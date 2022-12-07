@@ -718,7 +718,17 @@ public:
 				{
 					std::string i = make_intermediate_path(make_ext(f->file->file, ".ii"));
 					std::string ii = make_intermediate_path(make_ext(f->file->file, ".ii.ii"));
-					precmd = (use_clang ? "clang -I" + c2_incdir + " -E " : "g++ -I" + c2_incdir + " -E ") + f->file->file + " > " + i;
+					
+					precmd = use_clang ? "clang" : "g++";
+					precmd += " -I" + c2_incdir;
+
+					if(f->flags.size())
+					{
+						precmd += " " + f->flags;
+					}
+
+					precmd += " -E " + f->file->file + " > " + i;
+ 
 					sh_execute(precmd.c_str());
 					parser.process(i.c_str(), ii.c_str());
 					
