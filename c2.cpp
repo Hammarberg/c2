@@ -27,6 +27,7 @@
 #ifndef _MSC_VER
 #include <dlfcn.h>
 #include <unistd.h>
+#include <limits.h>
 #else
 #include <windows.h>
 #include <direct.h>
@@ -38,8 +39,6 @@
 #endif
 
 
-#define C2LIBDIR "/home/john/Documents/sources/c2/lib/"
-#define C2INCLUDEDIR C2LIBDIR "include/"
 #define TITLE "c2 cross assembler 0.5  Copyright (C) 2022  John Hammarberg (CRT)\n"
 
 const uint32_t MAGIC_VERSION = 1337*1337+2;
@@ -91,12 +90,38 @@ public:
 
 	sproject()
 	{
+		std::string path;
+#ifdef _WIN32
+		char result[MAX_PATH] = {0};
+		GetModuleFileNameW(NULL, result, MAX_PATH);
+		return path;
+#else
+		char result[PATH_MAX] = {0};
+		ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+		if(!count)
+			throw "Could not extract c2 path";
+#endif		
+		path = result;
+		
+		size_t n = path.rfind('/');
+		if(n == path.npos)
+			throw "Could not extract c2 path";
+			
+		c2_libdir = path.substr(0, n + 1) + "lib/";
+		c2_incdir = c2_libdir + "include/";
+		
+		printf("%s\n", c2_libdir.c_str());
+		printf("%s\n", c2_incdir.c_str());
+		
 	}
 	
 	~sproject()
 	{
 		unload_module();
 	}
+	
+	std::string c2_libdir;
+	std::string c2_incdir;
 	
 	cmda command;
 	
@@ -346,7 +371,7 @@ public:
 		data->dependency.clear();
 		
 		char buf[1024];
-		std::string command = (use_clang ? "clang -I" C2INCLUDEDIR " -MM -MG " : "g++ -I" C2INCLUDEDIR " -MM -MG ") + file;
+		std::string command = (use_clang ? "clang -I" + c2_incdir + " -MM -MG " : "g++ -I" + c2_incdir + " -MM -MG ") + file;
 		std::string output;
 		
 		FILE *ep = popen(command.c_str(), "r");
@@ -504,7 +529,7 @@ public:
 	
 	static void sh_execute(const char *str)
 	{
-		//fprintf(stderr ,"%s\n", str);
+		fprintf(stderr ,"%s\n", str);
 		char buf[1024];
 		FILE *ep = popen(str, "r");
 		if(!ep)
@@ -664,7 +689,7 @@ public:
 			
 			std::string final_file;
 			if(f->ext)
-				final_file = C2LIBDIR;
+				final_file = c2_libdir;
 			
 			final_file += f->file->file;
 			
@@ -677,9 +702,9 @@ public:
 				extract_dependencies(f, final_file);
 				
 #ifndef _MSC_VER
-				cmd = use_clang ? "clang -I" C2INCLUDEDIR " -g -c -Wall -fpic" : "g++ -I" C2INCLUDEDIR " -g -c -Wall -fpic";
+				cmd = use_clang ? "clang -I" + c2_incdir + " -g -c -Wall -fpic" : "g++ -I" + c2_incdir + " -g -c -Wall -fpic";
 #else
-				cmd = use_clang ? "clang -I" C2INCLUDEDIR " -g -c -Wall" : "g++ -I" C2INCLUDEDIR " -g -c -Wall";
+				cmd = use_clang ? "clang -I" + c2_incdir + " -g -c -Wall" : "g++ -I" + c2_incdir + " -g -c -Wall";
 #endif
 
 				if(f->flags.size())
@@ -693,7 +718,7 @@ public:
 				{
 					std::string i = make_intermediate_path(make_ext(f->file->file, ".ii"));
 					std::string ii = make_intermediate_path(make_ext(f->file->file, ".ii.ii"));
-					precmd = (use_clang ? "clang -I" C2INCLUDEDIR " -E " : "g++ -I" C2INCLUDEDIR " -E ") + f->file->file + " > " + i;
+					precmd = (use_clang ? "clang -I" + c2_incdir + " -E " : "g++ -I" + c2_incdir + " -E ") + f->file->file + " > " + i;
 					sh_execute(precmd.c_str());
 					parser.process(i.c_str(), ii.c_str());
 					
@@ -852,14 +877,14 @@ int main(int arga, char *argc[])
 		
 		proj.command.invoke("--create-project", 2, 3, [&](int arga, const char *argc[])
 		{
-			ctemplate tpl(C2LIBDIR);
+			ctemplate tpl(proj.c2_libdir.c_str());
 			projpath = tpl.create(arga, argc);
 			doexecute = false; //Only build
 		});
 		
 		proj.command.invoke("--list-templates", 0, 0, [&](int arga, const char *argc[])
 		{
-			ctemplate tpl(C2LIBDIR);
+			ctemplate tpl(proj.c2_libdir.c_str());
 			tpl.list();
 			throw "";
 		});
