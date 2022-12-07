@@ -2,7 +2,7 @@
 	"title" : "picscroll",
 	"basedir":".",
 	"arguments" : "--out-prg $0801 + picscroll.prg --vice-cmd picscroll.sym",
-	"execute" : "boozer -c 0801 picscroll.prg;cp picscroll.prg.b2 final.prg;x64 -silent -moncommands picscroll.sym final.prg",
+	"execute" : "x64 -silent -moncommands picscroll.sym picscroll.prg",
 	"files":[
 		"picscroll.cpp":{
 			"c2" : true,

@@ -59,8 +59,9 @@ zp_rol:		byte 0
 zp_frol:	word 0
 
 zp_end:
-			@ = $0801
 start:
+			basic_startup
+			
 			sei
 
 			vsync
