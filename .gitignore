@@ -1,0 +1,8 @@
+*.o
+*.ii
+/examples/*/imm/
+.depend
+.depend.bak
+c2
+c2.d
+c2.exe

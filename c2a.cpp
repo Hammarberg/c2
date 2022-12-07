@@ -15,7 +15,7 @@
 #include <algorithm>
 #include <cstdarg>
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 #include <malloc.h>
 #define strcasecmp _stricmp
 #endif
@@ -219,7 +219,7 @@ bool c2a::match_macro_parameters(const std::vector<stok *> &def, const std::vect
 	
 	const int NUM_DEF = set;
 
-#ifndef _MSC_VER
+#ifndef _WIN32
 	// Holds only static parameter indexes
 	int *idx[NUM_DEF];
 	// Same but also holds variables flagged with -1 or -2

@@ -220,14 +220,15 @@ std::string ctemplate::create(int arga, const char *argc[])
 			throw "Config type not pair";
 		}
 		
-		std::string src = "source/" + ppair->first;
+		std::filesystem::path src("source");
+		src /= ppair->first;
 		json::container *t = (json::container *)ppair->second;
 		if (t->GetType() != json::type::CONTAINER)
 		{
 			throw "Expected container";
 		}
 		
-		fprintf(fp,"\t\t\"%s\":{\n", src.c_str());
+		fprintf(fp,"\t\t\"%s\":{\n", src.string().c_str());
 		
 		fprintf(fp,"\t\t\t\"external\" : true,\n");
 		fprintf(fp,"\t\t\t\"flags\" : \"%s\"\n",str_translate(t->Get("flags").GetString(), translate).c_str());

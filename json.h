@@ -15,7 +15,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
-#ifndef _MSC_VER
+#ifndef _WIN32
 #include <strings.h>
 #else
 #define strcasecmp _stricmp

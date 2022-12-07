@@ -19,14 +19,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 // cmur3 adapted murmur3 hash
 ///////////////////////////////////////////////////////////////////////////////
-#if defined(_MSC_VER)
+#if defined(_WIN32)
 #define ROTL64(x,y)	_rotl64(x,y)
 #define BIG_CONSTANT(x) (x)
-#else	// defined(_MSC_VER)
+#else	// defined(_WIN32)
 inline uint64_t rotl64(uint64_t x, int8_t r ){return (x << r) | (x >> (64 - r));}
 #define ROTL64(x,y)	rotl64(x,y)
 #define BIG_CONSTANT(x) (x##LLU)
-#endif // !defined(_MSC_VER)
+#endif // !defined(_WIN32)
 
 class cmur3
 {

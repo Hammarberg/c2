@@ -199,7 +199,7 @@ std::string cmda::main()
 	
     for (auto const &entry : std::filesystem::directory_iterator(".")) 
     {
-		std::string tmp = entry.path();
+		std::string tmp = entry.path().string();
 		
 		size_t s = tmp.size();
 		if(s >= 8)
