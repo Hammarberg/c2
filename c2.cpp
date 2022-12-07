@@ -925,6 +925,7 @@ int main(int arga, char *argc[])
 			fprintf(stderr, TITLE);
 			proj.command.printf_info();
 			dobuild = false;
+			doexecute = false;
 		});
 		
 		proj.command.invoke("--license", 0, 0, [&](int arga, const char *argc[])
@@ -936,6 +937,7 @@ int main(int arga, char *argc[])
 							"You should have received a copy of the GNU General Public License along with c2. If not, see <https://www.gnu.org/licenses/>.\n");
 			
 			dobuild = false;
+			doexecute = false;
 		});
 		
 		if(loaded && dobuild)
