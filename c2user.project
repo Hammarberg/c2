@@ -17,11 +17,7 @@
     <File Name="lib/include/6502_unintended.s"/>
     <File Name="lib/include/6502.s"/>
     <File Name="lib/include/68k.h"/>
-    <File Name="depack.s"/>
-    <File Name="project.c2.json"/>
     <File Name="asm.cpp"/>
-    <File Name="AllSuiteA.s"/>
-    <File Name="asm.s"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
