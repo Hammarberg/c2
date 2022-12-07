@@ -1,0 +1,51 @@
+{
+	"templates":[
+		"c64":{
+			"description" : "Commodore 64",
+			"super" : "c64",
+			"arguments" : "--out-prg - + {title}.prg",
+			"source":[
+				"c2i.cpp":{
+					"flags" : "-O2"
+				},
+				"c64.cpp":{
+					"flags" : "-O2"
+				}
+			],
+			"template":[
+				"asm.cpp":{
+					"target" : "{title}.cpp"
+					"c2" : true
+					"flags" : "-O0"
+				},
+				"c64.s":{
+					"target" : "{title}.s"
+				}
+			]
+		}
+		"c64vice":{
+			"description" : "Commodore 64 with VICE configuration",
+			"super" : "c64",
+			"arguments" : "--out-prg - + {title}.prg --vice-cmd {title}.sym",
+			"execute" : "x64 -silent -moncommands {title}.sym {title}.prg",
+			"source":[
+				"c2i.cpp":{
+					"flags" : "-O2"
+				},
+				"c64.cpp":{
+					"flags" : "-O2"
+				}
+			],
+			"template":[
+				"asm.cpp":{
+					"target" : "{title}.cpp"
+					"c2" : true
+					"flags" : "-O0"
+				},
+				"c64.s":{
+					"target" : "{title}.s"
+				}
+			]
+		}
+	]
+}

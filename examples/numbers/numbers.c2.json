@@ -1,0 +1,20 @@
+{
+	"title" : "numbers",
+	"basedir":".",
+	"arguments" : "--out-prg - + numbers.prg --vice-cmd numbers.sym",
+	"execute" : "x64 -silent -moncommands numbers.sym numbers.prg",
+	"files":[
+		"numbers.cpp":{
+			"c2" : true,
+			"flags" : "-O0"
+		},
+		"source/c2i.cpp":{
+			"external" : true,
+			"flags" : "-O2"
+		},
+		"source/c64.cpp":{
+			"external" : true,
+			"flags" : "-O2"
+		}
+	]
+}

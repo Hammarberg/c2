@@ -1,0 +1,20 @@
+{
+	"title" : "picscroll",
+	"basedir":".",
+	"arguments" : "--out-prg $0801 + picscroll.prg --vice-cmd picscroll.sym",
+	"execute" : "boozer -c 0801 picscroll.prg;cp picscroll.prg.b2 final.prg;x64 -silent -moncommands picscroll.sym final.prg",
+	"files":[
+		"picscroll.cpp":{
+			"c2" : true,
+			"flags" : "-O0"
+		},
+		"source/c2i.cpp":{
+			"external" : true,
+			"flags" : "-O2"
+		},
+		"source/c64.cpp":{
+			"external" : true,
+			"flags" : "-O2"
+		}
+	]
+}

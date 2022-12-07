@@ -1,0 +1,20 @@
+{
+	"title" : "variables",
+	"basedir":".",
+	"arguments" : "--out-prg - + variables.prg --vice-cmd variables.sym",
+	"execute" : "x64 -silent -moncommands variables.sym variables.prg",
+	"files":[
+		"variables.cpp":{
+			"c2" : true,
+			"flags" : "-O0"
+		},
+		"source/c2i.cpp":{
+			"external" : true,
+			"flags" : "-O2"
+		},
+		"source/c64.cpp":{
+			"external" : true,
+			"flags" : "-O2"
+		}
+	]
+}

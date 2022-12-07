@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="c2" Database="" Version="10000">
+  <Project Name="c2" Path="c2.project" Active="No"/>
+  <Project Name="c2user" Path="c2user.project" Active="No"/>
+  <Project Name="sdl64" Path="../sdl64/sdl64.project" Active="Yes"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
+      <Environment/>
+      <Project Name="c2" ConfigName="Debug"/>
+      <Project Name="c2user" ConfigName="Debug"/>
+      <Project Name="sdl64" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Environment/>
+      <Project Name="c2" ConfigName="Release"/>
+      <Project Name="c2user" ConfigName="Release"/>
+      <Project Name="sdl64" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>

@@ -1,0 +1,20 @@
+{
+	"title" : "advbasic",
+	"basedir":".",
+	"arguments" : "--out-prg - + advbasic.prg --vice-cmd advbasic.sym",
+	"execute" : "x64 -silent -moncommands advbasic.sym advbasic.prg",
+	"files":[
+		"advbasic.cpp":{
+			"c2" : true,
+			"flags" : "-O0"
+		},
+		"source/c2i.cpp":{
+			"external" : true,
+			"flags" : "-O2"
+		},
+		"source/c64.cpp":{
+			"external" : true,
+			"flags" : "-O2"
+		}
+	]
+}

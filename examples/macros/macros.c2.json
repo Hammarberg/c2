@@ -1,0 +1,20 @@
+{
+	"title" : "macros",
+	"basedir":".",
+	"arguments" : "--out-prg - + macros.prg --vice-cmd macros.sym",
+	"execute" : "x64 -silent -moncommands macros.sym macros.prg",
+	"files":[
+		"macros.cpp":{
+			"c2" : true,
+			"flags" : "-O0"
+		},
+		"source/c2i.cpp":{
+			"external" : true,
+			"flags" : "-O2"
+		},
+		"source/c64.cpp":{
+			"external" : true,
+			"flags" : "-O2"
+		}
+	]
+}
