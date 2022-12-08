@@ -2,6 +2,8 @@
 *.ii
 *.prg
 *.sym
+*.tmp
+*~
 /examples/*/imm/
 .depend
 .depend.bak
