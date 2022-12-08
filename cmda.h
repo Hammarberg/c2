@@ -23,7 +23,7 @@ public:
 	void add_args(const char *argstr) override;
 	void add_info(const char *slong, const char *sshort, const char *sinfo) override;
 	void printf_info() override;
-	bool verify(const char *sw, int min_args, int max_args, int *arga, const char ***argc) override;
+	bool verify(int iter, const char *sw, int min_args, int max_args, int *arga, const char ***argc) override;
 	void cmdfree(void *ptr) override;
 	
 	std::string main();

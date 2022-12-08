@@ -99,7 +99,6 @@ void cmda::cswitch::print()
 		fprintf(stderr, "%s\n", tmp.c_str());
 		tmp = "";
 	}
-	
 }
 
 void cmda::printf_info()
@@ -111,8 +110,7 @@ void cmda::printf_info()
 	throw "";
 }
 
-
-bool cmda::verify(const char *sw, int min_args, int max_args, int *arga, const char ***argc)
+bool cmda::verify(int iter, const char *sw, int min_args, int max_args, int *arga, const char ***argc)
 {
 	std::string info,s1,s2;
 	cswitch *pd = nullptr;
@@ -134,48 +132,56 @@ bool cmda::verify(const char *sw, int min_args, int max_args, int *arga, const c
 		s1 = sw;
 	}
 	
+	int fc = 0;
 	for(size_t r = 0; r<sargs.size(); r++)
 	{
 		if(s1 == sargs[r] || s2 == sargs[r])
 		{
-			r++;
-			int start = int(r), count = 0;
-			for(; r<sargs.size() /*&& count < max_args*/; r++, count++)
+			if(fc == iter)
 			{
-				if(sargs[r].size() > 1 && sargs[r][0] == '-')
+				r++;
+				int start = int(r), count = 0;
+				for(; r<sargs.size() /*&& count < max_args*/; r++, count++)
 				{
-					break;
+					if(sargs[r].size() > 1 && sargs[r][0] == '-')
+					{
+						break;
+					}
 				}
-			}
-			
-			if(count < min_args || count > max_args)
-			{
-				if(pd)
-					pd->print();
+				
+				if(count < min_args || count > max_args)
+				{
+					if(pd)
+						pd->print();
+						
+					throw "Wrong number of arguments";
+				}
+				
+				if(count)
+				{
+					*argc = (const char **)malloc(sizeof(const char *) * count);
 					
-				throw "Wrong number of arguments";
-			}
-			
-			if(count)
-			{
-				*argc = (const char **)malloc(sizeof(const char *) * count);
-				
-				const char **tmp = *argc;
-				
-				for(int l=0; l<count; l++)
-				{
-					tmp[l] = sargs[start + l].c_str();
+					const char **tmp = *argc;
+					
+					for(int l=0; l<count; l++)
+					{
+						tmp[l] = sargs[start + l].c_str();
+					}
 				}
+				else
+				{
+					*argc = nullptr;
+				}
+				
+				*arga = count;
+				
+				return true;
 			}
 			else
 			{
-				*argc = nullptr;
+				fc++;
 			}
-			
-			*arga = count;
-			
-			return true;
-		}		
+		}
 	}
 	
 	return false;

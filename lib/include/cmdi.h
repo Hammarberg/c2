@@ -26,14 +26,17 @@ public:
 	{
 		int arga;
 		const char **argc;
-		if(verify(sw, min_args, max_args, &arga, &argc))
+		for(int r=0;; r++)
 		{
+			if(!verify(r, sw, min_args, max_args, &arga, &argc))
+				break;
+				
 			fn(arga, argc);
 			cmdfree(argc);
 		}
 	}
 	
 protected:
-	virtual bool verify(const char *sw, int min_args, int max_args, int *arga, const char ***argc) = 0;
+	virtual bool verify(int iter, const char *sw, int min_args, int max_args, int *arga, const char ***argc) = 0;
 	virtual void cmdfree(void *ptr) = 0;
 };
