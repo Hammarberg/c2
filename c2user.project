@@ -17,7 +17,6 @@
     <File Name="lib/include/6502_unintended.s"/>
     <File Name="lib/include/6502.s"/>
     <File Name="lib/include/68k.h"/>
-    <File Name="asm.cpp"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
