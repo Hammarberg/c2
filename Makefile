@@ -5,6 +5,9 @@ CXXFLAGS := -O2 -std=c++17 -march=native
 LDFLAGS :=
 LDLIBS :=
 
+srcfiles := c2.cpp c2a.cpp json.cpp macro.cpp token.cpp tokfeed.cpp cmda.cpp template.cpp
+objects  := $(patsubst %.cpp, %.o, $(srcfiles))
+
 ifndef C2_PLATFORM
 	ifneq ($(ProgramFiles),)
 		C2_PLATFORM := Windows
@@ -22,14 +25,11 @@ else ifeq ($(C2_PLATFORM),Windows)
 	appname := $(appname).exe
 endif
 
-srcfiles := c2.cpp c2a.cpp json.cpp macro.cpp token.cpp tokfeed.cpp cmda.cpp template.cpp
-objects  := $(patsubst %.cpp, %.o, $(srcfiles))
-
 .PHONY: always clean depend dist-clean
 
-all: $(appname)
+all: $(appname) always
 
-$(appname): $(objects)
+$(appname): .depend $(objects)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $(appname) $(objects) $(LDLIBS)
 
 always:
@@ -41,7 +41,7 @@ depend: .depend always
 # Use clang++ to generate dependency list.
 	$(CXX) $(CXXFLAGS) -MM $^ > .depend
 ifeq ($(C2_PLATFORM),Windows)
-# Use sed to convert non-continuation backslashes to slashes.
+	@echo "Converting non-continuation backslashes to slashes..."
 	sed -i.bak -E 's:\\([[:alnum:]]):/\1:g' .depend
 endif
 
