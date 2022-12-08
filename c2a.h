@@ -22,7 +22,8 @@ class c2a : public slinear_alloc<>
 {
 public:
 
-	c2a()
+	c2a(bool inverbose)
+	: verbose(inverbose)
 	{
 		// Create root scope space
 		scope_labels.push_back(std::vector<const char *>());
@@ -91,6 +92,8 @@ public:
 	stok *c2_top = nullptr;
 	stok *c2_asm = nullptr;
 	stok *c2_end = nullptr;
+	
+	bool verbose = false;
 	
 	stok *preprocessprefix(stok *o, toklink &link)
 	{

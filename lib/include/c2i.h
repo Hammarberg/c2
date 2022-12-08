@@ -321,7 +321,7 @@ public:
 	
 	enum c2_eloglevel : uint8_t
 	{
-		debug,
+		verbose,
 		info,
 		warning,
 		error
@@ -351,8 +351,10 @@ public:
 
 	virtual void c2_config_setup_file(const char *file);
 	virtual void c2_config_setup_include(const char *file);
+	virtual void c2_config_set_verbose(bool);
 	
 	bool c2_allow_overwrite = false;
+	bool c2_verbose = false;
 
 	cmdi &c2_cmd;
 	
