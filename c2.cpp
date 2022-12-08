@@ -91,17 +91,29 @@ public:
 	sproject()
 	{
 		std::string path;
+		
+		// Check for local override
+		if(file_exist("lib/" TEMPLATESFILE))
+		{
+			path = std::filesystem::current_path();
+			path += "/";
+		}
+		
+		if(!path.size())
+		{
+			
 #ifdef _WIN32
-		char result[MAX_PATH] = {0};
-		GetModuleFileNameW(NULL, result, MAX_PATH);
-		return path;
+			char result[MAX_PATH] = {0};
+			GetModuleFileNameA(NULL, result, MAX_PATH);
+			return path;
 #else
-		char result[PATH_MAX] = {0};
-		ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
-		if(!count)
-			throw "Could not extract c2 path";
+			char result[PATH_MAX] = {0};
+			ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+			if(!count)
+				throw "Could not extract c2 path";
 #endif		
-		path = result;
+			path = result;
+		}
 		
 		size_t n = path.rfind('/');
 		if(n == path.npos)
@@ -110,8 +122,8 @@ public:
 		c2_libdir = path.substr(0, n + 1) + "lib/";
 		c2_incdir = c2_libdir + "include/";
 		
-		printf("%s\n", c2_libdir.c_str());
-		printf("%s\n", c2_incdir.c_str());
+		//printf("%s\n", c2_libdir.c_str());
+		//printf("%s\n", c2_incdir.c_str());
 		
 	}
 	
@@ -518,8 +530,9 @@ public:
 	
 	static bool file_exist(const char *path)
 	{
-		struct stat data;
-		return ::stat(path, &data) >= 0;
+		return std::filesystem::exists(path);
+		//struct stat data;
+		//return ::stat(path, &data) >= 0;
 	}
 	
 	static std::string make_ext(const std::string &file, const char *ext)

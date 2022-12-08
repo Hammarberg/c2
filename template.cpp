@@ -18,8 +18,6 @@
 #include <memory>
 #include <filesystem>
 
-#define TEMPLATESFILE "templates.json"
-
 static bool loadfile(const char *file, std::string &out)
 {
 	FILE *fp = fopen(file, "r");
