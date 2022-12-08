@@ -18,8 +18,6 @@
 #include <memory>
 #include <filesystem>
 
-#define TEMPLATESFILE "templates.json"
-
 static bool loadfile(const char *file, std::string &out)
 {
 	FILE *fp = fopen(file, "r");
@@ -157,6 +155,10 @@ std::string ctemplate::create(int arga, const char *argc[])
 	translate.push_back({"{title}",title});
 	
 	std::string projfile = destpath + title + ".c2.json";
+	
+	if(std::filesystem::exists(projfile))
+		throw "A project already exist";
+	
 	FILE *fp = fopen(projfile.c_str(), "w");
 	
 	fprintf(fp,

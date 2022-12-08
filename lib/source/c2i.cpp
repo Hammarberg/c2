@@ -576,7 +576,8 @@ void c2i::c2_post()
 
 void c2i::loadbin(const char *path, size_t offset, size_t length)
 {
-	FILE *fp = fopen(path, "rb");
+	sinternal *p = (sinternal *)pinternal;
+	FILE *fp = p->search_fopen(path);
 	if(!fp)
 	{
 		ierror("File not found: %s", path);
@@ -624,7 +625,8 @@ void c2i::loadbin(const char *path, size_t offset, size_t length)
 c2i::var c2i::loadvar(const char *path, size_t offset, size_t length)
 {
 	var v;
-	FILE *fp = fopen(path, "rb");
+	sinternal *p = (sinternal *)pinternal;
+	FILE *fp = p->search_fopen(path);
 	if(!fp)
 	{
 		ierror("File not found: %s", path);
@@ -692,6 +694,12 @@ void c2i::c2_config_setup_file(const char *file)
 {
 	sinternal *p = (sinternal *)pinternal;
 	p->files.push_back(file);
+}
+
+void c2i::c2_config_setup_include(const char *include)
+{
+	sinternal *p = (sinternal *)pinternal;
+	p->include_paths.push_back(include);
 }
 
 void c2i::c2_log(c2_eloglevel level, const char *file, int line, const char *format, ...)

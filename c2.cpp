@@ -90,30 +90,6 @@ public:
 
 	sproject()
 	{
-		std::filesystem::path path;
-#ifdef _WIN32
-		char result[MAX_PATH] = {0};
-		GetModuleFileNameA(NULL, result, MAX_PATH);
-#else
-		char result[PATH_MAX] = {0};
-		ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
-		if(!count)
-			throw "Could not extract c2 path";
-#endif		
-		path = result;
-		
-		printf("c2 binary: '%s'\n", path.string().c_str());
-		if(path.empty())
-			throw "Could not extract c2 path";
-
-		std::filesystem::path libdir = path.parent_path() / "lib";
-
-		c2_libdir = libdir.string();
-		c2_incdir = (libdir / "include").string();
-		
-		printf("c2_libdir: '%s'\n", c2_libdir.c_str());
-		printf("c2_incdir: '%s'\n", c2_incdir.c_str());
-		
 	}
 	
 	~sproject()
@@ -124,6 +100,54 @@ public:
 	std::string c2_libdir;
 	std::string c2_incdir;
 	
+	void setlib(const std::string &basepath)
+	{
+		std::filesystem::path path = basepath;
+
+		// Honor project setting first.
+		if(path.empty())
+		{
+			// Check for local override
+			if(file_exist("lib/" TEMPLATESFILE))
+			{
+				path = std::filesystem::current_path();
+				path /= "lib";
+			}
+		}
+		
+		// Fallback to searching next to current binary.
+		if(path.empty())
+		{
+#ifdef _WIN32
+			char result[MAX_PATH] = {0};
+			GetModuleFileNameA(NULL, result, MAX_PATH);
+#else
+			char result[PATH_MAX] = {0};
+			ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+			if(!count)
+				throw "Could not extract c2 path";
+#endif
+			path = result;
+			
+			printf("c2 binary: '%s'\n", path.string().c_str());
+			if(path.empty())
+				throw "Could not extract c2 path";
+		}
+		
+		// Prepare libdir and incdir variables.
+		std::filesystem::path libdir = path.parent_path() / "lib";
+		if(!std::filesystem::is_directory(libdir))
+		{
+			throw "Could not find c2 library directory";
+		}
+		c2_libdir = libdir.string();
+
+		c2_incdir = (libdir / "include").string();
+		
+		printf("c2_libdir: '%s'\n", c2_libdir.c_str());
+		printf("c2_incdir: '%s'\n", c2_incdir.c_str());
+	}
+	
 	cmda command;
 	
 	bool use_clang = true;
@@ -133,6 +157,8 @@ public:
 	std::string title = "noname";
 	std::string arguments;
 	std::string execute;
+	
+	std::vector<std::string> include_paths;
 	
 	std::string make_path(const std::string &file)
 	{
@@ -524,8 +550,9 @@ public:
 	
 	static bool file_exist(const char *path)
 	{
-		struct stat data;
-		return ::stat(path, &data) >= 0;
+		return std::filesystem::exists(path);
+		//struct stat data;
+		//return ::stat(path, &data) >= 0;
 	}
 	
 	static std::string make_ext(const std::string &file, const char *ext)
@@ -683,6 +710,25 @@ public:
 
 	void build(bool doexecute)
 	{
+		command.invoke("--include", 1, 1, [&](int arga, const char *argc[])
+		{
+			std::string tmp = argc[0];
+			if(tmp[tmp.size()-1] != '/')
+				tmp += '/';
+				
+			include_paths.push_back(tmp);
+		});
+		
+		std::string include_flags;
+		
+		for(size_t r=0; r<include_paths.size(); r++)
+		{
+			if(include_flags.size())
+				include_flags += " ";
+				
+			include_flags += "-I"+include_paths[r];
+		}
+		
 		c2a parser;
 		std::string cmd, precmd;
 		
@@ -712,28 +758,30 @@ public:
 				final_file = file_subpath;
 			}
 			
-			printf("JPH b4='%s' + '%s' (%s)\n", final_file.string().c_str(), f->file->file.c_str(), file_subpath.c_str());
-			
-			
 			bool dirty = f->is_dirty();
 			
 			if(dirty)
 			{
 				dirty_link = true;
 				extract_dependencies(f, final_file.string());
-				
-#ifndef _WIN32
-				cmd = use_clang ? "clang -I" + c2_incdir + " -g -c -Wall -fpic" : "g++ -I" + c2_incdir + " -g -c -Wall -fpic";
-#else
-				cmd = use_clang ? "clang -I" + c2_incdir + " -g -c -Wall" : "g++ -I" + c2_incdir + " -g -c -Wall";
-#endif
 
+				cmd = use_clang ? "clang " : "g++ ";
+				cmd += "-I" + c2_incdir;
+				
+				if(include_flags.size())
+				{
+					cmd += " " + include_flags;
+				}
+				
 				if(f->flags.size())
 				{
 					cmd += " " + f->flags;
 				}
 				
-				cmd += " -o " + f->obj;
+#ifndef _WIN32
+				cmd += " -fpic";
+#endif
+				cmd += " -g -c -Wall -o " + f->obj;
 					
 				if(f->c2)
 				{
@@ -742,6 +790,11 @@ public:
 					
 					precmd = use_clang ? "clang" : "g++";
 					precmd += " -I" + c2_incdir;
+
+					if(include_flags.size())
+					{
+						precmd += " " + include_flags;
+					}
 
 					if(f->flags.size())
 					{
@@ -804,6 +857,11 @@ public:
 		for(size_t r=0; r<parser_files.size(); r++)
 		{
 			p->c2_config_setup_file(parser_files[r].c_str());
+		}
+		
+		for(size_t r=0; r<include_paths.size(); r++)
+		{
+			p->c2_config_setup_include(include_paths[r].c_str());
 		}
 		
 		if(!p->c2_assemble())
@@ -892,10 +950,20 @@ int main(int arga, char *argc[])
 		proj.command.add_info("--project", "-p", "<filename>: Explicitly load project file");
 		proj.command.add_info("--create-project", "-cp", "<template> <name> [path]: Creates a new project based on the specified template. If a path is given it will be created and used, otherwise the current directory is used");
 		proj.command.add_info("--list-templates", "-lt", "List available templates for project creation");
+		proj.command.add_info("--c2-library-dir", "-c2l", "<path>: Override default c2 library path");
+		proj.command.add_info("--include", "-i", "<path>: Add an include search path for source and binaries");
 		
 		bool doexecute = true;
 		bool dobuild = true;
 		std::string projpath;
+		std::string override_library;
+		
+		proj.command.invoke("--c2-library-dir", 1, 1, [&](int arga, const char *argc[])
+		{
+			override_library = argc[0];
+		});
+		
+		proj.setlib(override_library);
 		
 		proj.command.invoke("--no-execute", 0, 0, [&](int arga, const char *argc[])
 		{

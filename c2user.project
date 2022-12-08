@@ -3,7 +3,7 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
-    <File Name="lib/templates.json"/>
+    <File Name="lib/templates.c2.json"/>
     <File Name="lib/source/c64.cpp"/>
     <File Name="lib/source/c2i.cpp"/>
     <File Name="lib/source/68k.cpp"/>

@@ -15,6 +15,8 @@
 #include <string>
 #include <vector>
 
+#define TEMPLATESFILE "templates.c2.json"
+
 class ctemplate
 {
 public:

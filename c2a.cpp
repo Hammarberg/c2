@@ -865,7 +865,7 @@ void c2a::s_parse0(toklink &link)
 void c2a::s_parse1(toklink &link)
 {
 	std::string stmp;
-	bool label_declared;
+	bool label_declared = false;
 	
 	for(;;)
 	{
