@@ -90,41 +90,6 @@ public:
 
 	sproject()
 	{
-		std::string path;
-		
-		// Check for local override
-		if(file_exist("lib/" TEMPLATESFILE))
-		{
-			path = std::filesystem::current_path();
-			path += "/";
-		}
-		
-		if(!path.size())
-		{
-			
-#ifdef _WIN32
-			char result[MAX_PATH] = {0};
-			GetModuleFileNameA(NULL, result, MAX_PATH);
-			return path;
-#else
-			char result[PATH_MAX] = {0};
-			ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
-			if(!count)
-				throw "Could not extract c2 path";
-#endif		
-			path = result;
-		}
-		
-		size_t n = path.rfind('/');
-		if(n == path.npos)
-			throw "Could not extract c2 path";
-			
-		c2_libdir = path.substr(0, n + 1) + "lib/";
-		c2_incdir = c2_libdir + "include/";
-		
-		//printf("%s\n", c2_libdir.c_str());
-		//printf("%s\n", c2_incdir.c_str());
-		
 	}
 	
 	~sproject()
@@ -134,6 +99,53 @@ public:
 	
 	std::string c2_libdir;
 	std::string c2_incdir;
+	
+	void setlib(std::string path)
+	{
+		if(!path.size())
+		{
+			// Check for local override
+			if(file_exist("lib/" TEMPLATESFILE))
+			{
+				path = std::filesystem::current_path();
+				path += "/lib/";
+			}
+		}
+		
+		if(!path.size())
+		{
+#ifdef _WIN32
+			char result[MAX_PATH] = {0};
+			GetModuleFileNameA(NULL, result, MAX_PATH);
+#else
+			char result[PATH_MAX] = {0};
+			ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+			if(!count)
+				throw "Could not extract c2 path";
+#endif		
+			path = result;
+			
+			size_t n = path.rfind('/');
+			if(n == path.npos)
+				throw "Could not extract c2 path";
+			
+			path = path.substr(0, n + 1) + "lib/";
+		}
+		
+		if(!path.size())
+		{
+			throw "Could not find c2 library direcory";
+		}
+		
+		if(path[path.size()-1] != '/')
+			path += '/';
+			
+		c2_libdir = path;
+		c2_incdir = c2_libdir + "include/";
+		
+		//printf("%s\n", c2_libdir.c_str());
+		//printf("%s\n", c2_incdir.c_str());
+	}
 	
 	cmda command;
 	
@@ -883,10 +895,19 @@ int main(int arga, char *argc[])
 		proj.command.add_info("--project", "-p", "<filename>: Explicitly load project file");
 		proj.command.add_info("--create-project", "-cp", "<template> <name> [path]: Creates a new project based on the specified template. If a path is given it will be created and used, otherwise the current directory is used");
 		proj.command.add_info("--list-templates", "-lt", "List available templates for project creation");
+		proj.command.add_info("--c2-library-dir", "-c2l", "<path>: Override default c2 library path");
 		
 		bool doexecute = true;
 		bool dobuild = true;
 		std::string projpath;
+		std::string override_library;
+		
+		proj.command.invoke("--c2-library-dir", 1, 1, [&](int arga, const char *argc[])
+		{
+			override_library = argc[0];
+		});
+		
+		proj.setlib(override_library);
 		
 		proj.command.invoke("--no-execute", 0, 0, [&](int arga, const char *argc[])
 		{
