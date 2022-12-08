@@ -155,6 +155,10 @@ std::string ctemplate::create(int arga, const char *argc[])
 	translate.push_back({"{title}",title});
 	
 	std::string projfile = destpath + title + ".c2.json";
+	
+	if(std::filesystem::exists(projfile))
+		throw "A project already exist";
+	
 	FILE *fp = fopen(projfile.c_str(), "w");
 	
 	fprintf(fp,
