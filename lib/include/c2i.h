@@ -360,7 +360,7 @@ public:
 	
 	void *c2_get_internal(){return pinternal;}
 	
-	bool c2_resolve(const char *addr, int64_t &out);
+	bool c2_resolve(const char *addr, int64_t &out, bool allow_labels = true);
 	
 protected:
 	// Hides internals to avoid includes

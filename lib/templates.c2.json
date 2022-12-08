@@ -22,7 +22,7 @@
 					"target" : "{title}.s"
 				}
 			]
-		}
+		},
 		"c64vice":{
 			"description" : "Commodore 64 with VICE configuration",
 			"super" : "c64",
@@ -43,6 +43,26 @@
 					"flags" : "-O0"
 				},
 				"c64.s":{
+					"target" : "{title}.s"
+				}
+			]
+		},
+		"void":{
+			"description" : "Void c2 project, no target architecture for custom assembly of binaries",
+			"super" : "c2i",
+			"arguments" : "--address-range 0x0 0x100000 --out - + {title}.bin",
+			"source":[
+				"c2i.cpp":{
+					"flags" : "-O2"
+				}
+			],
+			"template":[
+				"asm.cpp":{
+					"target" : "{title}.cpp"
+					"c2" : true
+					"flags" : "-O0"
+				},
+				"void.s":{
 					"target" : "{title}.s"
 				}
 			]

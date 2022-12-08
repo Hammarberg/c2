@@ -152,7 +152,8 @@ c2i::c2i(cmdi *pcmd)
 	pinternal = (void *)p;
 	
 	c2_cmd.add_info("--out", "-o", "<from> <to> [filename]: Outputs a binary. If no filename is given stdout will be used. To and from can be either addresses, labels or '-' or '+' as lowest/highest+1 address assembled.");
-	c2_cmd.add_info("--dump-vars", "-dv", "[filename]: Output variables.");
+	c2_cmd.add_info("--dump-vars", "-dv", "[filename]: Output variables. If no filename is given, stdout will be used");
+	c2_cmd.add_info("--address-range", "-ar", "<start> <end>: Override the valid address range available for the assembly to target. Addresses must be numerical");
 
 	c2i::var a = "vice break";
 	c2i::var b = a;
@@ -307,6 +308,24 @@ bool c2i::c2_assemble()
 {
 	c2_pre();
 	
+	c2_cmd.invoke("--address-range", 2, 2, [&](int arga, const char *argc[])
+	{
+		int64_t from,to;
+		
+		if(!c2_resolve(argc[0], from, false))
+			throw "--address-range could not resolve 'from' address";
+		
+		if(!c2_resolve(argc[1], to, false))
+			throw "--address-range could not resolve 'to' address";
+			
+		if(from >= to || from < 0 )
+			throw "--address-range addresses out of range";
+			
+		// Valid range of RAM
+		c2_set_ram(from, to-from);
+			
+	});
+	
 	sinternal *p = (sinternal *)pinternal;
 	bool result = true;
 	
@@ -420,7 +439,7 @@ int64_t c2i::c2_high_bound()
 	return -1;
 }
 
-bool c2i::c2_resolve(const char *addr, int64_t &out)
+bool c2i::c2_resolve(const char *addr, int64_t &out, bool allow_labels)
 {
 	if(!addr)
 		return 0;
@@ -495,6 +514,10 @@ bool c2i::c2_resolve(const char *addr, int64_t &out)
 	default:
 		t = label;
 		p = addr;
+		
+		if(!allow_labels)
+			return false;
+		
 		break;
 	};
 	
