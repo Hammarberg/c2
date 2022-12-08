@@ -15,6 +15,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <cstdio>
 
 ///////////////////////////////////////////////////////////////////////////////
 // cmur3 adapted murmur3 hash
@@ -151,8 +152,36 @@ struct sinternal
 	std::vector<sdebugstack> stack_history;
 	std::vector<std::pair<c2i::c2_eloglevel, std::string>> log;
 	std::vector<std::string> files;
+	std::vector<std::string> include_paths;
 	std::unordered_map<std::string, c2i::c2_vardata *> registered_vars;
 	
 	void get_sorted_vars(std::vector<std::pair<std::string, int64_t>> &out);
 	bool lookup_var(const std::string &in, int64_t &out);
+	
+	FILE *search_fopen(const char *file)
+	{
+		FILE *fp = fopen(file, "rb");
+		if(fp)
+			return fp;
+		
+		std::string tmp = file;
+		
+		if(!tmp.size())
+			return nullptr;
+			
+		//Is absolute? TODO Fix for windows
+		if(tmp[0] == '/')
+			return nullptr;
+		
+		for(size_t r=0; r<include_paths.size(); r++)
+		{
+			tmp = include_paths[r] + file;
+			FILE *fp = fopen(tmp.c_str(), "rb");
+			if(fp)
+				return fp;
+		}
+		
+		return nullptr;
+	}
+	
 };

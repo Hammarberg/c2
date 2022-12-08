@@ -350,6 +350,7 @@ public:
 	uint8_t c2_peek(int64_t pos);
 
 	virtual void c2_config_setup_file(const char *file);
+	virtual void c2_config_setup_include(const char *file);
 	
 	bool c2_allow_overwrite = false;
 

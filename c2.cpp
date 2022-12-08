@@ -157,6 +157,8 @@ public:
 	std::string arguments;
 	std::string execute;
 	
+	std::vector<std::string> include_paths;
+	
 	std::string make_path(const std::string &file)
 	{
 		return basedir + file;
@@ -702,6 +704,25 @@ public:
 
 	void build(bool doexecute)
 	{
+		command.invoke("--include", 1, 1, [&](int arga, const char *argc[])
+		{
+			std::string tmp = argc[0];
+			if(tmp[tmp.size()-1] != '/')
+				tmp += '/';
+				
+			include_paths.push_back(tmp);
+		});
+		
+		std::string include_flags;
+		
+		for(size_t r=0; r<include_paths.size(); r++)
+		{
+			if(include_flags.size())
+				include_flags += " ";
+				
+			include_flags += "-I"+include_paths[r];
+		}
+		
 		c2a parser;
 		std::string cmd, precmd;
 		
@@ -718,26 +739,30 @@ public:
 			
 			final_file += f->file->file;
 			
-			
 			bool dirty = f->is_dirty();
 			
 			if(dirty)
 			{
 				dirty_link = true;
 				extract_dependencies(f, final_file);
-				
-#ifndef _MSC_VER
-				cmd = use_clang ? "clang -I" + c2_incdir + " -g -c -Wall -fpic" : "g++ -I" + c2_incdir + " -g -c -Wall -fpic";
-#else
-				cmd = use_clang ? "clang -I" + c2_incdir + " -g -c -Wall" : "g++ -I" + c2_incdir + " -g -c -Wall";
-#endif
 
+				cmd = use_clang ? "clang " : "g++ ";
+				cmd += "-I" + c2_incdir;
+				
+				if(include_flags.size())
+				{
+					cmd += " " + include_flags;
+				}
+				
 				if(f->flags.size())
 				{
 					cmd += " " + f->flags;
 				}
 				
-				cmd += " -o " + f->obj;
+#ifndef _MSC_VER
+				cmd += " -fpic";
+#endif
+				cmd += " -g -c -Wall -o " + f->obj;
 					
 				if(f->c2)
 				{
@@ -746,6 +771,11 @@ public:
 					
 					precmd = use_clang ? "clang" : "g++";
 					precmd += " -I" + c2_incdir;
+
+					if(include_flags.size())
+					{
+						precmd += " " + include_flags;
+					}
 
 					if(f->flags.size())
 					{
@@ -763,7 +793,6 @@ public:
 				}
 				else
 				{
-					
 					cmd += " " + final_file;
 				}
 				
@@ -807,6 +836,11 @@ public:
 		for(size_t r=0; r<parser_files.size(); r++)
 		{
 			p->c2_config_setup_file(parser_files[r].c_str());
+		}
+		
+		for(size_t r=0; r<include_paths.size(); r++)
+		{
+			p->c2_config_setup_include(include_paths[r].c_str());
 		}
 		
 		if(!p->c2_assemble())
@@ -896,6 +930,7 @@ int main(int arga, char *argc[])
 		proj.command.add_info("--create-project", "-cp", "<template> <name> [path]: Creates a new project based on the specified template. If a path is given it will be created and used, otherwise the current directory is used");
 		proj.command.add_info("--list-templates", "-lt", "List available templates for project creation");
 		proj.command.add_info("--c2-library-dir", "-c2l", "<path>: Override default c2 library path");
+		proj.command.add_info("--include", "-i", "<path>: Add an include search path for source and binaries");
 		
 		bool doexecute = true;
 		bool dobuild = true;
