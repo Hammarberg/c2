@@ -11,6 +11,10 @@
 	You should have received a copy of the GNU General Public License along with c2. If not, see <https://www.gnu.org/licenses/>.
 */
 
+#ifdef _WIN32
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include "tokfeed.h"
 #include "token.h"
 #include "c2a.h"
@@ -24,7 +28,7 @@
 #include <filesystem>
 #include <sys/stat.h>
 
-#ifndef _MSC_VER
+#ifndef _WIN32
 #include <dlfcn.h>
 #include <unistd.h>
 #include <limits.h>
@@ -102,19 +106,23 @@ public:
 	std::string c2_libdir;
 	std::string c2_incdir;
 	
-	void setlib(std::string path)
+	void setlib(const std::string &basepath)
 	{
-		if(!path.size())
+		std::filesystem::path path = basepath;
+
+		// Honor project setting first.
+		if(path.empty())
 		{
 			// Check for local override
 			if(file_exist("lib/" TEMPLATESFILE))
 			{
 				path = std::filesystem::current_path();
-				path += "/lib/";
+				path /= "lib";
 			}
 		}
 		
-		if(!path.size())
+		// Fallback to searching next to current binary.
+		if(path.empty())
 		{
 #ifdef _WIN32
 			char result[MAX_PATH] = {0};
@@ -124,26 +132,27 @@ public:
 			ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
 			if(!count)
 				throw "Could not extract c2 path";
-#endif		
+#endif
 			path = result;
 			
-			size_t n = path.rfind('/');
-			if(n == path.npos)
+			if(verbose)
+			{
+				fprintf(stderr, "c2 binary: '%s'\n", path.string().c_str());
+			}
+
+			if(path.empty())
 				throw "Could not extract c2 path";
-			
-			path = path.substr(0, n + 1) + "lib/";
 		}
 		
-		if(!path.size())
+		// Prepare libdir and incdir variables.
+		std::filesystem::path libdir = path.parent_path() / "lib";
+		if(!std::filesystem::is_directory(libdir))
 		{
-			throw "Could not find c2 library direcory";
+			throw "Could not find c2 library directory";
 		}
-		
-		if(path[path.size()-1] != '/')
-			path += '/';
-			
-		c2_libdir = path;
-		c2_incdir = c2_libdir + "include/";
+		c2_libdir = libdir.string();
+
+		c2_incdir = (libdir / "include").string();
 		
 		if(verbose)
 		{
@@ -198,7 +207,7 @@ public:
 			struct stat data;
 			if(::stat(file, &data) >= 0)
 			{
-#ifdef	_MSC_VER
+#ifdef	_WIN32
 				mtim = data.st_mtime;
 #else
 				mtim = uint64_t(data.st_mtim.tv_sec);
@@ -426,7 +435,12 @@ public:
 		n = output.find(':');
 		
 		if(n == std::string::npos)
+		{
+			printf("JPH CMD: '%s'\n", command.c_str());
+			printf("JPH OUT: '%s'\n", output.c_str());
+			printf("JPH FILE: '%s'\n", file.c_str());
 			throw "Unexpected output";
+		}
 
 		const char *p = &output[n+1];
 		
@@ -468,7 +482,7 @@ public:
 	
 	void save_imm(const std::string &path)
 	{
-		FILE *fp=fopen(path.c_str(),"wb");
+		FILE *fp = fopen(path.c_str(),"wb");
 		if(!fp)
 			throw "Error opening file for writing";
 
@@ -503,7 +517,7 @@ public:
 	
 	void load_imm(const std::string &path)
 	{
-		FILE *fp=fopen(path.c_str(),"rb");
+		FILE *fp = fopen(path.c_str(),"rb");
 		if(!fp)
 		{
 			return;
@@ -738,20 +752,33 @@ public:
 		for(size_t r=0;r<files.size();r++)
 		{
 			sproject::sfile *f = files[r].get();
+
 			f->obj = make_intermediate_path(make_ext(f->file->file, ".o"));
+
+			std::string file_subpath = f->file->file;
+
+#ifdef _WIN32
+			// Fix windows path to use backslashes.
+			std::replace(file_subpath.begin(), file_subpath.end(), '/', '\\');
+#endif
 			
-			std::string final_file;
+			std::filesystem::path final_file;
 			if(f->ext)
+			{
 				final_file = c2_libdir;
-			
-			final_file += f->file->file;
+				final_file /= file_subpath;
+			}
+			else
+			{
+				final_file = file_subpath;
+			}
 			
 			bool dirty = f->is_dirty();
 			
 			if(dirty)
 			{
 				dirty_link = true;
-				extract_dependencies(f, final_file);
+				extract_dependencies(f, final_file.string());
 
 				cmd = use_clang ? "clang " : "g++ ";
 				cmd += "-I" + c2_incdir;
@@ -766,15 +793,15 @@ public:
 					cmd += " " + f->flags;
 				}
 				
-#ifndef _MSC_VER
+#ifndef _WIN32
 				cmd += " -fpic";
 #endif
 				cmd += " -g -c -Wall -o " + f->obj;
 					
 				if(f->c2)
 				{
-					std::string i = make_intermediate_path(make_ext(f->file->file, ".ii"));
-					std::string ii = make_intermediate_path(make_ext(f->file->file, ".ii.ii"));
+					std::string i = make_intermediate_path(make_ext(file_subpath, ".ii"));
+					std::string ii = make_intermediate_path(make_ext(file_subpath, ".ii.ii"));
 					
 					precmd = use_clang ? "clang" : "g++";
 					precmd += " -I" + c2_incdir;
@@ -796,11 +823,13 @@ public:
 					
 					parser_files = parser.files;	//Update copy for imm
 					
-					cmd += " " + ii;
+					cmd += " ";
+					cmd += ii;
 				}
 				else
 				{
-					cmd += " " + final_file;
+					cmd += " ";
+					cmd += final_file.string();
 				}
 				
 				cmd += " 2>&1";
@@ -871,7 +900,7 @@ public:
 	}
 	
 	c2i *(*c2_object_instance)(cmdi *) = nullptr;
-#ifndef _MSC_VER
+#ifndef _WIN32
 	void *hasm = nullptr;
 #else
 	HMODULE hasm;
@@ -881,7 +910,7 @@ public:
 	{
 		if(!hasm)
 		{
-#ifndef _MSC_VER
+#ifndef _WIN32
 			hasm = dlopen(path, RTLD_LAZY);
 #else
 			hasm = LoadLibraryA(path);
@@ -889,7 +918,7 @@ public:
 			if(!hasm)
 				return false;
 
-#ifndef _MSC_VER
+#ifndef _WIN32
 			c2_object_instance = (c2i *(*)(cmdi *)) dlsym(hasm, "c2_get_object_instance");
 #else
 			c2_object_instance = (c2i *(*)(cmdi *)) GetProcAddress(hasm, "c2_get_object_instance");
@@ -908,7 +937,7 @@ public:
 	{
 		if(hasm)
 		{
-#ifndef _MSC_VER
+#ifndef _WIN32
 			dlclose(hasm);
 #else
 			FreeLibrary(hasm);
@@ -920,7 +949,7 @@ public:
 	
 	std::string get_link_target()
 	{
-#ifndef _MSC_VER
+#ifndef _WIN32
 		return make_intermediate_path(make_ext(title, ".so"));
 #else
 		return make_intermediate_path(make_ext(title, ".dll"));

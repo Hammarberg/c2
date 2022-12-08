@@ -3,26 +3,60 @@ appname := c2
 CXX := clang++
 CXXFLAGS := -O2 -std=c++17 -march=native
 LDFLAGS :=
-LDLIBS := -ldl
+LDLIBS :=
 
 srcfiles := c2.cpp c2a.cpp json.cpp macro.cpp token.cpp tokfeed.cpp cmda.cpp template.cpp
 objects  := $(patsubst %.cpp, %.o, $(srcfiles))
 
-all: $(appname)
+ifndef C2_PLATFORM
+	ifneq ($(ProgramFiles),)
+		C2_PLATFORM := Windows
+	else ifneq ($(WSLENV),)
+		C2_PLATFORM := Windows
+	else
+		C2_PLATFORM := $(shell uname)
+	endif
+endif
 
-$(appname): $(objects)
+# Fix some special cases.
+ifneq ($(filter Linux UNIX, $(C2_PLATFORM)),)
+	LDLIBS := $(LDLIBS) -ldl
+else ifeq ($(C2_PLATFORM),Windows)
+	appname := $(appname).exe
+endif
+
+.PHONY: always clean depend dist-clean
+
+all: $(appname) always
+
+$(appname): .depend $(objects)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $(appname) $(objects) $(LDLIBS)
 
-depend: .depend
+always:
+	@echo -n
+
+depend: .depend always
 
 .depend: $(srcfiles)
-	rm -f ./.depend
-	$(CXX) $(CXXFLAGS) -MM $^>>./.depend;
+# Use clang++ to generate dependency list.
+	$(CXX) $(CXXFLAGS) -MM $^ > .depend
+ifeq ($(C2_PLATFORM),Windows)
+	@echo "Converting non-continuation backslashes to slashes..."
+	sed -i.bak -E 's:\\([[:alnum:]]):/\1:g' .depend
+endif
 
 clean:
 	rm -f $(objects)
 
 dist-clean: clean
 	rm -f *~ .depend
+
+debug:
+	@echo C2_PLATFORM=$(C2_PLATFORM)
+	@echo appname=$(appname)
+	@echo CXX=$(CXX)
+	@echo CXXFLAGS=$(CXXFLAGS)
+	@echo LDFLAGS=$(LDFLAGS)
+	@echo LDLIBS=$(LDLIBS)
 
 include .depend

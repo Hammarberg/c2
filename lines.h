@@ -12,6 +12,11 @@
 */
 
 #pragma once
+
+#ifdef _WIN32
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include "linear.h"
 #include <cstdio>
 #include <cstring>
@@ -30,7 +35,7 @@ public:
 	
 	bool load(const char *file)
 	{
-		FILE *fp=fopen(file, "r");
+		FILE *fp = fopen(file, "r");
 		if(!fp)
 		return false;
 

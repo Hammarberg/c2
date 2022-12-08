@@ -11,11 +11,15 @@
 	You should have received a copy of the GNU General Public License along with c2. If not, see <https://www.gnu.org/licenses/>.
 */
 
+#ifdef _WIN32
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include "c2a.h"
 #include <algorithm>
 #include <cstdarg>
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 #include <malloc.h>
 #define strcasecmp _stricmp
 #endif
@@ -91,7 +95,7 @@ stok *c2a::clone(const stok *t)
 /*
 static char *read_file(const char *file)
 {
-	FILE *fp=fopen(file, "r");
+	FILE *fp = fopen(file, "r");
 	if(!fp)
 		return nullptr;
 
@@ -219,7 +223,7 @@ bool c2a::match_macro_parameters(const std::vector<stok *> &def, const std::vect
 	
 	const int NUM_DEF = set;
 
-#ifndef _MSC_VER
+#ifndef _WIN32
 	// Holds only static parameter indexes
 	int *idx[NUM_DEF];
 	// Same but also holds variables flagged with -1 or -2

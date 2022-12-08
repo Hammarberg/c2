@@ -1,0 +1,12 @@
+*.o
+*.ii
+*.prg
+*.sym
+*.tmp
+*~
+/examples/*/imm/
+.depend
+.depend.bak
+c2
+c2.d
+c2.exe
