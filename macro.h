@@ -70,5 +70,5 @@ public:
 	}
 	
 private:
-	stok *current = nullptr;
+	//stok *current = nullptr;
 };

@@ -23,7 +23,6 @@
 #define warning(...) c2_log(c2_eloglevel::warning, __FILE__, __LINE__, __VA_ARGS__);
 #define error(...) c2_log(c2_eloglevel::error, __FILE__, __LINE__, __VA_ARGS__);
 
-
 class c2i
 {
 public:

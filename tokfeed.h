@@ -239,7 +239,7 @@ public:
 		return i;
 	}
 	
-	bool operator==(const toklink &o)
+	bool operator==(const toklink &o) const
 	{
 		stok *a = pchain->first;
 		stok *b = o.pchain->first;
