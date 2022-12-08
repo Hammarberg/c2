@@ -328,15 +328,24 @@ bool c2i::c2_assemble()
 			c2_org.restore(org_backup_a, org_backup_w);
 			c2_reset_pass();
 			
-			fprintf(stderr, "Pass %d\t", pass);
+			fprintf(stderr, "Pass %d", pass);
 			c2_pass();
 			p->hash_state.finalize();
 			cmur3::shash hash = p->hash_state.hash;
+			
+			if(c2_verbose)
+			{
 #ifndef _MSC_VER
-			fprintf(stderr, "%016lx%016lx\n", hash.h1, hash.h2);
+				fprintf(stderr, ": %016lx%016lx\n", hash.h1, hash.h2);
 #else
-			fprintf(stderr, "%016llx%016llx\n", hash.h1, hash.h2);
+				fprintf(stderr, ": %016llx%016llx\n", hash.h1, hash.h2);
 #endif
+			}
+			else
+			{
+				fprintf(stderr, "\n");
+			}
+
 			if(history.size())
 			{
 				auto i = history.rbegin();
@@ -369,6 +378,10 @@ bool c2i::c2_assemble()
 	for(size_t r=0; r<log.size();r++)
 	{
 		c2_eloglevel level = log[r].first;
+		
+		if(level == c2_eloglevel::verbose && c2_verbose == false)
+			continue;
+		
 		fprintf(stderr, log[r].second.c_str());
 		fprintf(stderr, "\n");
 
@@ -702,6 +715,11 @@ void c2i::c2_config_setup_include(const char *include)
 	p->include_paths.push_back(include);
 }
 
+void c2i::c2_config_set_verbose(bool inverbose)
+{
+	c2_verbose = inverbose;
+}
+
 void c2i::c2_log(c2_eloglevel level, const char *file, int line, const char *format, ...)
 {
 	// Not logging anything on first pass
@@ -773,8 +791,8 @@ void c2i::c2_log(c2_eloglevel level, const char *file, int line, const char *for
 	
 	switch(level)
 	{
-		case c2_eloglevel::debug:
-			out += "debug: ";
+		case c2_eloglevel::verbose:
+			out += "verbose: ";
 		break;
 		case c2_eloglevel::info:
 			out += "info: ";

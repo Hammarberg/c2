@@ -392,7 +392,7 @@ void c64::loadsid(const char *path, var &init, var &play)
 		write++;
 	}
 	
-	info("SID $%04x-$%04x, init $%04x, play $%04x", int(load_address), int(write), int(init), int(play));
+	verbose("SID $%04x-$%04x, init $%04x, play $%04x", int(load_address), int(write), int(init), int(play));
 	
 	fclose(fp);
 }

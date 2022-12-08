@@ -1469,7 +1469,7 @@ void c2a::process(const char *infile, const char *outfile)
 	
 	tokoutfile write(outfile);
 	
-	printf("\n---------------------------------------\n");
+	//printf("\n---------------------------------------\n");
 
 	link.restart();
 	while((o = link.pull_tok()) != nullptr)

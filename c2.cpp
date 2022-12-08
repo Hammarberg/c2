@@ -97,6 +97,8 @@ public:
 		unload_module();
 	}
 	
+	bool verbose = false;
+	
 	std::string c2_libdir;
 	std::string c2_incdir;
 	
@@ -143,8 +145,10 @@ public:
 		c2_libdir = path;
 		c2_incdir = c2_libdir + "include/";
 		
-		//printf("%s\n", c2_libdir.c_str());
-		//printf("%s\n", c2_incdir.c_str());
+		if(verbose)
+		{
+			fprintf(stderr, "c2 library path: %s\n", c2_libdir.c_str());
+		}
 	}
 	
 	cmda command;
@@ -554,9 +558,12 @@ public:
 		return file.substr(0, file.rfind('.')) + ext;
 	}
 	
-	static void sh_execute(const char *str)
+	void sh_execute(const char *str)
 	{
-		fprintf(stderr ,"%s\n", str);
+		if(verbose)
+		{
+			fprintf(stderr ,"Executing: %s\n", str);
+		}
 		char buf[1024];
 		FILE *ep = popen(str, "r");
 		if(!ep)
@@ -723,7 +730,7 @@ public:
 			include_flags += "-I"+include_paths[r];
 		}
 		
-		c2a parser;
+		c2a parser(verbose);
 		std::string cmd, precmd;
 		
 		bool dirty_link = false;
@@ -833,6 +840,8 @@ public:
 
 		c2i *p = c2_object_instance(&command);
 		
+		p->c2_config_set_verbose(verbose);
+		
 		for(size_t r=0; r<parser_files.size(); r++)
 		{
 			p->c2_config_setup_file(parser_files[r].c_str());
@@ -852,6 +861,11 @@ public:
 
 		if(doexecute && execute.size())
 		{
+			if(verbose)
+			{
+				fprintf(stderr ,"Executing: %s\n", execute.c_str());
+			}
+			
 			system(execute.c_str());
 		}
 	}
@@ -931,11 +945,17 @@ int main(int arga, char *argc[])
 		proj.command.add_info("--list-templates", "-lt", "List available templates for project creation");
 		proj.command.add_info("--c2-library-dir", "-c2l", "<path>: Override default c2 library path");
 		proj.command.add_info("--include", "-i", "<path>: Add an include search path for source and binaries");
+		proj.command.add_info("--verbose", "-v", "Output more information");
 		
 		bool doexecute = true;
 		bool dobuild = true;
 		std::string projpath;
 		std::string override_library;
+		
+		proj.command.invoke("--verbose", 0, 0, [&](int arga, const char *argc[])
+		{
+			proj.verbose = true;
+		});
 		
 		proj.command.invoke("--c2-library-dir", 1, 1, [&](int arga, const char *argc[])
 		{
