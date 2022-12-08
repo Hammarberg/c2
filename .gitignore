@@ -1,5 +1,7 @@
 *.o
 *.ii
+*.prg
+*.sym
 /examples/*/imm/
 .depend
 .depend.bak
