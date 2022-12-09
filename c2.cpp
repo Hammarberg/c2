@@ -103,8 +103,27 @@ public:
 	
 	bool verbose = false;
 	
+	std::filesystem::path c2_curdir;
 	std::filesystem::path c2_libdir;
 	std::filesystem::path c2_incdir;
+
+	void setcurdir()
+	{
+			char tmp[1024] = {0};
+
+#if _WIN32
+			_getcwd(tmp, sizeof(tmp));
+#else
+			getcwd(tmp, sizeof(tmp));
+#endif
+
+			c2_curdir = tmp;
+
+			if (verbose)
+			{
+				fprintf(stderr, "c2 curdir: '%s'\n", c2_curdir.string().c_str());
+			}
+	}
 	
 	void setlib(std::filesystem::path path)
 	{
@@ -144,20 +163,32 @@ public:
 			if(path.empty())
 				throw "Could not extract c2 path";
 		}
+
+		if(!std::filesystem::is_directory(path))
+		{
+			// Check one and two levels up, since MSVC puts binary under x64/Debug.
+			path = path.parent_path().parent_path();
+			path /= "lib";
+
+			if(!std::filesystem::is_directory(path))
+			{
+				path = path.parent_path().parent_path();
+				path /= "lib";
+			}
+
+			if(!std::filesystem::is_directory(path))
+			{
+				throw "Could not find c2 library directory";
+			}
+		}
 		
 		// Prepare libdir and incdir variables.
 		c2_libdir = path;
-
-		if(!std::filesystem::is_directory(c2_libdir))
-		{
-			throw "Could not find c2 library directory";
-		}
-		
 		c2_incdir = c2_libdir / "include";
 		
 		if(verbose)
 		{
-			fprintf(stderr, "c2 library: %s\n", c2_libdir.string().c_str());
+			fprintf(stderr, "c2 libdir: '%s'\n", c2_libdir.string().c_str());
 		}
 	}
 	
@@ -166,7 +197,7 @@ public:
 	bool use_clang = true;
 
 	std::string basedir;
-	std::string intermediatedir = "imm/";
+	std::filesystem::path intermediatedir = "imm";
 	std::string title = "noname";
 	std::string arguments;
 	std::string execute;
@@ -478,13 +509,17 @@ public:
 	std::string make_intermediate_path(const std::string &file)
 	{
 		std::string tmp = file;
-		std::replace( tmp.begin(), tmp.end(), '/', '_');
-		return intermediatedir + tmp;
+		std::replace(tmp.begin(), tmp.end(), '/', '_');
+		std::filesystem::path path;
+		path = c2_curdir;
+		path /= intermediatedir;
+		path /= tmp;
+		return path.string();
 	}
 	
-	void save_imm(const std::string &path)
+	void save_imm(const std::filesystem::path &path)
 	{
-		FILE *fp = fopen(path.c_str(),"wb");
+		FILE *fp = fopen(path.string().c_str(),"wb");
 		if(!fp)
 			throw "Error opening file for writing";
 
@@ -517,9 +552,9 @@ public:
 		fclose(fp);
 	}
 	
-	void load_imm(const std::string &path)
+	void load_imm(const std::filesystem::path &path)
 	{
-		FILE *fp = fopen(path.c_str(),"rb");
+		FILE *fp = fopen(path.string().c_str(),"rb");
 		if(!fp)
 		{
 			return;
@@ -651,14 +686,6 @@ public:
 		tmp = cfg->Get("intermediate").GetString();
 		if (tmp.size()) intermediatedir = tmp;
 
-		if (intermediatedir.size())
-		{
-			if (intermediatedir[intermediatedir.size() - 1] != '/')
-			{
-				intermediatedir += '/';
-			}
-		}
-
 		std::filesystem::create_directories(intermediatedir);
 
 		// If project is modified, rebuild
@@ -672,7 +699,7 @@ public:
 
 		if(should_load_imm)
 		{
-			load_imm(intermediatedir + "c2cache");
+			load_imm(intermediatedir / "c2cache");
 			
 			stimestamp tproj;
 			tproj.stat(buildfile);
@@ -842,7 +869,7 @@ public:
 		if(dirty_link)
 		{
 			index_dependencies();
-			save_imm(intermediatedir + "c2cache");
+			save_imm(intermediatedir / "c2cache");
 		}
 		
 		std::string link_target = get_link_target();
@@ -862,6 +889,11 @@ public:
 			
 			cmd += " 2>&1";
 			sh_execute(cmd.c_str());
+		}
+
+		if (verbose)
+		{
+			fprintf(stderr, "Shared object path: '%s'\n", link_target.c_str());
 		}
 
 		if(!load_module(link_target.c_str()))
@@ -986,6 +1018,8 @@ int main(int arga, char *argc[])
 			proj.verbose = true;
 		});
 		
+		proj.setcurdir();
+
 		proj.command.invoke("--c2-library-dir", 1, 1, [&](int arga, const char *argc[])
 		{
 			override_library = argc[0];

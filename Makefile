@@ -29,7 +29,7 @@ endif
 
 all: $(appname) always
 
-$(appname): .depend $(objects)
+$(appname): $(objects)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $(appname) $(objects) $(LDLIBS)
 
 always:
