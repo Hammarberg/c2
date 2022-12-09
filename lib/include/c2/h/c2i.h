@@ -18,10 +18,10 @@
 #include <cstddef>
 #include <initializer_list>
 
-#define verbose(...) c2_log(c2_eloglevel::verbose, __FILE__, __LINE__, __VA_ARGS__);
-#define info(...) c2_log(c2_eloglevel::info, __FILE__, __LINE__, __VA_ARGS__);
-#define warning(...) c2_log(c2_eloglevel::warning, __FILE__, __LINE__, __VA_ARGS__);
-#define error(...) c2_log(c2_eloglevel::error, __FILE__, __LINE__, __VA_ARGS__);
+#define c2_verbose(...) c2_log(c2_eloglevel::verbose, __FILE__, __LINE__, __VA_ARGS__);
+#define c2_info(...) c2_log(c2_eloglevel::info, __FILE__, __LINE__, __VA_ARGS__);
+#define c2_warning(...) c2_log(c2_eloglevel::warning, __FILE__, __LINE__, __VA_ARGS__);
+#define c2_error(...) c2_log(c2_eloglevel::error, __FILE__, __LINE__, __VA_ARGS__);
 
 class c2i
 {
@@ -280,8 +280,8 @@ public:
 	template<int BITS> int64_t c2ur(int64_t n)
 	{
 		struct {uint64_t n:BITS;}s; s.n = n;
-		if(s.n != n)
-			error("Unsigned value out of range")
+		if (s.n != n)
+			c2_error("Unsigned value out of range");
 			
 		return n&((1<<BITS)-1);
 	}
@@ -289,31 +289,32 @@ public:
 	template<int BITS> int64_t c2sr(int64_t n)
 	{
 		struct {int64_t n:BITS;}s; s.n = n;
-		if(s.n != n)
-			error("Signed value out of range")
+		if (s.n != n)
+			c2_error("Signed value out of range");
 			
 		return n&((1<<BITS)-1);
 	}
 	
 	template<int LOW, int HIGH> int64_t c2lh(int64_t n)
 	{
-		if(n < LOW || n > HIGH)
-			error("Value out of range");
+		if (n < LOW || n > HIGH)
+			c2_error("Value out of range");
+		
 		return n;
 	}
 
 	template<int BITS> int64_t c2r(int64_t n)
 	{
-		if(!var::inrange(BITS,n))
-			error("Value out of range")
+		if (!var::inrange(BITS, n))
+			c2_error("Value out of range");
 		
 		return n&((1<<BITS)-1);
 	}
 	
 	template<int BITS> int64_t c2b(int64_t n)
 	{
-		if(BITS == 8 && n == 0)
-			error("Value out of range")
+		if (BITS == 8 && n == 0)
+			c2_error("Value out of range");
 		
 		return c2sr<BITS>(n);
 	}
