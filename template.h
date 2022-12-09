@@ -14,13 +14,14 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <filesystem>
 
 #define TEMPLATESFILE "templates.c2.json"
 
 class ctemplate
 {
 public:
-	ctemplate(const char *libpath);
+	ctemplate(const std::filesystem::path &libpath);
 	~ctemplate();
 	
 	void list();
@@ -30,6 +31,6 @@ public:
 	static void file_translate(const char *src, const char *dst, const std::vector<std::pair<std::string, std::string>> &translate);
 
 private:
-	std::string basepath;
+	std::filesystem::path basepath;
 };
 

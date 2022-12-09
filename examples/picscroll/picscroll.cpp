@@ -1,4 +1,4 @@
-#include "c64.h"
+#include "c2/c64/c64.h"
 #include <cmath>
 
 class c2_project_picscroll : public c64

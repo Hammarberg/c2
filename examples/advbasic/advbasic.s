@@ -1,4 +1,4 @@
-#include "c64.s"
+#include "c2/c64/c64.s"
 
 			// advbasic
 

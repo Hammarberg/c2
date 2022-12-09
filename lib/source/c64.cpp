@@ -11,8 +11,8 @@
 	You should have received a copy of the GNU General Public License along with c2. If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "c64.h"
-#include "c2b.h"
+#include "c2/c64/c64.h"
+#include "c2/h/c2b.h"
 #define CRT_SECURE_NO_WARNINGS 1
 #include <cstring>
 #include <cstdio>

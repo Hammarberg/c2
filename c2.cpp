@@ -103,13 +103,11 @@ public:
 	
 	bool verbose = false;
 	
-	std::string c2_libdir;
-	std::string c2_incdir;
+	std::filesystem::path c2_libdir;
+	std::filesystem::path c2_incdir;
 	
-	void setlib(const std::string &basepath)
+	void setlib(std::filesystem::path path)
 	{
-		std::filesystem::path path = basepath;
-
 		// Honor project setting first.
 		if(path.empty())
 		{
@@ -139,24 +137,27 @@ public:
 			{
 				fprintf(stderr, "c2 binary: '%s'\n", path.string().c_str());
 			}
+			
+			path = path.parent_path();
+			path /= "lib";
 
 			if(path.empty())
 				throw "Could not extract c2 path";
 		}
 		
 		// Prepare libdir and incdir variables.
-		std::filesystem::path libdir = path.parent_path() / "lib";
-		if(!std::filesystem::is_directory(libdir))
+		c2_libdir = path;
+
+		if(!std::filesystem::is_directory(c2_libdir))
 		{
 			throw "Could not find c2 library directory";
 		}
-		c2_libdir = libdir.string();
-
-		c2_incdir = (libdir / "include").string();
+		
+		c2_incdir = c2_libdir / "include";
 		
 		if(verbose)
 		{
-			fprintf(stderr, "c2 library path: %s\n", c2_libdir.c_str());
+			fprintf(stderr, "c2 library: %s\n", c2_libdir.string().c_str());
 		}
 	}
 	
@@ -410,7 +411,7 @@ public:
 		data->dependency.clear();
 		
 		char buf[1024];
-		std::string command = (use_clang ? "clang -I" + c2_incdir + " -MM -MG " : "g++ -I" + c2_incdir + " -MM -MG ") + file;
+		std::string command = (use_clang ? "clang -I" + c2_incdir.string() + " -MM -MG " : "g++ -I" + c2_incdir.string() + " -MM -MG ") + file;
 		std::string output;
 		
 		FILE *ep = popen(command.c_str(), "r");
@@ -781,7 +782,7 @@ public:
 				extract_dependencies(f, final_file.string());
 
 				cmd = use_clang ? "clang " : "g++ ";
-				cmd += "-I" + c2_incdir;
+				cmd += "-I" + c2_incdir.string();
 				
 				if(include_flags.size())
 				{
@@ -804,7 +805,7 @@ public:
 					std::string ii = make_intermediate_path(make_ext(file_subpath, ".ii.ii"));
 					
 					precmd = use_clang ? "clang" : "g++";
-					precmd += " -I" + c2_incdir;
+					precmd += " -I" + c2_incdir.string();
 
 					if(include_flags.size())
 					{

@@ -1,6 +1,6 @@
-#include "c64.s"
-#include "c64_vic2.s"
-#include "c64_irq.s"
+#include "c2/c64/c64.s"
+#include "c2/c64/c64_vic2.s"
+#include "c2/c64/c64_irq.s"
 
 			// picscroll
 

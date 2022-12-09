@@ -11,8 +11,8 @@
 	You should have received a copy of the GNU General Public License along with c2. If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "c2i.h"
-#include "c2b.h"
+#include "c2/h/c2i.h"
+#include "c2/h/c2b.h"
 
 #include <cstdio>
 #include <cstdarg>

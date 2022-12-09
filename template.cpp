@@ -41,7 +41,7 @@ static bool loadfile(const char *file, std::string &out)
 	return true;
 }
 
-ctemplate::ctemplate(const char *libpath)
+ctemplate::ctemplate(const std::filesystem::path &libpath)
  : basepath(libpath)
 {
 }
@@ -52,9 +52,9 @@ ctemplate::~ctemplate()
 
 void ctemplate::list()
 {
-	std::string file = basepath + TEMPLATESFILE;
+	std::filesystem::path file = basepath /= TEMPLATESFILE;
 	std::string buf;
-	if(!loadfile(file.c_str(), buf))
+	if(!loadfile(file.string().c_str(), buf))
 		throw "Error loading " TEMPLATESFILE;
 
 	std::unique_ptr<json::base> cfg(json::base::Decode(buf.c_str()));
@@ -94,9 +94,9 @@ void ctemplate::list()
 
 std::string ctemplate::create(int arga, const char *argc[])
 {
-	std::string file = basepath + TEMPLATESFILE;
+	std::filesystem::path file = basepath / TEMPLATESFILE;
 	std::string buf;
-	if(!loadfile(file.c_str(), buf))
+	if(!loadfile(file.string().c_str(), buf))
 		throw "Error loading " TEMPLATESFILE;
 
 	std::unique_ptr<json::base> cfg(json::base::Decode(buf.c_str()));
@@ -141,13 +141,10 @@ std::string ctemplate::create(int arga, const char *argc[])
 		throw "Could not find specified template";
 	}
 	
-	std::string destpath;
+	std::filesystem::path destpath;
 	if(arga == 3)
 	{
 		destpath = argc[2];
-		if(destpath[destpath.size()-1] != '/')
-			destpath += '/';
-		
 		std::filesystem::create_directories(destpath);
 	}
 	
@@ -160,12 +157,12 @@ std::string ctemplate::create(int arga, const char *argc[])
 	translate.push_back({"{title}",title});
 	translate.push_back({"{include}",include});
 	
-	std::string projfile = destpath + title + ".c2.json";
+	std::filesystem::path projfile = destpath / (title + ".c2.json");
 	
 	if(std::filesystem::exists(projfile))
 		throw "A project already exist";
 	
-	FILE *fp = fopen(projfile.c_str(), "w");
+	FILE *fp = fopen(projfile.string().c_str(), "w");
 	
 	fprintf(fp,
 		"{\n"
@@ -192,7 +189,7 @@ std::string ctemplate::create(int arga, const char *argc[])
 			throw "Config type not pair";
 		}
 		
-		std::string src = basepath + "template/" + ppair->first;
+		std::filesystem::path src = basepath / "template" / ppair->first;
 		json::container *t = (json::container *)ppair->second;
 		if (t->GetType() != json::type::CONTAINER)
 		{
@@ -200,8 +197,8 @@ std::string ctemplate::create(int arga, const char *argc[])
 		}
 		
 		std::string dstfile = str_translate(t->Get("target").GetString(), translate);
-		std::string dst = destpath + dstfile;
-		file_translate(src.c_str(), dst.c_str(), translate);
+		std::filesystem::path dst = destpath / dstfile;
+		file_translate(src.string().c_str(), dst.string().c_str(), translate);
 		
 		if(t->Get("c2").GetBool())
 		{
@@ -269,6 +266,8 @@ std::string ctemplate::str_translate(std::string str, const std::vector<std::pai
 
 void ctemplate::file_translate(const char *src, const char *dst, const std::vector<std::pair<std::string, std::string>> &translate)
 {
+	printf("%s->%s\n", src, dst);
+	
 	std::string str;
 	if(!loadfile(src, str))
 		throw "Template file not found";
