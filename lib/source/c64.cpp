@@ -367,7 +367,7 @@ void c64::loadsid(const char *path, var &init, var &play)
 	FILE *fp = fopen(path, "rb");
 	if(!fp)
 	{
-		error("SID file not found");
+		c2_error("SID file not found");
 		return;
 	}
 	
@@ -392,7 +392,7 @@ void c64::loadsid(const char *path, var &init, var &play)
 		write++;
 	}
 	
-	verbose("SID $%04x-$%04x, init $%04x, play $%04x", int(load_address), int(write), int(init), int(play));
+	c2_verbose("SID $%04x-$%04x, init $%04x, play $%04x", int(load_address), int(write), int(init), int(play));
 	
 	fclose(fp);
 }
