@@ -33,7 +33,7 @@
 				}
 				else
 				{
-					error("memcpy size out of range");
+					c2_error("memcpy size out of range");
 				}
 			}
 
