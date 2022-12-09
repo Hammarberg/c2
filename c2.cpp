@@ -163,15 +163,27 @@ public:
 			if(path.empty())
 				throw "Could not extract c2 path";
 		}
+
+		if(!std::filesystem::is_directory(path))
+		{
+			// Check one and two levels up, since MSVC puts binary under x64/Debug.
+			path = path.parent_path().parent_path();
+			path /= "lib";
+
+			if(!std::filesystem::is_directory(path))
+			{
+				path = path.parent_path().parent_path();
+				path /= "lib";
+			}
+
+			if(!std::filesystem::is_directory(path))
+			{
+				throw "Could not find c2 library directory";
+			}
+		}
 		
 		// Prepare libdir and incdir variables.
 		c2_libdir = path;
-
-		if(!std::filesystem::is_directory(c2_libdir))
-		{
-			throw "Could not find c2 library directory";
-		}
-		
 		c2_incdir = c2_libdir / "include";
 		
 		if(verbose)
