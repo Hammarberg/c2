@@ -244,7 +244,7 @@ std::string ctemplate::create(int arga, const char *argc[])
 	
 	fclose(fp);
 	
-	return projfile;
+	return projfile.string();
 }
 
 std::string ctemplate::str_translate(std::string str, const std::vector<std::pair<std::string, std::string>> &translate)
