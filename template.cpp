@@ -266,8 +266,6 @@ std::string ctemplate::str_translate(std::string str, const std::vector<std::pai
 
 void ctemplate::file_translate(const char *src, const char *dst, const std::vector<std::pair<std::string, std::string>> &translate)
 {
-	printf("%s->%s\n", src, dst);
-	
 	std::string str;
 	if(!loadfile(src, str))
 		throw "Template file not found";
