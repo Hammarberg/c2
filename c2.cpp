@@ -700,19 +700,19 @@ public:
 		if(should_load_imm)
 		{
 			load_imm(intermediatedir / "c2cache");
-			
-			stimestamp tproj;
-			tproj.stat(buildfile);
-			
-			if(!(projecttime == tproj))
-			{
-				dependencies.clear();
-				files.clear();
-			}
-			
-			projecttime = tproj;
 		}
 		
+		// Invalidate everything if project file changed
+		stimestamp tproj;
+		tproj.stat(buildfile);
+		
+		if(!(projecttime == tproj))
+		{
+			dependencies.clear();
+			files.clear();
+		}
+		
+		projecttime = tproj;
 
 		// Files
 		json::array* pfiles = (json::array*)cfg->Find("files");
@@ -881,7 +881,8 @@ public:
 		
 		if(dirty_link)
 		{
-			cmd = (use_clang ? "clang -g -shared -o " : "g++ -g -shared -o ") + link_target;
+			cmd = use_clang ? "clang " : "g++ ";
+			cmd += " -g -shared -o " + link_target;
 			for(size_t r=0; r<files.size(); r++)
 			{
 				cmd += " " + files[r]->obj;
