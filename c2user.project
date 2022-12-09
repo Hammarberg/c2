@@ -3,20 +3,23 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <File Name="lib/include/c2/c2.s"/>
+    <File Name="lib/include/c2/motorola/68k.h"/>
+    <File Name="lib/include/c2/mos/6502_word.s"/>
+    <File Name="lib/include/c2/mos/6502_unintended.s"/>
+    <File Name="lib/include/c2/mos/6502_longbranch.s"/>
+    <File Name="lib/include/c2/mos/6502.s"/>
+    <File Name="lib/include/c2/h/cmdi.h"/>
+    <File Name="lib/include/c2/h/c2i.h"/>
+    <File Name="lib/include/c2/h/c2b.h"/>
+    <File Name="lib/include/c2/c64/c64_vic2.s"/>
+    <File Name="lib/include/c2/c64/c64_irq.s"/>
+    <File Name="lib/include/c2/c64/c64.s"/>
+    <File Name="lib/include/c2/c64/c64.h"/>
     <File Name="lib/templates.c2.json"/>
     <File Name="lib/source/c64.cpp"/>
     <File Name="lib/source/c2i.cpp"/>
     <File Name="lib/source/68k.cpp"/>
-    <File Name="lib/include/cmdi.h"/>
-    <File Name="lib/include/c64.s"/>
-    <File Name="lib/include/c64.h"/>
-    <File Name="lib/include/c2i.h"/>
-    <File Name="lib/include/c2b.h"/>
-    <File Name="lib/include/c2.s"/>
-    <File Name="lib/include/6502_word.s"/>
-    <File Name="lib/include/6502_unintended.s"/>
-    <File Name="lib/include/6502.s"/>
-    <File Name="lib/include/68k.h"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
