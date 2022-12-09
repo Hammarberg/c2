@@ -182,7 +182,7 @@ macro lax #@n
 {
 	if(n != 0)
 	{
-		warning("LAX immediate used with a non zero value");
+		c2_warning("LAX immediate used with a non zero value")
 	}
 	
 	byte $ab, n
@@ -430,7 +430,7 @@ macro ane #@n
 {
 	if(n != 0)
 	{
-		warning("ANE immediate used with a non zero value");
+		c2_warning("ANE immediate used with a non zero value")
 	}
 	byte $8b, n
 }
