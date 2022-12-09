@@ -95,29 +95,9 @@ public:
 	
 	bool verbose = false;
 	
-	stok *preprocessprefix(stok *o, toklink &link)
-	{
-		stok *n = o->get_prev();
-		while(o->is_same_line(n))
-		{
-			n = n->get_prev();
-		}
-		
-		char tmp[1024];
-		if(*n->name == 0x0a)
-			sprintf(tmp, "# %d \"%s\"\n", o->line, files[o->fileindex].c_str());
-		else
-			sprintf(tmp, "\n# %d \"%s\"\n", o->line, files[o->fileindex].c_str());
+	stok *preprocessprefix(stok *o, toklink &link);
 
-		link.link(maketok(o, tmp), n);
-		return n;
-	}
-
-	stok *linkinit(stok *p, toklink &out)
-	{
-		out.link(p, c2_top);
-		return c2_top = p;
-	}
+	stok *linkinit(stok *p, toklink &out);
 private:
 
 	const char *linear_string(const std::string &s)
@@ -141,69 +121,10 @@ private:
 	
 	stok *clone(const stok *o);
 	
-	static std::string undot(const char *p)
-	{
-		std::string s;
-		
-		do
-		{
-			if(*p == '.')
-				s += "__";
-			else if(*p == '_')
-				s += "__";
-			else
-				s += *p;
-			p++;
-		}
-		while(*p);
-		
-		return s;
-	}
-	
-	static int bracketcount(const stok *o)
-	{
-		char c = *o->name;
-		
-		switch(c)
-		{
-			case '(':
-				return 1;
-			case '{':
-				return 1000;
-			case '[':
-				return 1000000;
-			case ')':
-				return -1;
-			case '}':
-				return -1000;
-			case ']':
-				return -1000000;
-		};
-		return 0;
-	}
+	static int bracketcount(const stok *o);
 	
 	uint32_t auto_num = 0;
-	std::string autolabel(const char *hint = nullptr, bool local = false)
-	{
-		std::string out = local ? ".c2_auto_" : "c2_auto_";
-		if(hint)
-		{
-			// Get rid of dots in hint
-			while(*hint)
-			{
-				if(*hint == '.')
-					out += '_';
-				else
-					out += *hint;
-				
-				hint++;
-			}
-			
-			out += "_";
-		}
-		out += std::to_string(auto_num++);
-		return out;
-	}
+	std::string autolabel(const char *hint = nullptr, bool local = false);
 	
 	void error(stok *o, const char *format, ...);
 	void warning(stok *o, const char *format, ...);

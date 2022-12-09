@@ -148,6 +148,74 @@ stok *c2a::get_next_nonspace(toklink &link, bool unlink)
 	return o;
 }
 
+int c2a::bracketcount(const stok *o)
+{
+	char c = *o->name;
+	
+	switch(c)
+	{
+		case '(':
+			return 1;
+		case '{':
+			return 1000;
+		case '[':
+			return 1000000;
+		case ')':
+			return -1;
+		case '}':
+			return -1000;
+		case ']':
+			return -1000000;
+	};
+	return 0;
+}
+
+std::string c2a::autolabel(const char *hint, bool local)
+{
+	std::string out = local ? ".c2_auto_" : "c2_auto_";
+	if(hint)
+	{
+		// Get rid of dots in hint
+		while(*hint)
+		{
+			if(*hint == '.')
+				out += '_';
+			else
+				out += *hint;
+			
+			hint++;
+		}
+		
+		out += "_";
+	}
+	out += std::to_string(auto_num++);
+	return out;
+}
+
+stok *c2a::preprocessprefix(stok *o, toklink &link)
+{
+	stok *n = o->get_prev();
+	while(o->is_same_line(n))
+	{
+		n = n->get_prev();
+	}
+	
+	char tmp[1024];
+	if(*n->name == 0x0a)
+		sprintf(tmp, "# %d \"%s\"\n", o->line, files[o->fileindex].c_str());
+	else
+		sprintf(tmp, "\n# %d \"%s\"\n", o->line, files[o->fileindex].c_str());
+
+	link.link(maketok(o, tmp), n);
+	return n;
+}
+
+stok *c2a::linkinit(stok *p, toklink &out)
+{
+	out.link(p, c2_top);
+	return c2_top = p;
+}
+
 bool c2a::match_macro_parameters_pos_forward(int pos, const std::vector<stok *> &def, const std::vector<stok *> &par, int **idx, const int NUM_DEF, const int NUM_PAR)
 {
 	if(!NUM_DEF)
