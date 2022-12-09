@@ -12,7 +12,7 @@
 */
 
 #pragma once
-#include "c2i.h"
+#include "c2/h/c2i.h"
 
 class c64 : public c2i
 {

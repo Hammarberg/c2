@@ -152,11 +152,13 @@ std::string ctemplate::create(int arga, const char *argc[])
 	}
 	
 	std::string super = t->Get("super").GetString();
+	std::string include = t->Get("include").GetString();
 	std::string title = argc[1];
 	
 	std::vector<std::pair<std::string, std::string>> translate;
 	translate.push_back({"{super}",super});
 	translate.push_back({"{title}",title});
+	translate.push_back({"{include}",include});
 	
 	std::string projfile = destpath + title + ".c2.json";
 	

@@ -12,7 +12,7 @@
 */
 
 #pragma once
-#include "68k.h"
+#include "c2/h/c2i.h"
 
 class m68k : public c2i
 {

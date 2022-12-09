@@ -1,4 +1,4 @@
-#include "c2.s"
+#include "c2/c2.s"
 
 			// {title}
 			

@@ -1,4 +1,4 @@
-#include "{super}.h"
+#include "{include}"
 
 class c2_project_{title} : public {super}
 {

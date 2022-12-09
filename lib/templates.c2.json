@@ -2,7 +2,8 @@
 	"templates":[
 		"c64":{
 			"description" : "Commodore 64",
-			"super" : "c64",
+			"superclass" : "c64",
+			"include" : "c2/c64/c64.h",
 			"arguments" : "--out-prg - + {title}.prg",
 			"source":[
 				"c2i.cpp":{
@@ -25,7 +26,8 @@
 		},
 		"c64vice":{
 			"description" : "Commodore 64 with VICE configuration",
-			"super" : "c64",
+			"superclass" : "c64",
+			"include" : "c2/c64/c64.h",
 			"arguments" : "--out-prg - + {title}.prg --vice-cmd {title}.sym",
 			"execute" : "x64 -silent -moncommands {title}.sym {title}.prg",
 			"source":[
@@ -49,7 +51,8 @@
 		},
 		"void":{
 			"description" : "Void c2 project, no target architecture for custom assembly of binaries",
-			"super" : "c2i",
+			"superclass" : "c2i",
+			"superclass" : "c2/h/c2i.h",
 			"arguments" : "--address-range 0x0 0x100000 --out - + {title}.bin",
 			"source":[
 				"c2i.cpp":{

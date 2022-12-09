@@ -20,7 +20,7 @@
 #include "c2a.h"
 #include "json.h"
 #include "cmda.h"
-#include "lib/include/c2i.h"
+#include "lib/include/c2/h/c2i.h"
 #include "template.h"
 
 #include <functional>
