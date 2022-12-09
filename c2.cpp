@@ -411,7 +411,8 @@ public:
 		data->dependency.clear();
 		
 		char buf[1024];
-		std::string command = (use_clang ? "clang -I" + c2_incdir.string() + " -MM -MG " : "g++ -I" + c2_incdir.string() + " -MM -MG ") + file;
+		std::string command = use_clang ? "clang " : "g++ ";
+		command += generate_includes() + " -MM -MG " + file;
 		std::string output;
 		
 		FILE *ep = popen(command.c_str(), "r");
@@ -723,6 +724,22 @@ public:
 		
 		return true;
 	}
+	
+	std::string generate_includes()
+	{
+		std::string cmd;
+		cmd += "-I" + c2_incdir.string();
+		
+		for(size_t r=0; r<include_paths.size(); r++)
+		{
+			if(cmd.size())
+				cmd += " ";
+				
+			cmd += "-I"+include_paths[r];
+		}
+		
+		return cmd;
+	}
 
 	void build(bool doexecute)
 	{
@@ -735,15 +752,7 @@ public:
 			include_paths.push_back(tmp);
 		});
 		
-		std::string include_flags;
-		
-		for(size_t r=0; r<include_paths.size(); r++)
-		{
-			if(include_flags.size())
-				include_flags += " ";
-				
-			include_flags += "-I"+include_paths[r];
-		}
+		std::string include_flags = generate_includes();
 		
 		c2a parser(verbose);
 		std::string cmd, precmd;
@@ -782,12 +791,7 @@ public:
 				extract_dependencies(f, final_file.string());
 
 				cmd = use_clang ? "clang " : "g++ ";
-				cmd += "-I" + c2_incdir.string();
-				
-				if(include_flags.size())
-				{
-					cmd += " " + include_flags;
-				}
+				cmd += include_flags;
 				
 				if(f->flags.size())
 				{
@@ -804,13 +808,8 @@ public:
 					std::string i = make_intermediate_path(make_ext(file_subpath, ".ii"));
 					std::string ii = make_intermediate_path(make_ext(file_subpath, ".ii.ii"));
 					
-					precmd = use_clang ? "clang" : "g++";
-					precmd += " -I" + c2_incdir.string();
-
-					if(include_flags.size())
-					{
-						precmd += " " + include_flags;
-					}
+					precmd = use_clang ? "clang " : "g++ ";
+					precmd += include_flags;
 
 					if(f->flags.size())
 					{
