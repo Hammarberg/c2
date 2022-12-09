@@ -5,9 +5,10 @@
 *.tmp
 *~
 /examples/*/imm/
-.depend
-.depend.bak
-c2.d
-c2.exe
-c2.mk
-compile_flags.txt
+/.depend
+/.depend.bak
+/c2.d
+/c2.exe
+/c2.mk
+/compile_flags.txt
+/c2
