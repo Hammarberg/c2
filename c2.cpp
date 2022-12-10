@@ -40,6 +40,7 @@
 #define strcasecmp _stricmp
 #define stat _stat
 #define chdir _chdir
+#define getcwd _getcwd
 #endif
 
 
@@ -111,11 +112,7 @@ public:
 	{
 			char tmp[1024] = {0};
 
-#if _WIN32
-			_getcwd(tmp, sizeof(tmp));
-#else
 			getcwd(tmp, sizeof(tmp));
-#endif
 
 			c2_curdir = tmp;
 
