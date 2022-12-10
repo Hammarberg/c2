@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License along with c2.
 ### Contributors
 John Hammarberg, Jocelyn Houle, Johan Samuelsson
 ## Build & Installation
-make
+`make`
 
 VS2022 should also be able to build with the project file.
 
@@ -29,41 +29,90 @@ Put the c2 executable root in your path. Make sure the lib/ directory is next to
 ### Windows
 # Usage
 ## Command line
-c2 --help
+`c2 --help`
 
 Note that the help listing can extend with project specific options when a project file is loaded or detected.
 ## Templates overview
 ## Project files
 ## Your first simple project tutorial
-c2 --list-templates
+`c2 --list-templates`
 
 Create an empty folder for your project and step into it.
 
-c2 --create-project c64vice myawesomeproject
+`c2 --create-project c64vice myawesomeproject`
 
 When executing c2 without arguments in a project folder, it will build/assemble automatically.
 # Syntax
 ## Comments
 Only C/C++ style comments are supported.
 ## Numbers
-## ORG pointer
-Syntax: @ = <label/address>
+Decimal: `0, 1337`
 
-Example: @ = $1000
+Binary: `0b10101010` or `%10100111001`
+
+Hexadecimal: `0xfffd` or `$0x1B46B1`
+
+Octal: `020, 02471`
+
+Note that octal has a zero prefix.
+## ORG pointer
+Syntax: `@ = <label/address>`
+
+Example: `@ = $1000`
 ### Relocation with ORG pointer
 The ORG pointer contains two internal cursors. One is write location and the other is address location. Normally these are set to one and the same address. To assemble code with absolute adressing mode for another location than the writing cursor, use the relocation ORG pointer mode.
 
-Syntax: @ = <label/address> \[,relocation label/address\]
+Syntax: `@ = <label/address> \[,relocation label/address\]`
 
-Example: @ = @, $0200
+Example: `@ = @, $0200`
 
 This would keep writing to the current ORG but change addressing as it would be located at $0200.
 To reset the addressing cursor, just assign ORG to itself with one argument like: @ = @
 ## Labels
+Labels repressent an address. Labels are global in the assembly namespace, must to be unique and declared first in a line.
+
+Syntax: `<name>:`
+
+Example:
+```
+loop:   dex
+        bpl loop
+```
 ### Local labels
+A label can be local under its parent label namespace when prefixed with a dot.
+
+Syntax: `.<name>:`
+
+Example:
+```
+start:
+.loop:  dex
+        bpl .loop
+mid:
+.loop:  dey
+        bpl .loop
+```
+Local labels can be referenced from the outside of its parent scope by `<parent>.<local>`.
+
+Example:
+```
+main:
+        moveq #data.end - data, d0
+data:
+        word $01020304, $baadbeef
+.end:
+```
 ### Anonymous labels
-### Indexed labels
+Anonymous labels are local labels without a name and are declared as a colon at the beginning of a line.
+
+Example:
+```
+:       dex
+        bpl -
+```
 ### Alternative label addressing
+When referencing a label it's normally done by name, this cannot be done for anonymous labels, but it can also be done by a relative count from the current location. To reference the previous label use a single `-`, to reference two labels back use `--`, etc. In the same way, use `+` to reference forward labels.
+### Indexed labels
 ## Variables
 ### Indexed variables
 ## Macros
