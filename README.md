@@ -68,16 +68,15 @@ Example:
 ```
 Note that ORG is evaluated at the beginning of the line before any opcode is counted. This can differ from some older assemblers where ORG was evaluated after the intial opcode,
 ### Relocation with ORG pointer
-The ORG pointer contains two internal cursors. One is write location and the other is address location. Normally these are set to one and the same address. To assemble code with absolute adressing mode for another location than the writing cursor, use the relocation ORG pointer mode.
+The ORG pointer contains two internal pointers. One is the write pointer and the other is the address pointer. Normally these are set to one and the same address. It's possible to assemble code with absolute adressing another location to the current writing pointer.
 
-Syntax: `@ = <label/address> \[,relocation label/address\]`
+Syntax: `@ = <write address> [,addressing address]`
 
 Example: `@ = @, $0200`
 
-This would keep writing to the current ORG but change addressing as it would be located at $0200.
-To reset the addressing cursor, just assign ORG to itself with one argument like: @ = @
+This would keep writing to the current ORG but change addressing as it would be located at $0200. To reset the addressing cursor, just assign ORG to itself with one argument like: `@ = @`
 ## Labels
-Labels repressent an address. Labels are global in the assembly namespace, must to be unique and declared first in a line.
+Labels repressent an address. Labels are global in the assembly namespace, must to be unique and declared first on a line.
 
 Syntax: `<name>:`
 
@@ -111,7 +110,7 @@ data:
 .end:
 ```
 ### Anonymous labels
-Anonymous labels doesn't have to be unique and are declared as a colon at the beginning of a line.
+Anonymous labels doesn't have to be unique and are declared with a colon at the beginning of a line.
 
 Example:
 ```
@@ -119,9 +118,9 @@ Example:
         bpl -
 ```
 ### Alternative label addressing
-When referencing a label it's normally done by name, this cannot be done for anonymous labels, but it can be done with a relative count from the current location. To reference the previous label use a single `-`, to reference two labels back use `--`, etc. In the same way, use one or more`+` to reference forward labels.
+When referencing a label, it's normally done by name. This cannot be done for anonymous labels, but it can be done with a relative count from the current location. To reference the previous label use a single `-`, to reference two labels back use `--`, etc. In the same way, use one or more`+` to reference forward labels.
 ### Indexed labels
-Indexed labels are global in nature but they won't provide a namespace for local labels. They have to be declared and referenced with an index number.
+Indexed labels are global in nature but they won't provide a namespace for local labels. They have to be declared and referenced with an index number or a variable.
 
 Syntax: `<name>[<index>]:`
 
@@ -134,7 +133,14 @@ data[1]: byte $ff
 ### Indexed variables
 ## Macros
 In its simmplest form, macros are pieces of declared information that can be recalled by a reference at any point. They are expanded inline at the point of reference.
-### Definition
+
+Syntax:
+```
+macro <name> [arguments]
+{
+    [contents]
+}
+```
 Example:
 ```
 macro nop
@@ -142,7 +148,6 @@ macro nop
     byte 0xea
 }
 ```
-### Reference
 Macros are case insensitive and are simply recalled by name.
 
 Example:
