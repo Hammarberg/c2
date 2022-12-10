@@ -59,6 +59,14 @@ Note that octal has a zero prefix.
 Syntax: `@ = <label/address>`
 
 Example: `@ = $1000`
+
+ORG can be read as a variable,
+
+Example:
+```
+        bra @   //Loop forever
+```
+Note that ORG is evaluated at the beginning of the line before any opcode is counted. This can differ from some older assemblers where ORG was evaluated after the intial opcode,
 ### Relocation with ORG pointer
 The ORG pointer contains two internal cursors. One is write location and the other is address location. Normally these are set to one and the same address. To assemble code with absolute adressing mode for another location than the writing cursor, use the relocation ORG pointer mode.
 
@@ -103,7 +111,7 @@ data:
 .end:
 ```
 ### Anonymous labels
-Anonymous labels are local labels without a name and are declared as a colon at the beginning of a line.
+Anonymous labels doesn't have to be unique and are declared as a colon at the beginning of a line.
 
 Example:
 ```
@@ -111,18 +119,50 @@ Example:
         bpl -
 ```
 ### Alternative label addressing
-When referencing a label it's normally done by name, this cannot be done for anonymous labels, but it can also be done by a relative count from the current location. To reference the previous label use a single `-`, to reference two labels back use `--`, etc. In the same way, use `+` to reference forward labels.
+When referencing a label it's normally done by name, this cannot be done for anonymous labels, but it can be done with a relative count from the current location. To reference the previous label use a single `-`, to reference two labels back use `--`, etc. In the same way, use one or more`+` to reference forward labels.
 ### Indexed labels
+Indexed labels are global in nature but they won't provide a namespace for local labels. They have to be declared and referenced with an index number.
+
+Syntax: `<name>[<index>]:`
+
+Example:
+```
+data[0]: byte $bd
+data[1]: byte $ff
+```
 ## Variables
 ### Indexed variables
 ## Macros
-### Macro input
-### Variadic macro input
+In its simmplest form, macros are pieces of declared information that can be recalled by a reference at any point. They are expanded inline at the point of reference.
+### Definition
+Example:
+```
+macro nop
+{
+    byte 0xea
+}
+```
+### Reference
+Macros are case insensitive and are simply recalled by name.
+
+Example:
+```
+    nop
+```
+This will be expanded back to
+```
+    byte 0xea
+```
+### Input
+### Indexed input
+### Variadic input
 ## C pre-processor
 ## Inline C++
+### C++ expressions
 ## Logging, warnings & errors
 ## c2 C++ interface
 ## yourproject.cpp / yourproject.s
+### Custom C++ extensions
 # Defined targets / Templates
 ## 6502
 A plain 6502 template with 64KB of RAM.
