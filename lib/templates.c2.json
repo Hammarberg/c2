@@ -74,7 +74,7 @@
 			"description" : "Void c2 project, no target architecture for custom assembly of binaries and hacking",
 			"super" : "c2i",
 			"include" : "c2/h/c2i.h",
-			"arguments" : "--address-range 0x0 0x100000 --out - + {title}.bin",
+			"arguments" : "--address-range 0x0 0xa00000 --out - + {title}.bin",
 			"source":[
 				"c2i.cpp":{
 					"flags" : "-O2"

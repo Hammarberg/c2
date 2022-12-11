@@ -1,7 +1,7 @@
 {
 	"title" : "void",
 	"basedir":".",
-	"arguments" : "--address-range 0x0 0x100000 --out - + void.bin",
+	"arguments" : "--address-range 0x0 0xa00000 --out - + void.bin",
 	"execute" : "",
 	"files":[
 		"void.cpp":{
