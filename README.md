@@ -1,4 +1,14 @@
 # c2 cross assembler
+### TODO
+* Optimize C++ label template generation to greatly improve compile times.
+* Support local & global library folders.
+* Support user template/library configuration.
+* Cleanup/rewrite 6502 utilities and word extension.
+* Support 65816, 65C02, 65802
+* Finish 68000 support.
+* Amiga hunk format and utility classes.
+* Zilog 80 support.
+* Cleanup error reporting.
 ## Overview
 c2 is an assembler wrapper top of a C++ compiler. c2 stems from retro/hobby assembler programming and the initial targets are common 8 and 16 bit platforms but doesn't have to be limited to that. It's architecture independent in the sense that all assembly pseudo opcodes are built with macros. Macro files can be included with the standard C pre-processor.
 
@@ -22,13 +32,11 @@ You should have received a copy of the GNU General Public License along with c2.
 ### Contributors
 John Hammarberg, Jocelyn Houle, Johan Samuelsson
 ## Build & Installation
-`make`
-
-VS2022 should also be able to build with the project file.
-
-Put the c2 executable root in your path. Make sure the lib/ directory is next to c2 and that a 64 bit compatible clang or gcc is in path. The later might not always be the case in Windows.
+Put the c2 executable root in your path. Make sure the lib/ directory is next to c2 and that a 64 bit compatible clang or gcc is in path. The later might not always be the case for Windows.
 ### GNU/Linux/BSD
+`make`
 ### Windows
+When installing VS2022, make sure to check the ticker to also install clang if you don't already have it installed.
 # Usage
 ## Command line
 `c2 --help`
@@ -50,7 +58,7 @@ Optionally you can create the destination path with c2 directly.
 When executing c2 without arguments in a project folder, it will build/assemble automatically.
 # Syntax
 ## Comments
-Only C/C++ style comments are supported. This might hurt for some people used to `;` as
+Only C/C++ style comments are supported. This might hurt for some people used to `;` as comment prefix.
 ## Numbers
 Decimal: `0, 1337`
 
@@ -58,7 +66,14 @@ Binary, prefixed with `0b` or `%` as in `0b10101010` or `%10100111001`.
 
 Hexadecimal, prefixed with `0x` or `$` as in `0xfffd` or `$0x1B46B1`.
 
-Octal numbers looks a lot like decimal number but are prefixed with a `0` as in `020, 02471`. Beware of this, if you have a habit of prefixing decimal numbers with `0`.
+Octal numbers looks a lot like decimal number but are prefixed with a `0` as in `020, 02471`. Beware of this if you have a habit of prefixing decimal numbers with `0` for purey estetical reasons.
+
+### Explicit bit size
+You can explicitly force a bit size by prefixing hexadecimal, binary or octal numbers.
+
+```
+        lda $0002
+```
 ## ORG pointer
 Note, many classical assembler uses `*` for ORG but not c2. Instead the at (`@`) sign is used.
 
@@ -66,7 +81,7 @@ Syntax: `@ = <label/address>`
 
 Example: `@ = 0xa00000` or `@ = base + $fe00`
 
-ORG can be read as a variable,
+ORG can be read as a variable.
 
 Example:
 ```
@@ -81,7 +96,7 @@ Syntax: `@ = <write address> [,addressing address]`
 
 Example: `@ = @, $0200`
 
-This would keep writing to the current ORG but change addressing as it would be located at $0200. The code would obviously have to be relocated to `$0200` before being executed. To reset the addressing pointer, just assign ORG to itself with one argument like: `@ = @`
+This would keep writing to the current ORG but change addressing as it would be located at `$0200`. The code would obviously have to be relocated to `$0200` before being executed. To reset the addressing pointer, just assign ORG to itself with one argument like: `@ = @`
 ## Labels
 Labels represents an address. Labels are global in the assembly namespace, must to be unique and declared first on a line.
 
@@ -93,7 +108,7 @@ loop:   dex
         bpl loop
 ```
 ### Local labels
-A label can be local under its parent label namespace when prefixed with a dot.
+A label can be local under its parent label namespace when prefixed with a dot. This greatly reduses the risk of label name conflicts.
 
 Syntax: `.<name>:`
 
@@ -124,8 +139,8 @@ Example:
 :       dex
         bpl -
 ```
-### Alternative label addressing
-When referencing a label, it's normally done by name. This cannot be done for anonymous labels, but, it can be done with a relative count from the current location. To reference the previous label use a single `-`, to reference two labels back use `--`, etc. In the same way, use one or more`+` to reference forward labels.
+### Relative label addressing
+When referencing a label, it's normally done by name. Anonymous labels can only be referenced with a relative count from the current location. To reference the previous label use a single `-`, to reference two labels back use `--`, etc. In the same way, use one or more`+` to reference forward labels.
 ### Indexed labels
 Indexed labels are global in nature but they won't provide a namespace for local labels. They have to be declared and referenced with an index number or a variable.
 
@@ -151,9 +166,12 @@ Currently, variables doesn't support label namespaces (design decisions yet to b
         //Other code here
 }
 ```
+Variables can hold and remeber explicit bit counts:
+```
+        var src = $0002
+        lda src //Absolute rather than zero page addressing mode
+```
 Variables declared inside macros are automatically scoped to the macro.
-
-Variables
 ### C/C++ variables
 You are free to use C/C++ variables in almost all cases where you would use an assembler variable. Just remember to apply `;` as in C-syntax.
 
