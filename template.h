@@ -32,6 +32,7 @@ public:
 private:
 	clibrary &lib;
 	bool loadfile(const char *file, std::string &out);
+	bool loadfile_direct(const char *file, std::string &out);
 	void file_translate(const char *src, const char *dst, const std::vector<std::pair<std::string, std::string>> &translate);
 	static std::string str_translate(std::string str, const std::vector<std::pair<std::string, std::string>> &translate);
 };

@@ -204,6 +204,19 @@ std::filesystem::path clibrary::lib_get_file_path(const char *file)
 	return "";
 }
 
+void clibrary::lib_get_file_path(const char *file, std::vector<std::filesystem::path> &out)
+{
+	for(size_t r=0; r<libraries.size(); r++)
+	{
+		std::filesystem::path path = libraries[r] / file;
+		
+		if(std::filesystem::is_regular_file(path))
+		{
+			out.push_back(path);
+		}
+	}
+}
+
 void clibrary::lib_add_include_path(const char *path)
 {
 	std::filesystem::path base = path;

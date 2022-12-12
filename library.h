@@ -44,6 +44,7 @@ public:
 	FILE *lib_fopen(const char *path, const char *mode);
 	
 	std::filesystem::path lib_get_file_path(const char *path);
+	void lib_get_file_path(const char *path, std::vector<std::filesystem::path> &out);
 	
 	void lib_add_include_path(const char *path);
 	

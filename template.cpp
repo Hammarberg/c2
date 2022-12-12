@@ -50,89 +50,123 @@ bool ctemplate::loadfile(const char *file, std::string &out)
 	return true;
 }
 
+bool ctemplate::loadfile_direct(const char *file, std::string &out)
+{
+	FILE *fp = fopen(file, "r");
+	if(!fp)
+		return false;
+	
+	fseek(fp, 0, SEEK_END);
+	size_t n = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
+	
+	out.resize(n);
+	char *p = &(out[0]);
+
+	fread(p, 1, n, fp);
+		
+	fclose(fp);
+	return true;
+}
 
 void ctemplate::list()
 {
-	std::string buf;
-	if(!loadfile(TEMPLATESFILE, buf))
-		throw "Error loading " TEMPLATESFILE;
+	std::vector<std::filesystem::path> out;
+	lib.lib_get_file_path(TEMPLATESFILE, out);
 
-	std::unique_ptr<json::base> cfg(json::base::Decode(buf.c_str()));
-	
-	// Templates
-	json::array* p = (json::array*)cfg->Find("templates");
-	if (p)
+	for(size_t r=0; r<out.size(); r++)
 	{
-		if (p->GetType() != json::type::ARRAY)
-		{
-			throw "templates type not array";
-		}
+		std::string buf;
+		if(!loadfile_direct(out[r].string().c_str(), buf))
+			throw "Error loading " TEMPLATESFILE;
 
-		for (size_t r = 0; r < p->data.size(); r++)
+		std::unique_ptr<json::base> cfg(json::base::Decode(buf.c_str()));
+		
+		// Templates
+		json::array* p = (json::array*)cfg->Find("templates");
+		if (p)
 		{
-			json::pair* ppair = (json::pair*)p->data[r];
-			if (ppair->GetType() != json::type::PAIR)
+			if (p->GetType() != json::type::ARRAY)
 			{
-				throw "Config type not pair";
+				throw "templates type not array";
 			}
-			std::string desc = ppair->second->Get("description").GetString();
-			std::string tmp = ppair->first + ":";
-			
-			while(tmp.size() < 12)
-				tmp += ' ';
+
+			for (size_t r = 0; r < p->data.size(); r++)
+			{
+				json::pair* ppair = (json::pair*)p->data[r];
+				if (ppair->GetType() != json::type::PAIR)
+				{
+					throw "Config type not pair";
+				}
+				std::string desc = ppair->second->Get("description").GetString();
+				std::string tmp = ppair->first + ":";
 				
-			tmp += desc;
-			
-			fprintf(stdout, "%s\n", tmp.c_str());
+				while(tmp.size() < 12)
+					tmp += ' ';
+					
+				tmp += desc;
+				
+				fprintf(stdout, "%s\n", tmp.c_str());
+			}
 		}
-	}
-	else
-	{
-		throw "No templates array found in" TEMPLATESFILE;
+		else
+		{
+			throw "No templates array found in" TEMPLATESFILE;
+		}
 	}
 }
 
 std::string ctemplate::create(int arga, const char *argc[])
 {
-	std::string buf;
-	if(!loadfile(TEMPLATESFILE, buf))
-		throw "Error loading " TEMPLATESFILE;
+	std::vector<std::filesystem::path> out;
+	lib.lib_get_file_path(TEMPLATESFILE, out);
 
-	std::unique_ptr<json::base> cfg(json::base::Decode(buf.c_str()));
-	
-	// Templates
 	json::container *t = nullptr;
-	json::array* p = (json::array*)cfg->Find("templates");
-	if (p)
+	json::array* p;
+	
+	std::unique_ptr<json::base> cfg;
+		
+	for(size_t r=0; r<out.size() && t == nullptr; r++)
 	{
-		if (p->GetType() != json::type::ARRAY)
-		{
-			throw "templates type not array";
-		}
+		std::string buf;
+		if(!loadfile_direct(out[r].string().c_str(), buf))
+			throw "Error loading " TEMPLATESFILE;
 
-		for (size_t r = 0; r < p->data.size(); r++)
+		cfg.reset(json::base::Decode(buf.c_str()));
+		
+		// Templates
+		p = (json::array*)cfg->Find("templates");
+		if (p)
 		{
-			json::pair* ppair = (json::pair*)p->data[r];
-			if (ppair->GetType() != json::type::PAIR)
+			if (p->GetType() != json::type::ARRAY)
 			{
-				throw "Config type not pair";
+				throw "templates type not array";
 			}
-			std::string desc = ppair->second->Get("description").GetString();
-			
-			if(ppair->first == argc[0])
+
+			for (size_t r = 0; r < p->data.size(); r++)
 			{
-				t = (json::container *)ppair->second;
-				if (t->GetType() != json::type::CONTAINER)
+				json::pair* ppair = (json::pair*)p->data[r];
+				if (ppair->GetType() != json::type::PAIR)
 				{
-					throw "Expected container";
+					throw "Config type not pair";
 				}
-				break;
+				std::string desc = ppair->second->Get("description").GetString();
+				
+				if(ppair->first == argc[0])
+				{
+					t = (json::container *)ppair->second;
+					if (t->GetType() != json::type::CONTAINER)
+					{
+						throw "Expected container";
+					}
+					break;
+				}
 			}
 		}
-	}
-	else
-	{
-		throw "No templates array found in" TEMPLATESFILE;
+		else
+		{
+			throw "No templates array found in" TEMPLATESFILE;
+		}
 	}
 	
 	if(!t)
