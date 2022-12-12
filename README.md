@@ -264,6 +264,27 @@ macro dowork (@input)
 ## c2 C++ interface
 ## yourproject.cpp / yourproject.s
 ### Custom C++ extensions
+## c2lib directory
+Besides the executable, c2 is also dependent on its library to operate. The library contains necessary include files, source files and templates for project creation.
+
+`include/c2` contains target platform and architecture specific includes sorted in sub folders. The `h` folder is reserved for C++ includes used by c2.
+
+`source` contains target platform and architecture specific C++ files compiled alongside projects.
+
+`template` contains templated base files referenced by `templates.c2.json`. These are copied and translated to your project folder when creating a new project.
+### c2lib search order
+* In the project path alongsone `<project>.c2.json`
+* Explicitly set with `--c2-library-dir`
+* Nix home folder as `.c2lib` or `c2lib`. For windows `%LOCALAPPDATA%\c2lib`
+* At location of environment variable `C2LIB_HOME`
+* Nix global path `/usr/lib/c2lib`
+* Alongside executable
+
+It's possible to copy, modify or extend parts of c2lib and place those modifications in your local directory to override.
+## Include files & search order
+Additional include search paths can be added with one or multiple `--include <path>` or `-i <path>`. This works for both pre-processor includes as well as incbin or c2 file system.
+
+It searches the explicitly set paths first followed by the include folders in c2lib.
 # Defined targets / Templates
 ## 6502
 A plain 6502 template with 64KB of RAM.
