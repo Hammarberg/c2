@@ -47,7 +47,7 @@
 
 #define TITLE "c2 cross assembler 0.5  Copyright (C) 2022  John Hammarberg (CRT)\n"
 
-const uint32_t MAGIC_VERSION = 1337*1337+2;
+const uint32_t MAGIC_VERSION = 1337*1337+3;
 
 static bool loadfile(const char *file, std::string &out)
 {
