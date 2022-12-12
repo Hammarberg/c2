@@ -134,6 +134,7 @@
     <ClCompile Include="c2a.cpp" />
     <ClCompile Include="cmda.cpp" />
     <ClCompile Include="json.cpp" />
+    <ClCompile Include="library.cpp" />
     <ClCompile Include="macro.cpp" />
     <ClCompile Include="template.cpp" />
     <ClCompile Include="token.cpp" />
@@ -143,6 +144,7 @@
     <ClInclude Include="c2a.h" />
     <ClInclude Include="cmda.h" />
     <ClInclude Include="json.h" />
+    <ClInclude Include="library.h" />
     <ClInclude Include="lib\include\c2i.h" />
     <ClInclude Include="lib\include\cmdi.h" />
     <ClInclude Include="linear.h" />

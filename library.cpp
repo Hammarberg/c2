@@ -10,14 +10,17 @@
 
 	You should have received a copy of the GNU General Public License along with c2. If not, see <https://www.gnu.org/licenses/>.
 */
+#ifdef _WIN32
+#define _CRT_SECURE_NO_WARNINGS
+#endif
 
 #include "library.h"
 #include <cstdlib>
 #ifdef _WIN32
 #include <windows.h>
-#endif
-//#include <fcntl.h>
+#else
 #include <unistd.h>
+#endif
 #include <limits.h>
 
 clibrary::clibrary()
@@ -42,7 +45,11 @@ void clibrary::lib_initialize(const std::vector<std::filesystem::path> &expaths)
 	// Get user/local path
 	//const char *home = getenv("HOME");
 	{
+#ifdef _WIN32
+		const char* home = getenv("LOCALAPPDATA");
+#else
 		const char *home = secure_getenv("HOME");
+#endif
 		if(home)
 		{
 			std::filesystem::path tmp = home;
@@ -66,7 +73,11 @@ void clibrary::lib_initialize(const std::vector<std::filesystem::path> &expaths)
 	
 	// From environment path
 	{
+#ifdef _WIN32
+		const char* envpath = getenv("C2LIBRARY");
+#else
 		const char *envpath = secure_getenv("C2LIBRARY");
+#endif
 		
 		if(envpath)
 		{
@@ -79,6 +90,7 @@ void clibrary::lib_initialize(const std::vector<std::filesystem::path> &expaths)
 		}
 	}
 	
+#ifndef _WIN32
 	// Global path
 	{
 		std::filesystem::path tmp = NIX_GLOBAL;
@@ -88,6 +100,7 @@ void clibrary::lib_initialize(const std::vector<std::filesystem::path> &expaths)
 			push_path(tmp);
 		}
 	}
+#endif
 
 	// Relative to executable
 	{	
@@ -111,13 +124,13 @@ void clibrary::lib_initialize(const std::vector<std::filesystem::path> &expaths)
 		{
 #ifdef _WIN32
 			// Check one and two levels up, since MSVC puts binary under x64/Debug.
-			path = path.parent_path().parent_path();
-			path /= "lib";
+			path = path.parent_path().parent_path().parent_path();
+			path /= C2LIB;
 
 			if(!std::filesystem::is_directory(path))
 			{
 				path = path.parent_path().parent_path();
-				path /= "lib";
+				path /= C2LIB;
 			}
 
 			if(std::filesystem::is_directory(path))
@@ -252,3 +265,4 @@ void clibrary::lib_generate_includes_array(std::vector<std::string> &out)
 		out.push_back(tmp);
 	}
 }
+
