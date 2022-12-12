@@ -5,7 +5,7 @@ CXXFLAGS := -O2 -std=c++17 -march=native
 LDFLAGS :=
 LDLIBS :=
 
-srcfiles := c2.cpp c2a.cpp json.cpp macro.cpp token.cpp tokfeed.cpp cmda.cpp template.cpp
+srcfiles := c2.cpp c2a.cpp json.cpp macro.cpp token.cpp tokfeed.cpp cmda.cpp template.cpp library.cpp
 objects  := $(patsubst %.cpp, %.o, $(srcfiles))
 
 ifndef C2_PLATFORM

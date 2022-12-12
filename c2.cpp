@@ -20,8 +20,9 @@
 #include "c2a.h"
 #include "json.h"
 #include "cmda.h"
-#include "lib/include/c2/h/c2i.h"
+#include "c2lib/include/c2/h/c2i.h"
 #include "template.h"
+#include "library.h"
 
 #include <functional>
 #include <ctime>
@@ -40,6 +41,7 @@
 #define strcasecmp _stricmp
 #define stat _stat
 #define chdir _chdir
+#define getcwd _getcwd
 #endif
 
 
@@ -88,7 +90,7 @@ static void load(FILE *fp, std::string &s)
 	}
 }
 
-class sproject
+class sproject : public clibrary
 {
 public:
 
@@ -102,112 +104,16 @@ public:
 	}
 	
 	bool verbose = false;
-	
-	std::filesystem::path c2_curdir;
-	std::filesystem::path c2_libdir;
-	std::filesystem::path c2_incdir;
 
-	void setcurdir()
-	{
-			char tmp[1024] = {0};
-
-#if _WIN32
-			_getcwd(tmp, sizeof(tmp));
-#else
-			getcwd(tmp, sizeof(tmp));
-#endif
-
-			c2_curdir = tmp;
-
-			if (verbose)
-			{
-				fprintf(stderr, "c2 curdir: '%s'\n", c2_curdir.string().c_str());
-			}
-	}
-	
-	void setlib(std::filesystem::path path)
-	{
-		// Honor project setting first.
-		if(path.empty())
-		{
-			// Check for local override
-			if(file_exist("lib/" TEMPLATESFILE))
-			{
-				path = std::filesystem::current_path();
-				path /= "lib";
-			}
-		}
-		
-		// Fallback to searching next to current binary.
-		if(path.empty())
-		{
-#ifdef _WIN32
-			char result[MAX_PATH] = {0};
-			GetModuleFileNameA(NULL, result, MAX_PATH);
-#else
-			char result[PATH_MAX] = {0};
-			ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
-			if(!count)
-				throw "Could not extract c2 path";
-#endif
-			path = result;
-			
-			if(verbose)
-			{
-				fprintf(stderr, "c2 binary: '%s'\n", path.string().c_str());
-			}
-			
-			path = path.parent_path();
-			path /= "lib";
-
-			if(path.empty())
-				throw "Could not extract c2 path";
-		}
-
-		if(!std::filesystem::is_directory(path))
-		{
-			// Check one and two levels up, since MSVC puts binary under x64/Debug.
-			path = path.parent_path().parent_path();
-			path /= "lib";
-
-			if(!std::filesystem::is_directory(path))
-			{
-				path = path.parent_path().parent_path();
-				path /= "lib";
-			}
-
-			if(!std::filesystem::is_directory(path))
-			{
-				throw "Could not find c2 library directory";
-			}
-		}
-		
-		// Prepare libdir and incdir variables.
-		c2_libdir = path;
-		c2_incdir = c2_libdir / "include";
-		
-		if(verbose)
-		{
-			fprintf(stderr, "c2 libdir: '%s'\n", c2_libdir.string().c_str());
-		}
-	}
-	
 	cmda command;
 	
 	bool use_clang = true;
 
-	std::string basedir;
+	std::filesystem::path basedir;
 	std::filesystem::path intermediatedir = "imm";
 	std::string title = "noname";
 	std::string arguments;
 	std::string execute;
-	
-	std::vector<std::string> include_paths;
-	
-	std::string make_path(const std::string &file)
-	{
-		return basedir + file;
-	}
 	
 	struct stimestamp
 	{
@@ -236,6 +142,7 @@ public:
 
 		void stat(const char *file)
 		{
+			//printf("stat: %s\n", file);
 			struct stat data;
 			if(::stat(file, &data) >= 0)
 			{
@@ -254,6 +161,7 @@ public:
 		std::string file;
 		stimestamp timestamp;
 		size_t index;
+		bool stat_done = false;
 		
 		void save(FILE *fp)
 		{
@@ -267,6 +175,7 @@ public:
 
 		void stat()
 		{
+			//printf("stat: %s\n", file.c_str());
 			timestamp.stat(file.c_str());
 		}
 	};
@@ -374,6 +283,14 @@ public:
 		}
 	}
 	
+	void stat_files()
+	{
+		for(auto i=files.rbegin();i!=files.rend();i++)
+		{
+			i->get()->file->stat();
+		}
+	}
+	
 	void index_dependencies()
 	{
 		size_t index = 0;
@@ -437,13 +354,13 @@ public:
 		return d;
 	}
 	
-	void extract_dependencies(sfile *data, const std::string &file)
+	void extract_dependencies(sfile *data, const std::string &file, bool c2)
 	{
 		data->dependency.clear();
 		
 		char buf[1024];
 		std::string command = use_clang ? "clang " : "g++ ";
-		command += generate_includes() + " -MM -MG " + file;
+		command += lib_generate_includes(c2) + " -MM -MG " + file;
 		std::string output;
 		
 		FILE *ep = popen(command.c_str(), "r");
@@ -469,9 +386,9 @@ public:
 		
 		if(n == std::string::npos)
 		{
-			printf("JPH CMD: '%s'\n", command.c_str());
-			printf("JPH OUT: '%s'\n", output.c_str());
-			printf("JPH FILE: '%s'\n", file.c_str());
+			//printf("JPH CMD: '%s'\n", command.c_str());
+			//printf("JPH OUT: '%s'\n", output.c_str());
+			//printf("JPH FILE: '%s'\n", file.c_str());
 			throw "Unexpected output";
 		}
 
@@ -501,6 +418,7 @@ public:
 			
 			if(d.size())
 			{
+				//printf("Dep: %s\n", d.c_str());
 				data->dependency.push_back(std::pair<std::shared_ptr<sdependency>, stimestamp>(add_dependency(d), stimestamp()));
 			}
 		}
@@ -511,9 +429,7 @@ public:
 		std::string tmp = file;
 		std::replace(tmp.begin(), tmp.end(), '/', '_');
 		std::filesystem::path path;
-		path = c2_curdir;
-		path /= intermediatedir;
-		path /= tmp;
+		path = intermediatedir / tmp;
 		return path.string();
 	}
 	
@@ -644,69 +560,60 @@ public:
 		}
 	}
 	
-	bool load_project(const char* buildfile)
+	bool load_project(const char* projectfile)
 	{
 		std::string bdata, tmp;
-		if(!loadfile(buildfile, bdata))
+		if(!loadfile(projectfile, bdata))
 			return false;
+			
+		// Stat projectfile before changing directory
+		stimestamp tproj;
+		tproj.stat(projectfile);
 
 		std::unique_ptr<json::base> cfg(json::base::Decode(bdata.c_str()));
 
 		// basedir
-		std::string::size_type n;
-		basedir = buildfile;
-		n = basedir.rfind('/');
-		if (n != std::string::npos)
+		basedir = projectfile;
+		basedir = basedir.parent_path();
+
+		tmp = cfg->Get("basedir").GetString();
+		if (tmp.size())
 		{
-			basedir = basedir.substr(0, n + 1);
-		}
-		else
-		{
-			basedir = "";
+			basedir /= tmp;
 		}
 
-		std::string config_basedir = cfg->Get("basedir").GetString();
-		if (config_basedir[0] == '/')
-		{
-			basedir = config_basedir;
-		}
-		else if (config_basedir != ".")
-		{
-			basedir += config_basedir;
-		}
-
-		if (basedir.size() && basedir[basedir.size() - 1] != '/')
-		{
-			basedir += '/';
-		}
-
-		chdir(basedir.c_str());
+		chdir(basedir.string().c_str());
+		lib_basepath();	// Let clibrary know we are in the project folder
 
 		// Intermediate
 		tmp = cfg->Get("intermediate").GetString();
-		if (tmp.size()) intermediatedir = tmp;
+		if (tmp.size())
+		{
+			intermediatedir = tmp;
+		}
 
 		std::filesystem::create_directories(intermediatedir);
+		load_imm(intermediatedir / "c2cache");
 
-		// If project is modified, rebuild
+		bool should_rebuild = false;
 		
-		bool should_load_imm = true;
+		// Invalidate everything if project file changed
+		if(!(projecttime == tproj))
+		{
+			if(verbose)
+			{
+				fprintf(stderr, "%s is dirty\n", projectfile);
+			}
+			
+			should_rebuild = true;
+		}
 		
 		command.invoke("--rebuild", 0, 0, [&](int arga, const char *argc[])
 		{
-			should_load_imm = false;
+			should_rebuild = true;
 		});
 
-		if(should_load_imm)
-		{
-			load_imm(intermediatedir / "c2cache");
-		}
-		
-		// Invalidate everything if project file changed
-		stimestamp tproj;
-		tproj.stat(buildfile);
-		
-		if(!(projecttime == tproj))
+		if(should_rebuild)
 		{
 			dependencies.clear();
 			files.clear();
@@ -730,12 +637,23 @@ public:
 				{
 					throw "Config type not pair";
 				}
+				bool ext = ppair->second->Get("external").GetBool();
 
-				sfile* file = add_file(ppair->first);
+				std::filesystem::path path;
+				if(ext)
+				{
+					path = lib_get_file_path(ppair->first.c_str());
+				}
+				else
+				{
+					path = ppair->first;
+				}
+				
+				sfile* file = add_file(path.string());
 
 				file->c2 = ppair->second->Get("c2").GetBool();
 				file->flags = ppair->second->Get("flags").GetString();
-				file->ext = ppair->second->Get("external").GetBool();
+				file->ext = ext;
 			}
 		}
 
@@ -746,40 +664,20 @@ public:
 		execute = cfg->Get("execute").GetString();
 
 		clean_dependencies();
-		stat_dependencies();
 		clean_files();
+		
+		//stat_files();
+		stat_dependencies();
 		
 		return true;
 	}
 	
-	std::string generate_includes()
-	{
-		std::string cmd;
-		cmd += "-I" + c2_incdir.string();
-		
-		for(size_t r=0; r<include_paths.size(); r++)
-		{
-			if(cmd.size())
-				cmd += " ";
-				
-			cmd += "-I"+include_paths[r];
-		}
-		
-		return cmd;
-	}
-
 	void build(bool doexecute)
 	{
 		command.invoke("--include", 1, 1, [&](int arga, const char *argc[])
 		{
-			std::string tmp = argc[0];
-			if(tmp[tmp.size()-1] != '/')
-				tmp += '/';
-				
-			include_paths.push_back(tmp);
+			lib_add_include_path(argc[0]);
 		});
-		
-		std::string include_flags = generate_includes();
 		
 		c2a parser(verbose);
 		std::string cmd, precmd;
@@ -798,27 +696,21 @@ public:
 			// Fix windows path to use backslashes.
 			std::replace(file_subpath.begin(), file_subpath.end(), '/', '\\');
 #endif
-			
-			std::filesystem::path final_file;
-			if(f->ext)
-			{
-				final_file = c2_libdir;
-				final_file /= file_subpath;
-			}
-			else
-			{
-				final_file = file_subpath;
-			}
+			std::filesystem::path final_file = file_subpath;
 			
 			bool dirty = f->is_dirty();
+			if(verbose && dirty)
+			{
+				fprintf(stderr, "%s is dirty\n", final_file.string().c_str());
+			}
 			
 			if(dirty)
 			{
 				dirty_link = true;
-				extract_dependencies(f, final_file.string());
+				extract_dependencies(f, final_file.string(), f->c2);
 
 				cmd = use_clang ? "clang " : "g++ ";
-				cmd += include_flags;
+				cmd += lib_generate_includes(f->c2);
 				
 				if(f->flags.size())
 				{
@@ -836,7 +728,7 @@ public:
 					std::string ii = make_intermediate_path(make_ext(file_subpath, ".ii.ii"));
 					
 					precmd = use_clang ? "clang " : "g++ ";
-					precmd += include_flags;
+					precmd += lib_generate_includes(true);
 
 					if(f->flags.size())
 					{
@@ -881,6 +773,11 @@ public:
 		
 		if(dirty_link)
 		{
+			if(verbose)
+			{
+				fprintf(stderr, "%s is dirty\n", link_target.c_str());
+			}
+			
 			cmd = use_clang ? "clang " : "g++ ";
 			cmd += " -g -shared -o " + link_target;
 			for(size_t r=0; r<files.size(); r++)
@@ -908,10 +805,14 @@ public:
 		{
 			p->c2_config_setup_file(parser_files[r].c_str());
 		}
-		
-		for(size_t r=0; r<include_paths.size(); r++)
+
 		{
-			p->c2_config_setup_include(include_paths[r].c_str());
+			std::vector<std::string> includes;
+			lib_generate_includes_array(includes);
+			for(size_t r=0; r<includes.size(); r++)
+			{
+				p->c2_config_setup_include(includes[r].c_str());
+			}
 		}
 		
 		if(!p->c2_assemble())
@@ -1005,28 +906,28 @@ int main(int arga, char *argc[])
 		proj.command.add_info("--project", "-p", "<filename>: Explicitly load project file");
 		proj.command.add_info("--create-project", "-cp", "<template> <name> [path]: Creates a new project based on the specified template. If a path is given it will be created and used, otherwise the current directory is used");
 		proj.command.add_info("--list-templates", "-lt", "List available templates for project creation");
-		proj.command.add_info("--c2-library-dir", "-c2l", "<path>: Override default c2 library path");
+		proj.command.add_info("--c2-library-dir", "-c2l", "<path>: Add a c2 library path");
 		proj.command.add_info("--include", "-i", "<path>: Add an include search path for source and binaries");
 		proj.command.add_info("--verbose", "-v", "Output more information");
 		
 		bool doexecute = true;
 		bool dobuild = true;
 		std::string projpath;
-		std::string override_library;
 		
 		proj.command.invoke("--verbose", 0, 0, [&](int arga, const char *argc[])
 		{
 			proj.verbose = true;
 		});
 		
-		proj.setcurdir();
-
-		proj.command.invoke("--c2-library-dir", 1, 1, [&](int arga, const char *argc[])
 		{
-			override_library = argc[0];
-		});
-		
-		proj.setlib(override_library);
+			std::vector<std::filesystem::path> exlib;
+			proj.command.invoke("--c2-library-dir", 1, 1, [&](int arga, const char *argc[])
+			{
+				exlib.push_back(argc[0]);
+			});
+			
+			proj.lib_initialize(exlib);
+		}
 		
 		proj.command.invoke("--no-execute", 0, 0, [&](int arga, const char *argc[])
 		{
@@ -1036,20 +937,6 @@ int main(int arga, char *argc[])
 		proj.command.invoke("--no-build", 0, 0, [&](int arga, const char *argc[])
 		{
 			dobuild = false;
-		});
-		
-		proj.command.invoke("--create-project", 2, 3, [&](int arga, const char *argc[])
-		{
-			ctemplate tpl(proj.c2_libdir.c_str());
-			projpath = tpl.create(arga, argc);
-			doexecute = false; //Only build
-		});
-		
-		proj.command.invoke("--list-templates", 0, 0, [&](int arga, const char *argc[])
-		{
-			ctemplate tpl(proj.c2_libdir.c_str());
-			tpl.list();
-			throw "";
 		});
 		
 		bool loaded = false;
@@ -1063,6 +950,13 @@ int main(int arga, char *argc[])
 		{
 			projpath = proj.command.main();
 		}
+		
+		proj.command.invoke("--create-project", 2, 3, [&](int arga, const char *argc[])
+		{
+			ctemplate tpl(proj);
+			projpath = tpl.create(arga, argc);
+			doexecute = false; //Only build
+		});
 		
 		if(projpath.size())
 		{
@@ -1099,6 +993,14 @@ int main(int arga, char *argc[])
 							"c2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\n"
 							"You should have received a copy of the GNU General Public License along with c2. If not, see <https://www.gnu.org/licenses/>.\n");
 			
+			dobuild = false;
+			doexecute = false;
+		});
+		
+		proj.command.invoke("--list-templates", 0, 0, [&](int arga, const char *argc[])
+		{
+			ctemplate tpl(proj);
+			tpl.list();
 			dobuild = false;
 			doexecute = false;
 		});
