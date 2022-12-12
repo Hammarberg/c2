@@ -142,6 +142,7 @@ public:
 
 		void stat(const char *file)
 		{
+			//printf("stat: %s\n", file);
 			struct stat data;
 			if(::stat(file, &data) >= 0)
 			{
@@ -160,6 +161,7 @@ public:
 		std::string file;
 		stimestamp timestamp;
 		size_t index;
+		bool stat_done = false;
 		
 		void save(FILE *fp)
 		{
@@ -173,6 +175,7 @@ public:
 
 		void stat()
 		{
+			//printf("stat: %s\n", file.c_str());
 			timestamp.stat(file.c_str());
 		}
 	};
@@ -280,6 +283,14 @@ public:
 		}
 	}
 	
+	void stat_files()
+	{
+		for(auto i=files.rbegin();i!=files.rend();i++)
+		{
+			i->get()->file->stat();
+		}
+	}
+	
 	void index_dependencies()
 	{
 		size_t index = 0;
@@ -336,7 +347,7 @@ public:
 		{
 			d = std::make_shared<sdependency>();
 			d->file = file;
-			//d->stat();
+			d->stat();
 			dependencies.push_back(d);
 		}
 		
@@ -375,9 +386,9 @@ public:
 		
 		if(n == std::string::npos)
 		{
-			printf("JPH CMD: '%s'\n", command.c_str());
-			printf("JPH OUT: '%s'\n", output.c_str());
-			printf("JPH FILE: '%s'\n", file.c_str());
+			//printf("JPH CMD: '%s'\n", command.c_str());
+			//printf("JPH OUT: '%s'\n", output.c_str());
+			//printf("JPH FILE: '%s'\n", file.c_str());
 			throw "Unexpected output";
 		}
 
@@ -407,6 +418,7 @@ public:
 			
 			if(d.size())
 			{
+				//printf("Dep: %s\n", d.c_str());
 				data->dependency.push_back(std::pair<std::shared_ptr<sdependency>, stimestamp>(add_dependency(d), stimestamp()));
 			}
 		}
@@ -581,25 +593,30 @@ public:
 		}
 
 		std::filesystem::create_directories(intermediatedir);
+		load_imm(intermediatedir / "c2cache");
 
-		bool should_load_imm = true;
+		bool should_rebuild = false;
 		
 		// Invalidate everything if project file changed
 		if(!(projecttime == tproj))
 		{
-			//dependencies.clear();
-			//files.clear();
-			should_load_imm = false;
+			if(verbose)
+			{
+				fprintf(stderr, "%s is dirty\n", projectfile);
+			}
+			
+			should_rebuild = true;
 		}
 		
 		command.invoke("--rebuild", 0, 0, [&](int arga, const char *argc[])
 		{
-			should_load_imm = false;
+			should_rebuild = true;
 		});
 
-		if(should_load_imm)
+		if(should_rebuild)
 		{
-			load_imm(intermediatedir / "c2cache");
+			dependencies.clear();
+			files.clear();
 		}
 		
 		projecttime = tproj;
@@ -620,12 +637,23 @@ public:
 				{
 					throw "Config type not pair";
 				}
+				bool ext = ppair->second->Get("external").GetBool();
 
-				sfile* file = add_file(ppair->first);
+				std::filesystem::path path;
+				if(ext)
+				{
+					path = lib_get_file_path(ppair->first.c_str());
+				}
+				else
+				{
+					path = ppair->first;
+				}
+				
+				sfile* file = add_file(path.string());
 
 				file->c2 = ppair->second->Get("c2").GetBool();
 				file->flags = ppair->second->Get("flags").GetString();
-				file->ext = ppair->second->Get("external").GetBool();
+				file->ext = ext;
 			}
 		}
 
@@ -636,8 +664,10 @@ public:
 		execute = cfg->Get("execute").GetString();
 
 		clean_dependencies();
-		stat_dependencies();
 		clean_files();
+		
+		//stat_files();
+		stat_dependencies();
 		
 		return true;
 	}
@@ -666,18 +696,13 @@ public:
 			// Fix windows path to use backslashes.
 			std::replace(file_subpath.begin(), file_subpath.end(), '/', '\\');
 #endif
-			
-			std::filesystem::path final_file;
-			if(f->ext)
-			{
-				final_file = lib_get_file_path(file_subpath.c_str());
-			}
-			else
-			{
-				final_file = file_subpath;
-			}
+			std::filesystem::path final_file = file_subpath;
 			
 			bool dirty = f->is_dirty();
+			if(verbose && dirty)
+			{
+				fprintf(stderr, "%s is dirty\n", final_file.string().c_str());
+			}
 			
 			if(dirty)
 			{
@@ -748,6 +773,11 @@ public:
 		
 		if(dirty_link)
 		{
+			if(verbose)
+			{
+				fprintf(stderr, "%s is dirty\n", link_target.c_str());
+			}
+			
 			cmd = use_clang ? "clang " : "g++ ";
 			cmd += " -g -shared -o " + link_target;
 			for(size_t r=0; r<files.size(); r++)

@@ -135,7 +135,7 @@ void clibrary::lib_basepath()
 	
 	if(std::filesystem::is_directory(base))
 	{
-		push_path(base);
+		push_path(base, true);
 	}
 }
 
