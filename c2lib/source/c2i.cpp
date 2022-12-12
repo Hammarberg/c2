@@ -872,6 +872,52 @@ c2i::var c2i::loadvar(const char *path, size_t offset, size_t length)
 	return v;
 }
 
+void c2i::loadstream(const char *cmd, size_t offset, size_t length)
+{
+#ifdef _WIN32
+	FILE *ep = popen(cmd, "b");
+#else
+	FILE *ep = popen(cmd, "r");
+#endif
+	
+	if(!ep)
+	{
+		ierror("Error executing stream command: %s", cmd);
+		return;
+	}
+
+	int n;
+	size_t count = 0;
+	uint8_t b;
+	
+	while(count < offset)
+	{
+		n = fread(&b, 1, sizeof(b), ep);
+		if(!n)
+		{
+			ierror("Requested offset (%d) to is beyond the end if the stream", int(offset));
+			pclose(ep);
+			return;
+		}
+		count++;
+	}
+	
+	count = 0;
+	
+	while(count < length)
+	{
+		n = fread(&b, 1, sizeof(b), ep);
+		if(!n)
+		{
+			break;
+		}
+		push(b);
+		count++;
+	}
+	
+	pclose(ep);
+}
+
 void c2i::c2_scope_push(uint32_t fileindex, uint32_t line)
 {
 	sinternal *p = (sinternal *)pinternal;

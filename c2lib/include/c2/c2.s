@@ -31,3 +31,22 @@ macro incbin @file, @param...
 		
 	loadbin(file.str(), offset, length);
 }
+
+macro incstream @cmd
+{
+	loadstream(cmd.str());
+}
+
+macro incstream @cmd, @param...
+{
+	size_t offset = 0;
+	size_t length = -1;
+	
+	if(param.size() >= 1)
+		offset = param[0];
+	
+	if(param.size() >= 2)
+		length = param[1];
+	
+	loadstream(cmd.str(), offset, length);
+}
