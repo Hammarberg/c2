@@ -74,9 +74,9 @@ void clibrary::lib_initialize(const std::vector<std::filesystem::path> &expaths)
 	// From environment path
 	{
 #ifdef _WIN32
-		const char* envpath = getenv("C2LIBRARY");
+		const char* envpath = getenv(ENV_C2LIB_HOME);
 #else
-		const char *envpath = secure_getenv("C2LIBRARY");
+		const char *envpath = secure_getenv(ENV_C2LIB_HOME);
 #endif
 		
 		if(envpath)

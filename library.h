@@ -17,9 +17,9 @@
 #include <cstdio>
 
 
-#define ENV_C2LIBRARY "C2LIB_HOME"
+#define ENV_C2LIB_HOME "C2LIB_HOME"
 #define C2LIB "c2lib"
-#define NIX_GLOBAL "/lib/" C2LIB
+#define NIX_GLOBAL "/usr/lib/" C2LIB
 
 /*
  * Library path search order:
