@@ -22,9 +22,18 @@
 #include <memory>
 #include <filesystem>
 
-static bool loadfile(const char *file, std::string &out)
+ctemplate::ctemplate(clibrary &inlib)
+ : lib(inlib)
 {
-	FILE *fp = fopen(file, "r");
+}
+
+ctemplate::~ctemplate()
+{
+}
+
+bool ctemplate::loadfile(const char *file, std::string &out)
+{
+	FILE *fp = lib.lib_fopen(file, "r");
 	if(!fp)
 		return false;
 	
@@ -41,20 +50,11 @@ static bool loadfile(const char *file, std::string &out)
 	return true;
 }
 
-ctemplate::ctemplate(const std::filesystem::path &libpath)
- : basepath(libpath)
-{
-}
-
-ctemplate::~ctemplate()
-{
-}
 
 void ctemplate::list()
 {
-	std::filesystem::path file = basepath /= TEMPLATESFILE;
 	std::string buf;
-	if(!loadfile(file.string().c_str(), buf))
+	if(!loadfile(TEMPLATESFILE, buf))
 		throw "Error loading " TEMPLATESFILE;
 
 	std::unique_ptr<json::base> cfg(json::base::Decode(buf.c_str()));
@@ -94,9 +94,8 @@ void ctemplate::list()
 
 std::string ctemplate::create(int arga, const char *argc[])
 {
-	std::filesystem::path file = basepath / TEMPLATESFILE;
 	std::string buf;
-	if(!loadfile(file.string().c_str(), buf))
+	if(!loadfile(TEMPLATESFILE, buf))
 		throw "Error loading " TEMPLATESFILE;
 
 	std::unique_ptr<json::base> cfg(json::base::Decode(buf.c_str()));
@@ -164,6 +163,13 @@ std::string ctemplate::create(int arga, const char *argc[])
 	
 	FILE *fp = fopen(projfile.string().c_str(), "w");
 	
+	struct sdestroy
+	{
+		sdestroy(FILE *ifp):fp(ifp){}
+		~sdestroy(){fclose(fp);}
+		FILE *fp;
+	}scoped(fp);
+	
 	fprintf(fp,
 		"{\n"
 		"\t\"title\" : \"%s\",\n"
@@ -189,7 +195,9 @@ std::string ctemplate::create(int arga, const char *argc[])
 			throw "Config type not pair";
 		}
 		
-		std::filesystem::path src = basepath / "template" / ppair->first;
+		std::filesystem::path src = "template";
+		src /= ppair->first;
+		
 		json::container *t = (json::container *)ppair->second;
 		if (t->GetType() != json::type::CONTAINER)
 		{
@@ -241,8 +249,6 @@ std::string ctemplate::create(int arga, const char *argc[])
 	}
 	
 	fprintf(fp,"\t]\n}\n");
-	
-	fclose(fp);
 	
 	return projfile.string();
 }

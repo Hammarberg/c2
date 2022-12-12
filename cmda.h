@@ -12,7 +12,7 @@
 */
 
 #pragma once
-#include "lib/include/c2/h/cmdi.h"
+#include "c2lib/include/c2/h/cmdi.h"
 #include <string>
 #include <vector>
 

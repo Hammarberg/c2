@@ -12,6 +12,7 @@
 */
 
 #pragma once
+#include "library.h"
 #include <string>
 #include <vector>
 #include <filesystem>
@@ -21,16 +22,17 @@
 class ctemplate
 {
 public:
-	ctemplate(const std::filesystem::path &libpath);
+	ctemplate(clibrary &inlib);
 	~ctemplate();
 	
 	void list();
 	std::string create(int arga, const char *argc[]);
 	
-	static std::string str_translate(std::string str, const std::vector<std::pair<std::string, std::string>> &translate);
-	static void file_translate(const char *src, const char *dst, const std::vector<std::pair<std::string, std::string>> &translate);
 
 private:
-	std::filesystem::path basepath;
+	clibrary &lib;
+	bool loadfile(const char *file, std::string &out);
+	void file_translate(const char *src, const char *dst, const std::vector<std::pair<std::string, std::string>> &translate);
+	static std::string str_translate(std::string str, const std::vector<std::pair<std::string, std::string>> &translate);
 };
 
