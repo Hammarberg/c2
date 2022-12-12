@@ -795,7 +795,11 @@ public:
 		}
 
 		if(!load_module(link_target.c_str()))
-			throw "Failed to load shared object";
+		{
+			std::filesystem::path link_target_full = std::filesystem::absolute(link_target);
+			if(!load_module(link_target_full.string().c_str()))
+				throw "Failed to load shared object";
+		}
 
 		c2i *p = c2_object_instance(&command);
 		
