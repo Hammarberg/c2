@@ -364,35 +364,32 @@ void c64::loadsid(const char *path, var &init, var &play)
 		uint32_t speed;		//Big endian
 	}head;
 	
-	FILE *fp = fopen(path, "rb");
-	if(!fp)
+	c2file fp;
+	if(!fp.open(path))
 	{
 		c2_error("SID file not found");
 		return;
 	}
-	
-	fread(&head, 1, sizeof(head), fp);
+
+	fp.read(&head, sizeof(head));
 	
 	long offset = swap_endian(head.offset);
 	uint16_t load_address = swap_endian(head.load_address);
 	init = swap_endian(head.init_address);
 	play = swap_endian(head.play_address);
 
-	fseek(fp, offset, SEEK_SET);
+	fp.seek(offset);
 	if(!load_address)
 	{
-		fread(&load_address, 1, sizeof(load_address), fp);
+		fp.read(&load_address, sizeof(load_address));
 	}
 	
 	int64_t write = load_address;
-	uint8_t b;
-	while(fread(&b, 1, 1, fp))
+	while(!fp.eof())
 	{
-		c2_poke(write, b);
+		c2_poke(write, fp.pop8());
 		write++;
 	}
 	
 	c2_verbose("SID $%04x-$%04x, init $%04x, play $%04x", int(load_address), int(write), int(init), int(play));
-	
-	fclose(fp);
 }

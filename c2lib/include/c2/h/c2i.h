@@ -329,6 +329,29 @@ public:
 	
 	void c2_log(c2_eloglevel level, const char *file, int line, const char *format, ...);
 	
+	class c2file
+	{
+	public:
+		c2file(const char *file = nullptr);
+		~c2file();
+		bool open(const char *file);
+		void close();
+		int64_t size();
+		int64_t seek(int64_t pos);
+		int64_t pos();
+		bool eof();
+		int64_t pop8();
+		int64_t pop16le();
+		int64_t pop16be();
+		int64_t pop32le();
+		int64_t pop32be();
+		int64_t pop64le();
+		int64_t pop64be();
+		int64_t read(void *ptr, int64_t size);
+	private:
+		void *pinternal;
+	};
+	
 	void loadbin(const char *file, size_t offset = 0, size_t length = -1);
 	var loadvar(const char *file, size_t offset = 0, size_t length = -1);
 

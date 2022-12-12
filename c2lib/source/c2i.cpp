@@ -20,8 +20,25 @@
 #include <map>
 #include <memory>
 
-#define ierror(...) c2_log(c2_eloglevel::error, nullptr, 0, __VA_ARGS__)
-#define iwarning(...) c2_log(c2_eloglevel::warning, nullptr, 0, __VA_ARGS__)
+#define ierror(...) c2_get_single()->c2_log(c2_eloglevel::error, nullptr, 0, __VA_ARGS__)
+#define iwarning(...) c2_get_single()->c2_log(c2_eloglevel::warning, nullptr, 0, __VA_ARGS__)
+
+template <typename T>
+T swap_endian(T u)
+{
+    union
+    {
+        T u;
+        unsigned char u8[sizeof(T)];
+    } source, dest;
+
+    source.u = u;
+
+    for (size_t k = 0; k < sizeof(T); k++)
+        dest.u8[k] = source.u8[sizeof(T) - k - 1];
+
+    return dest.u;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Var
@@ -114,6 +131,161 @@ bool sinternal::lookup_var(const std::string &in, int64_t &out)
 		return true;
 	}
 	return false;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// c2file
+///////////////////////////////////////////////////////////////////////////////
+
+struct c2file_data
+{
+	FILE *fp = nullptr;
+	int64_t size = 0;
+};
+
+
+c2i::c2file::c2file(const char *file)
+{
+	c2file_data *p = new c2file_data;
+	pinternal = (void *)p;
+	open(file);
+}
+
+c2i::c2file::~c2file()
+{
+	close();
+	c2file_data *p = (c2file_data *)pinternal;
+	delete p;
+}
+
+bool c2i::c2file::open(const char *file)
+{
+	close();
+	
+	c2file_data *p = (c2file_data *)pinternal;
+	sinternal *c2p = (sinternal *)c2_get_single()->pinternal;
+	
+	if(file)
+	{
+		p->fp = c2p->search_fopen(file);
+		
+		if(!p->fp)
+		{
+			ierror("File not found: %s", file);
+			return false;
+		}
+		
+		fseek(p->fp, 0, SEEK_END);
+		p->size = (int64_t)ftell(p->fp);
+		fseek(p->fp, 0, SEEK_SET);
+		return true;
+	}
+	
+	return false;
+}
+
+void c2i::c2file::close()
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	if(p->fp)
+	{
+		fclose(p->fp);
+		p->fp = nullptr;
+		p->size = 0;
+	}
+}
+
+int64_t c2i::c2file::size()
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	return p->size;
+}
+
+int64_t c2i::c2file::seek(int64_t newpos)
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	if(newpos < 0 || newpos > p->size)
+	{
+		ierror("Offset %d is beyond file size", int(newpos));
+		return pos();
+	}
+	fseek(p->fp, long(newpos), SEEK_SET);
+	return newpos;
+}
+
+int64_t c2i::c2file::pos()
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	return (int64_t)ftell(p->fp);
+}
+
+bool c2i::c2file::eof()
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	return feof(p->fp) != 0;
+}
+
+int64_t c2i::c2file::pop8()
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	uint8_t d;
+	fread(&d, 1, sizeof(d), p->fp);
+	return d;
+}
+
+int64_t c2i::c2file::pop16le()
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	uint16_t d;
+	fread(&d, 1, sizeof(d), p->fp);
+	return d;
+}
+
+int64_t c2i::c2file::pop16be()
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	uint16_t d;
+	fread(&d, 1, sizeof(d), p->fp);
+	return swap_endian(d);
+}
+
+int64_t c2i::c2file::pop32le()
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	uint32_t d;
+	fread(&d, 1, sizeof(d), p->fp);
+	return d;
+}
+
+int64_t c2i::c2file::pop32be()
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	uint32_t d;
+	fread(&d, 1, sizeof(d), p->fp);
+	return swap_endian(d);
+}
+
+int64_t c2i::c2file::pop64le()
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	int64_t d;
+	fread(&d, 1, sizeof(d), p->fp);
+	return d;
+}
+
+int64_t c2i::c2file::pop64be()
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	int64_t d;
+	fread(&d, 1, sizeof(d), p->fp);
+	return swap_endian(d);
+}
+
+int64_t c2i::c2file::read(void *ptr, int64_t size)
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	int rs = fread(ptr, 1, size, p->fp);
+	return rs;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -401,8 +573,7 @@ bool c2i::c2_assemble()
 		if(level == c2_eloglevel::verbose && c2_verbose == false)
 			continue;
 		
-		fprintf(stderr, log[r].second.c_str());
-		fprintf(stderr, "\n");
+		fprintf(stderr, "%s\n", log[r].second.c_str());
 
 		if(level == c2_eloglevel::error)
 		{
@@ -612,26 +783,25 @@ void c2i::c2_post()
 
 void c2i::loadbin(const char *path, size_t offset, size_t length)
 {
-	sinternal *p = (sinternal *)pinternal;
-	FILE *fp = p->search_fopen(path);
-	if(!fp)
+	
+	c2file fp;
+	
+	if(!fp.open(path))
 	{
-		ierror("File not found: %s", path);
 		return;
 	}
 	
-	fseek(fp, 0, SEEK_END);
-	size_t size = ftell(fp);
-		
+	int64_t size = fp.size();
+	
 	if(offset > size)
 	{
-		fclose(fp);
-		ierror("Offset %d is beyond file size for: %s", int(offset), path);
+		ierror("Requested offset (%d) to is beyond the file size for: %s", int(offset), path);
 		return;
 	}
-	fseek(fp, long(offset), SEEK_SET);
 	
-	size_t toread;
+	fp.seek(offset);
+		
+	int64_t toread;
 	
 	if(length == size_t(-1))
 	{
@@ -639,9 +809,8 @@ void c2i::loadbin(const char *path, size_t offset, size_t length)
 	}
 	else if(length > size - offset)
 	{
-		fclose(fp);
-		ierror("Requested size (%d) to read is larger than the file size for: %s", int(length), path);
-		return;
+		iwarning("Requested size (%d) to read is larger than the file size for: %s", int(length), path);
+		toread = size - offset;
 	}
 	else
 	{
@@ -650,37 +819,31 @@ void c2i::loadbin(const char *path, size_t offset, size_t length)
 
 	for(size_t r=0; r<toread; r++)
 	{
-		uint8_t b;
-		fread(&b, 1, 1, fp);
-		push(b);
+		push(fp.pop8());
 	}
-	
-	fclose(fp);
 }
 
 c2i::var c2i::loadvar(const char *path, size_t offset, size_t length)
 {
 	var v;
-	sinternal *p = (sinternal *)pinternal;
-	FILE *fp = p->search_fopen(path);
-	if(!fp)
+	c2file fp;
+	
+	if(!fp.open(path))
 	{
-		ierror("File not found: %s", path);
 		return v;
 	}
 	
-	fseek(fp, 0, SEEK_END);
-	size_t size = ftell(fp);
-		
+	int64_t size = fp.size();
+	
 	if(offset > size)
 	{
-		fclose(fp);
-		ierror("Offset %d is beyond file size for: %s", int(offset), path);
+		ierror("Requested offset (%d) to is beyond the file size for: %s", int(offset), path);
 		return v;
 	}
-	fseek(fp, long(offset), SEEK_SET);
 	
-	size_t toread;
+	fp.seek(offset);
+		
+	int64_t toread;
 	
 	if(length == size_t(-1))
 	{
@@ -688,29 +851,24 @@ c2i::var c2i::loadvar(const char *path, size_t offset, size_t length)
 	}
 	else if(length > size - offset)
 	{
-		fclose(fp);
-		ierror("Requested size (%d) to read is larger than the file size for: %s", int(length), path);
-		return v;
+		iwarning("Requested size (%d) to read is larger than the file size for: %s", int(length), path);
+		toread = size - offset;
 	}
 	else
 	{
 		toread = length;
 	}
-	
+
 	if(toread)
 	{
 		v[toread - 1] = 0;
 		
 		for(size_t r=0;r<toread;r++)
 		{
-			uint8_t b;
-			fread((char *)&b, 1, 1, fp);
-			v[r] = b;
+			v[r] = fp.pop8();
 		}
 	}
 
-	fclose(fp);
-	
 	return v;
 }
 
