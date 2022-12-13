@@ -817,7 +817,7 @@ public:
 
 		c2i *p = c2_object_instance(&command);
 		
-		p->c2_config_set_verbose(verbose);
+		p->c2_config_setup_info(title.c_str(), verbose);
 		
 		for(size_t r=0; r<parser_files.size(); r++)
 		{

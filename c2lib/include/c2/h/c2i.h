@@ -373,9 +373,9 @@ public:
 	void c2_poke(int64_t pos, int64_t data);
 	uint8_t c2_peek(int64_t pos);
 
+	virtual void c2_config_setup_info(const char *title, bool verbose);
 	virtual void c2_config_setup_file(const char *file);
 	virtual void c2_config_setup_include(const char *file);
-	virtual void c2_config_set_verbose(bool);
 	
 	bool c2_allow_overwrite = false;
 	bool c2_verbose = false;

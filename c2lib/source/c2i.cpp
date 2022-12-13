@@ -930,6 +930,13 @@ void c2i::c2_scope_pop()
 	p->stack_history.pop_back();
 }
 
+void c2i::c2_config_setup_info(const char *title, bool verbose)
+{
+	sinternal *p = (sinternal *)pinternal;
+	p->title = title;
+	c2_verbose = verbose;
+}
+
 void c2i::c2_config_setup_file(const char *file)
 {
 	sinternal *p = (sinternal *)pinternal;
@@ -940,11 +947,6 @@ void c2i::c2_config_setup_include(const char *include)
 {
 	sinternal *p = (sinternal *)pinternal;
 	p->include_paths.push_back(include);
-}
-
-void c2i::c2_config_set_verbose(bool inverbose)
-{
-	c2_verbose = inverbose;
 }
 
 void c2i::c2_log(c2_eloglevel level, const char *file, int line, const char *format, ...)

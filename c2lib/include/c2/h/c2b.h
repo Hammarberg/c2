@@ -155,6 +155,8 @@ struct sinternal
 	std::vector<std::string> include_paths;
 	std::unordered_map<std::string, c2i::c2_vardata *> registered_vars;
 	
+	std::string title;
+	
 	void get_sorted_vars(std::vector<std::pair<std::string, int64_t>> &out);
 	bool lookup_var(const std::string &in, int64_t &out);
 	
