@@ -5,6 +5,8 @@
 * ~~Support user template/library configuration.~~
 * ~~c2 file object to be exposed in c2i (also used by incbin internally).~~
 * ~~Interface to stream stdout from external tools back into assembly.~~
+* Automatic clang or gcc detection.
+* c2 config in c2lib path.
 * Option to bypass project file and only use switches.
 * Cleanup/rewrite 6502 utilities and word extension.
 * Support 65816, 65C02, 65802
@@ -15,6 +17,11 @@
 * CP/M support.
 * Cleanup error reporting.
 * C64 RLE packer 0200-ffff.
+* c2i interface to add to post command line.
+* Set pre-processor switch.
+* Set variable switch.
+* Flag and hash+store switches to intermediate data that would affect compile outcome.
+* Cache labels between builds.
 * More, deeper and prettier README.
 ## Overview
 c2 is an assembler wrapper top of a C++ compiler. c2 stems from retro/hobby assembler programming and the initial targets are common 8 and 16 bit platforms but doesn't have to be limited to that. It's architecture independent in the sense that all assembly pseudo opcodes are built with macros. Macro files can be included with the standard C pre-processor.
@@ -39,7 +46,7 @@ You should have received a copy of the GNU General Public License along with c2.
 ### Contributors
 John Hammarberg, Jocelyn Houle, Johan Samuelsson
 ## Build & Installation
-Put the c2 executable root in your path. Make sure the lib/ directory is next to c2 and that a 64 bit compatible clang or gcc is in path. The later might not always be the case for Windows.
+Put the c2 executable root in your path. Make sure the c2lib/ directory is next to c2 and that a 64 bit compatible clang or gcc is in path. The later might not always be the case for Windows.
 ### GNU/Linux/BSD
 `make`
 ### Windows
