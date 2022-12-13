@@ -103,8 +103,8 @@ namespace json
 				{
 					b = (base *) new boolean(true);
 					p += 4;
-					break;
 				}
+				break;
 			}
 			case 'f':
 			case 'F':
@@ -113,8 +113,8 @@ namespace json
 				{
 					b = (base *) new boolean(false);
 					p += 5;
-					break;
 				}
+				break;
 			}
 			case ',':
 				p++;
