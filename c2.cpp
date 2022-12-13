@@ -555,7 +555,17 @@ public:
 		
 		if(res)
 		{ 
+			if(!verbose)
+			{
+				size_t t = output.find(char(0x0a));
+				if(t != output.npos)
+				{
+					output = output.substr(0, t);
+				}				
+			}
+			
 			fprintf(stderr ,"%s\n", output.c_str());
+			
 			throw "Compile error";
 		}
 	}
