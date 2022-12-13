@@ -682,7 +682,7 @@ bool c2a::match_macro(stok *io, toklink &link)
 	}
 	
 	//Warn about nearly matched macro here
-	warning(io, "\"%s\" looks like a macro but could not match any parameters", io->name);
+	warning(io, "\"%s\" looks like a macro but could not match any parameters\n", io->name);
 	
 	return false;
 }
