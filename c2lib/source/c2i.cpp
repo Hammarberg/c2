@@ -11,6 +11,12 @@
 	You should have received a copy of the GNU General Public License along with c2. If not, see <https://www.gnu.org/licenses/>.
 */
 
+#ifdef _WIN32
+#define _CRT_SECURE_NO_WARNINGS
+#define popen _popen
+#define pclose _pclose
+#endif
+
 #include "c2/h/c2i.h"
 #include "c2/h/c2b.h"
 
@@ -701,13 +707,25 @@ bool c2i::c2_resolve(const char *addr, int64_t &out, bool allow_labels)
 		out = c2_high_bound();
 		break;
 	case dec:
+#ifndef _MSC_VER
 		sscanf(p, "%ld", &out);
+#else
+		sscanf(p, "%lld", &out);
+#endif
 		break;
 	case oct:
+#ifndef _MSC_VER
 		sscanf(p, "%lo", &out);
+#else
+		sscanf(p, "%llo", &out);
+#endif
 		break;
 	case hex:
+#ifndef _MSC_VER
 		sscanf(p, "%lx", &out);
+#else
+		sscanf(p, "%llx", &out);
+#endif
 		break;
 	case label:
 		{

@@ -237,8 +237,8 @@ std::string clibrary::lib_generate_includes(bool c2)
 		{
 			if(cmd.size())
 				cmd += " ";
-				
-			cmd += "-I"+user_include_paths[r].string();
+
+			cmd += "-I" + quote_path(user_include_paths[r].string());
 		}
 	}
 	
@@ -247,7 +247,7 @@ std::string clibrary::lib_generate_includes(bool c2)
 		if(cmd.size())
 			cmd += " ";
 			
-		cmd += "-I"+library_include_paths[r].string();
+		cmd += "-I" + quote_path(library_include_paths[r].string());
 	}
 	
 	return cmd;
@@ -279,3 +279,12 @@ void clibrary::lib_generate_includes_array(std::vector<std::string> &out)
 	}
 }
 
+std::string clibrary::quote_path(std::string path)
+{
+	if (path.find(' ') != path.npos)
+	{
+		path = "\"" + path + "\"";
+	}
+
+	return path;
+}

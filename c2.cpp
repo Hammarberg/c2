@@ -357,12 +357,17 @@ public:
 	void extract_dependencies(sfile *data, const std::string &file, bool c2)
 	{
 		data->dependency.clear();
-		
+
 		char buf[1024];
 		std::string command = use_clang ? "clang " : "g++ ";
-		command += lib_generate_includes(c2) + " -MM -MG " + file;
+		command += lib_generate_includes(c2) + " -MM -MG " + quote_path(file);
 		std::string output;
 		
+		if (verbose)
+		{
+			fprintf(stderr, "Executing: %s\n", command.c_str());
+		}
+
 		FILE *ep = popen(command.c_str(), "r");
 		
 		if(!ep)
@@ -424,12 +429,14 @@ public:
 		}
 	}
 	
-	std::string make_intermediate_path(const std::string &file)
+	std::string make_intermediate_path(std::string file)
 	{
-		std::string tmp = file;
-		std::replace(tmp.begin(), tmp.end(), '/', '_');
+		std::replace(file.begin(), file.end(), '\\', '_');
+		std::replace(file.begin(), file.end(), '/', '_');
+		std::replace(file.begin(), file.end(), ' ', '_');
+		std::replace(file.begin(), file.end(), ':', '_');
 		std::filesystem::path path;
-		path = intermediatedir / tmp;
+		path = intermediatedir / file;
 		return path.string();
 	}
 	
@@ -516,8 +523,6 @@ public:
 	static bool file_exist(const char *path)
 	{
 		return std::filesystem::exists(path);
-		//struct stat data;
-		//return ::stat(path, &data) >= 0;
 	}
 	
 	static std::string make_ext(const std::string &file, const char *ext)
@@ -734,7 +739,7 @@ public:
 #ifndef _WIN32
 				cmd += " -fpic";
 #endif
-				cmd += " -g -c -Wall -o " + f->obj;
+				cmd += " -g -c -Wall -o " + quote_path(f->obj);
 					
 				if(f->c2)
 				{
@@ -749,7 +754,7 @@ public:
 						precmd += " " + f->flags;
 					}
 
-					precmd += " -E " + f->file->file + " > " + i;
+					precmd += " -E " + quote_path(f->file->file) + " > " + quote_path(i);
  
 					sh_execute(precmd.c_str());
 					parser.process(i.c_str(), ii.c_str());
@@ -762,7 +767,7 @@ public:
 				else
 				{
 					cmd += " ";
-					cmd += final_file.string();
+					cmd += quote_path(final_file.string());
 				}
 				
 				cmd += " 2>&1";
@@ -793,10 +798,10 @@ public:
 			}
 			
 			cmd = use_clang ? "clang " : "g++ ";
-			cmd += " -g -shared -o " + link_target;
+			cmd += " -g -shared -o " + quote_path(link_target);
 			for(size_t r=0; r<files.size(); r++)
 			{
-				cmd += " " + files[r]->obj;
+				cmd += " " + quote_path(files[r]->obj);
 			}
 			
 			cmd += " 2>&1";

@@ -40,13 +40,13 @@ public:
 		return false;
 
 		fseek(fp, 0, SEEK_END);
-		size_t size = ftell(fp);
+		size_t size = ftell(fp);	// This is the binary size. With Windows text read mode "r", the actual data will be smaller.
 		fseek(fp, 0, SEEK_SET);
 
 		char *data = (char *)mem.alloc(size + 1);
-		fread(data, 1, size, fp);
+		size_t read = fread(data, 1, size, fp);
 		fclose(fp);
-		data[size] = 0;
+		data[read] = 0;
 
 		char *p = data, *s;
 		while((s = strchr(p, 0x0a)))

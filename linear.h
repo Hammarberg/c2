@@ -42,7 +42,9 @@ class slinear_alloc
 		
 		if(n >= size_left)
 		{
-			ptr = (uintptr_t)malloc(size_left = BSIZE);
+			size_t ta = n > BSIZE ? n : BSIZE;
+
+			ptr = (uintptr_t)malloc(size_left = ta);
 			buffers.push_back((void *)ptr);
 		}
 		

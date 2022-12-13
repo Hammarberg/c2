@@ -51,6 +51,8 @@ public:
 	std::string lib_generate_includes(bool c2);
 	void lib_generate_includes_array(std::vector<std::string> &out);
 
+	static std::string quote_path(std::string path);
+
 private:
 
 	void push_path(const std::filesystem::path &path, bool first = false);
