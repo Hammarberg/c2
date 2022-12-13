@@ -3,8 +3,8 @@
 * Optimize C++ label template generation to greatly improve compile times.
 * ~~Support local & global library folders.~~
 * ~~Support user template/library configuration.~~
-* c2 file object to be exposed in c2i (also used by incbin internally).
-* Interface to stream stdout from external tools back into assembly.
+* ~~c2 file object to be exposed in c2i (also used by incbin internally).~~
+* ~~Interface to stream stdout from external tools back into assembly.~~
 * Option to bypass project file and only use switches.
 * Cleanup/rewrite 6502 utilities and word extension.
 * Support 65816, 65C02, 65802
@@ -14,6 +14,7 @@
 * 8080 support.
 * CP/M support.
 * Cleanup error reporting.
+* C64 RLE packer 0200-ffff.
 * More, deeper and prettier README.
 ## Overview
 c2 is an assembler wrapper top of a C++ compiler. c2 stems from retro/hobby assembler programming and the initial targets are common 8 and 16 bit platforms but doesn't have to be limited to that. It's architecture independent in the sense that all assembly pseudo opcodes are built with macros. Macro files can be included with the standard C pre-processor.
