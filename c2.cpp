@@ -710,11 +710,15 @@ public:
 				extract_dependencies(f, final_file.string(), f->c2);
 
 				cmd = use_clang ? "clang " : "g++ ";
-				cmd += lib_generate_includes(f->c2);
+				if(!f->c2)
+				{
+					cmd += lib_generate_includes(f->c2);
+				}
 				
 				if(f->flags.size())
 				{
-					cmd += " " + f->flags;
+					if(!f->c2)cmd += " ";
+					cmd += f->flags;
 				}
 				
 #ifndef _WIN32
