@@ -55,3 +55,6 @@ macro postarg @arg
 {
 	c2_add_arg(arg.str());
 }
+
+#define repeat(X) for(int c2repeatcount=0;c2repeatcount<(X);c2repeatcount++)
+#define REPEAT(X) for(int c2repeatcount=0;c2repeatcount<(X);c2repeatcount++)

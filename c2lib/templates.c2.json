@@ -70,6 +70,27 @@
 				}
 			]
 		},
+		"atari2600":{
+			"description" : "Atari2600 with 4KB of ROM at $f000",
+			"super" : "c2i",
+			"include" : "c2/h/c2i.h",
+			"arguments" : "--address-range 0xf000 0x10000 --out 0xf000 0x10000 {title}.rom",
+			"source":[
+				"c2i.cpp":{
+					"flags" : "-O2"
+				}
+			],
+			"template":[
+				"asm.cpp":{
+					"target" : "{title}.cpp"
+					"c2" : true
+					"flags" : "-O0"
+				},
+				"atari2600.s":{
+					"target" : "{title}.s"
+				}
+			]
+		},
 		"void":{
 			"description" : "Void c2 project, no target architecture for custom assembly of binaries and hacking",
 			"super" : "c2i",

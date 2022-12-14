@@ -441,3 +441,15 @@ macro jam
 {
 	byte $02
 }
+
+///////////////////////
+
+macro dop,nop2
+{
+	byte $04, $00
+}
+
+macro nop4
+{
+	byte $14, $00
+}

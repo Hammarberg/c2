@@ -23,7 +23,7 @@
 * Set variable switch.
 * Flag and hash+store switches to intermediate data that would affect compile outcome.
 * Cache labels between builds.
-* Atari 2600 target template.
+* ~~Atari 2600 target template.~~
 * More, deeper and prettier README.
 ## Overview
 c2 is an assembler wrapper top of a C++ compiler. c2 stems from retro/hobby assembler programming and the initial targets are common 8 and 16 bit platforms but doesn't have to be limited to that. It's architecture independent in the sense that all assembly pseudo opcodes are built with macros. Macro files can be included with the standard C pre-processor.
