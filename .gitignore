@@ -1,9 +1,4 @@
-*.ii
 *.o
-*.obj
-*.prg
-*.sym
-*.tmp
 *.vcxproj.user
 *~
 /.depend
@@ -14,5 +9,8 @@
 /c2.exe
 /c2.mk
 /compile_flags.txt
-/examples/*/imm/
+/examples/**/imm/
+/examples/**/*.prg
+/examples/**/*.sym
+/examples/**/*.rom
 /x64/
