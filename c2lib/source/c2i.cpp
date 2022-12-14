@@ -25,6 +25,7 @@
 #include <cstring>
 #include <map>
 #include <memory>
+#include <algorithm>
 
 #define ierror(...) c2_get_single()->c2_log(c2_eloglevel::error, nullptr, 0, __VA_ARGS__)
 #define iwarning(...) c2_get_single()->c2_log(c2_eloglevel::warning, nullptr, 0, __VA_ARGS__)
@@ -331,6 +332,7 @@ c2i::c2i(cmdi *pcmd)
 	
 	c2_cmd.add_info("--out", "-o", "<from> <to> [filename]: Outputs a binary. If no filename is given stdout will be used. To and from can be either addresses, labels or '-' or '+' as lowest/highest+1 address assembled.");
 	c2_cmd.add_info("--dump-vars", "-dv", "[filename]: Output variables. If no filename is given, stdout will be used");
+	c2_cmd.add_info("--dump-enum", "-de", "[filename]: Output variables in C++ enum format. If no filename is given, stdout will be used");
 	c2_cmd.add_info("--address-range", "-ar", "<start> <end>: Override the valid address range available for the assembly to target. Addresses must be numerical");
 
 	c2i::var a = "vice break";
@@ -797,6 +799,35 @@ void c2i::c2_post()
 		if(fp != stdout)
 			fclose(fp);
 	});
+	
+	c2_cmd.invoke("--dump-enum", 0, 1, [p](int arga, const char *argc[])
+	{
+		FILE *fp = stdout;
+		if(arga)
+		{
+			fp = fopen(argc[0], "w");
+			if(!fp)
+				throw "--dump-enum could not open file for writing";
+		}
+
+		std::vector<std::pair<std::string, int64_t>> sorted;
+		p->get_sorted_vars(sorted);
+		
+		fprintf(fp, "enum %s{\n", p->title.c_str());
+			
+		for(size_t r=0;r<sorted.size();r++)
+		{
+			std::string tmp = sorted[r].first;
+			std::replace(tmp.begin(), tmp.end(), '.', '_');
+
+			fprintf(fp, "\t%s = 0x%lx%s\n", tmp.c_str(), sorted[r].second, (r != sorted.size()-1 ? "," : ""));
+		}
+		fprintf(fp, "};\n");
+		
+		if(fp != stdout)
+			fclose(fp);
+	});
+	
 }
 
 void c2i::loadbin(const char *path, size_t offset, size_t length)
