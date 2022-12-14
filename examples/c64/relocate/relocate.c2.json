@@ -1,10 +1,10 @@
 {
-	"title" : "macros",
+	"title" : "relocate",
 	"basedir":".",
-	"arguments" : "--out-prg - + macros.prg --vice-cmd macros.sym",
-	"execute" : "x64 -silent -moncommands macros.sym macros.prg",
+	"arguments" : "--out-prg - + relocate.prg --vice-cmd relocate.sym",
+	"execute" : "x64sc -silent -moncommands relocate.sym relocate.prg",
 	"files":[
-		"macros.cpp":{
+		"relocate.cpp":{
 			"c2" : true,
 			"flags" : "-O0"
 		},

@@ -1,10 +1,10 @@
 {
-	"title" : "relocate",
+	"title" : "urpetscii",
 	"basedir":".",
-	"arguments" : "--out-prg - + relocate.prg --vice-cmd relocate.sym",
-	"execute" : "x64 -silent -moncommands relocate.sym relocate.prg",
+	"arguments" : "--out-prg - + urpetscii.prg --vice-cmd urpetscii.sym",
+	"execute" : "x64sc -silent -moncommands urpetscii.sym urpetscii.prg",
 	"files":[
-		"relocate.cpp":{
+		"urpetscii.cpp":{
 			"c2" : true,
 			"flags" : "-O0"
 		},

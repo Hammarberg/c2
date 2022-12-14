@@ -1,10 +1,10 @@
 {
-	"title" : "urpetscii",
+	"title" : "advbasic",
 	"basedir":".",
-	"arguments" : "--out-prg - + urpetscii.prg --vice-cmd urpetscii.sym",
-	"execute" : "x64 -silent -moncommands urpetscii.sym urpetscii.prg",
+	"arguments" : "--out-prg - + advbasic.prg --vice-cmd advbasic.sym",
+	"execute" : "x64sc -silent -moncommands advbasic.sym advbasic.prg",
 	"files":[
-		"urpetscii.cpp":{
+		"advbasic.cpp":{
 			"c2" : true,
 			"flags" : "-O0"
 		},
