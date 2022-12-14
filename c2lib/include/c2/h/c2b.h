@@ -157,6 +157,8 @@ struct sinternal
 	
 	std::string title;
 	
+	std::string added_arg;
+	
 	void get_sorted_vars(std::vector<std::pair<std::string, int64_t>> &out);
 	bool lookup_var(const std::string &in, int64_t &out);
 	

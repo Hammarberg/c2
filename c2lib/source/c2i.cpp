@@ -592,6 +592,7 @@ bool c2i::c2_assemble()
 	
 	if(result)
 	{
+		c2_cmd.add_args(p->added_arg.c_str());
 		c2_post();
 	}
 	
@@ -965,6 +966,12 @@ void c2i::loadstream(const char *cmd, size_t offset, size_t length)
 	}
 	
 	pclose(ep);
+}
+
+void c2i::c2_add_arg(const char *str)
+{
+	sinternal *p = (sinternal *)pinternal;
+	p->added_arg = str;
 }
 
 void c2i::c2_scope_push(uint32_t fileindex, uint32_t line)

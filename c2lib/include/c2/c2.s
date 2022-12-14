@@ -50,3 +50,8 @@ macro incstream @cmd, @param...
 	
 	loadstream(cmd.str(), offset, length);
 }
+
+macro postarg @arg
+{
+	c2_add_arg(arg.str());
+}
