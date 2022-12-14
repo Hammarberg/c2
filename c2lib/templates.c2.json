@@ -50,7 +50,7 @@
 			"super" : "c64",
 			"include" : "c2/c64/c64.h",
 			"arguments" : "--out-prg - + {title}.prg --vice-cmd {title}.sym",
-			"execute" : "x64 -silent -moncommands {title}.sym {title}.prg",
+			"execute" : "x64sc -silent -moncommands {title}.sym {title}.prg",
 			"source":[
 				"c2i.cpp":{
 					"flags" : "-O2"

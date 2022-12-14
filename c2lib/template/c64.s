@@ -1,4 +1,6 @@
 #include "c2/c64/c64.s"
+#include "c2/c64/kernal.s"
+#include "c2/mos/6502_unintended.s"
 
 			// {title}
 			
@@ -8,7 +10,7 @@
 			
 :			lda text,x
 			beq +
-			jsr $ffd2
+			jsr KERNAL_CHROUT
 			inx
 			jmp -
 
