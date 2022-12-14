@@ -968,10 +968,24 @@ void c2i::loadstream(const char *cmd, size_t offset, size_t length)
 	pclose(ep);
 }
 
-void c2i::c2_add_arg(const char *str)
+void c2i::c2_add_arg(const char *format, ...)
 {
+	va_list args;
+	
+	va_start (args, format);
+	int n = vsnprintf (nullptr, 0, format, args);
+	va_end (args);
+	
+	char *buffer = new char[n+8];
+	
+	va_start (args, format);
+	vsnprintf (buffer, n + 8, format, args);
+	va_end (args);
+	
 	sinternal *p = (sinternal *)pinternal;
-	p->added_arg = str;
+	p->added_arg = buffer;
+	
+	delete [] buffer;
 }
 
 void c2i::c2_scope_push(uint32_t fileindex, uint32_t line)

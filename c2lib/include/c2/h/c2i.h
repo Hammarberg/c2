@@ -356,7 +356,7 @@ public:
 	var loadvar(const char *file, size_t offset = 0, size_t length = -1);
 	void loadstream(const char *cmd, size_t offset = 0, size_t length = -1);
 	
-	void c2_add_arg(const char *str);
+	void c2_add_arg(const char *format, ...);
 
 	void c2_set_ram(int64_t base, int64_t size);
 	
