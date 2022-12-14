@@ -15,13 +15,15 @@
 * Zilog 80 support.
 * 8080 support.
 * CP/M support.
-* Cleanup error reporting.
+* ~~Cleanup error reporting.~~
+* Bug: C++ errors can sometimes be one line off.
 * C64 RLE packer 0200-ffff.
-* c2i interface to add to post command line.
+* ~~c2i interface to add to post command line.~~
 * Set pre-processor switch.
 * Set variable switch.
 * Flag and hash+store switches to intermediate data that would affect compile outcome.
 * Cache labels between builds.
+* Atari 2600 target template.
 * More, deeper and prettier README.
 ## Overview
 c2 is an assembler wrapper top of a C++ compiler. c2 stems from retro/hobby assembler programming and the initial targets are common 8 and 16 bit platforms but doesn't have to be limited to that. It's architecture independent in the sense that all assembly pseudo opcodes are built with macros. Macro files can be included with the standard C pre-processor.
