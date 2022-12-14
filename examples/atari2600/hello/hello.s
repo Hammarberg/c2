@@ -74,13 +74,13 @@ Overscan:
     jmp StartFrame  // ...and start it over!
 
 Phrase:
-    BYTE %00000000 // D
-    BYTE %01111000
-    BYTE %01000100
+    BYTE %00000000 // H
     BYTE %01000010
     BYTE %01000010
-    BYTE %01000100
-    BYTE %01111000
+    BYTE %01111110
+    BYTE %01000010
+    BYTE %01000010
+    BYTE %01000010
     BYTE %00000000 // E
     BYTE %01111110
     BYTE %01000000
