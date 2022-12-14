@@ -10,7 +10,7 @@
 		},
 		"source/c2i.cpp":{
 			"external" : true,
-			"flags" : "-O0"
+			"flags" : "-O2"
 		}
 	]
 }
