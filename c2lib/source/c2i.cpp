@@ -331,8 +331,9 @@ c2i::c2i(cmdi *pcmd)
 	pinternal = (void *)p;
 	
 	c2_cmd.add_info("--out", "-o", "<from> <to> [filename]: Outputs a binary. If no filename is given stdout will be used. To and from can be either addresses, labels or '-' or '+' as lowest/highest+1 address assembled.");
+	c2_cmd.add_info("--out-c", "-oc", "<from> <to> [filename]: Outputs a C-style formated hex array. Parameters are the same as for --out");
 	c2_cmd.add_info("--dump-vars", "-dv", "[filename]: Output variables. If no filename is given, stdout will be used");
-	c2_cmd.add_info("--dump-enum", "-de", "[filename]: Output variables in C++ enum format. If no filename is given, stdout will be used");
+	c2_cmd.add_info("--dump-enum", "-de", "[filename]: Output variables in C-style enum format. If no filename is given, stdout will be used");
 	c2_cmd.add_info("--address-range", "-ar", "<start> <end>: Override the valid address range available for the assembly to target. Addresses must be numerical");
 
 	c2i::var a = "vice break";
@@ -779,6 +780,53 @@ void c2i::c2_post()
 			fclose(fp);
 	});
 	
+	c2_cmd.invoke("--out-c", 2, 3, [&](int arga, const char *argc[])
+	{
+		int64_t from,to;
+		
+		if(!c2_resolve(argc[0], from))
+			throw "--out-c could not resolve 'from' address";
+		
+		if(!c2_resolve(argc[1], to))
+			throw "--out-c could not resolve 'to' address";
+			
+		if(from > to || from < RAM_base || from > RAM_base+RAM_size || to < RAM_base || to > RAM_base+RAM_size)
+			throw "--out-c addresses out of range";
+			
+		FILE *fp = stdout;
+		if(arga == 3)
+		{
+			fp = fopen(argc[2], "wb");
+			if(!fp)
+				throw "--out-c could not open file for writing";
+		}
+		
+		fprintf(fp,"unsigned char c_%s[]={", p->title.c_str());
+		
+		int64_t size = to - from;
+		const int64_t W = 8;
+		for(int64_t r = 0; r < size; r++)
+		{
+			int b = RAM[from-RAM_base+r];
+			if(r % W == 0)
+			{
+				fprintf(fp,"\n\t");
+			}
+			
+			fprintf(fp,"0x%02x",b);
+			
+			if(r != size - 1)
+			{
+				fprintf(fp,",");
+			}
+		}
+		
+		fprintf(fp,"\n};\n");
+		
+		if(fp != stdout)
+			fclose(fp);
+	});
+	
 	c2_cmd.invoke("--dump-vars", 0, 1, [p](int arga, const char *argc[])
 	{
 		FILE *fp = stdout;
@@ -814,7 +862,7 @@ void c2i::c2_post()
 		std::vector<std::pair<std::string, int64_t>> sorted;
 		p->get_sorted_vars(sorted);
 		
-		fprintf(fp, "enum %s{\n", p->title.c_str());
+		fprintf(fp, "enum e_%s{\n", p->title.c_str());
 			
 		for(size_t r=0;r<sorted.size();r++)
 		{
