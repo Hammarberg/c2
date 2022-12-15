@@ -50,24 +50,8 @@ public:
 	toklink signature;
 	std::vector<std::pair<std::string, std::vector<const char *>>> inputs;
 	
-	void print()
-	{
-		printf("signature: ");
-		signature.restart();
-		stok *o;
-		while((o = signature.pull_tok()))
-		{
-			printf("%s", o->format().c_str());
-		}
-		printf("\n");
-		
-		restart();
-		while((o = pull_tok()))
-		{
-			printf("%s", o->format().c_str());
-		}
-		printf("\n");
-	}
+	bool cmp(const cmacro &other);
+	void print();
 	
 private:
 	//stok *current = nullptr;

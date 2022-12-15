@@ -813,7 +813,7 @@ void c2a::parse_macro(toklink &link)
 			
 			for(size_t r=0; r<v.size(); r++)
 			{
-				if(v[r]->signature == signature)
+				if(v[r]->cmp(*m.get()))
 				{
 					error(title, "Macro already defined");
 				}

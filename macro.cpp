@@ -13,3 +13,56 @@
 
 #include "macro.h"
 
+#ifdef _WIN32
+#define strcasecmp _stricmp
+#endif
+
+void cmacro::print()
+{
+	printf("signature: ");
+	signature.restart();
+	stok *o;
+	while((o = signature.pull_tok()))
+	{
+		printf("%s", o->format().c_str());
+	}
+	printf("\n");
+	
+	restart();
+	while((o = pull_tok()))
+	{
+		printf("%s", o->format().c_str());
+	}
+	printf("\n");
+}
+
+bool cmacro::cmp(const cmacro &other)
+{
+	if(signature == other.signature)
+	{
+		if(inputs.size() == 0 && other.inputs.size() == 0)
+			return true;
+		
+		if(inputs.size() != other.inputs.size())
+			return false;
+
+		for(size_t r=0; r<inputs.size(); r++)
+		{
+			auto &one = inputs[r].second;
+			auto &two = other.inputs[r].second;
+			
+			if(one.size() != two.size())
+				return false;
+			
+			for(size_t l=0; l<one.size(); l++)
+			{
+				if(strcasecmp(one[l], two[l]))
+					return false;
+			}
+		}
+
+		return true;
+	}
+	
+	return false;
+}
