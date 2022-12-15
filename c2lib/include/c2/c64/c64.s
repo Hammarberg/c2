@@ -12,6 +12,7 @@
 */
 
 #pragma once
+#include "c2/c2.s"
 #include "c2/mos/6502.s"
 
 macro basic_startup
