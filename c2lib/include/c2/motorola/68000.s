@@ -284,6 +284,116 @@ macro add.l @[C2Dn]r1s,(@id).l
 	push16be(0xd1b9|(r1s<<9));
 	push32be(0|c2sr<32>(id));
 }
+macro add.w,add @[C2Dn]r1s,@[C2An]r1d
+{
+	push16be(0xd0c0|r1s|(r1d<<9));
+}
+macro add.w,add @[C2An]r1s,@[C2An]r1d
+{
+	push16be(0xd0c8|r1s|(r1d<<9));
+}
+macro add.w,add (@[C2An]r1s),@[C2An]r1d
+{
+	push16be(0xd0d0|r1s|(r1d<<9));
+}
+macro add.w,add (@[C2An]r1s)+,@[C2An]r1d
+{
+	push16be(0xd0d8|r1s|(r1d<<9));
+}
+macro add.w,add -(@[C2An]r1s),@[C2An]r1d
+{
+	push16be(0xd0e0|r1s|(r1d<<9));
+}
+macro add.w,add @is(@[C2An]r1s),@[C2An]r1d
+{
+	push16be(0xd0e8|r1s|(r1d<<9));
+	push16be(0|c2sr<16>(is));
+}
+macro add.w,add @is(@[C2An]r1s,@[C2Dns]r2s),@[C2An]r1d
+{
+	push16be(0xd0f0|r1s|(r1d<<9));
+	push16be(0|((r2s&7)<<12)|c2sr<8>(is)|(((r2s>>3)&0x1)<<11));
+}
+macro add.w,add (@is).w,@[C2An]r1d
+{
+	push16be(0xd0f8|(r1d<<9));
+	push16be(0|c2sr<16>(is));
+}
+macro add.w,add (@is).l,@[C2An]r1d
+{
+	push16be(0xd0f9|(r1d<<9));
+	push32be(0|c2ur<32>(is));
+}
+macro add.w,add #@is,@[C2An]r1d
+{
+	push16be(0xd0fc|(r1d<<9));
+	push16be(0|c2ur<16>(is));
+}
+macro add.w,add @is(pc),@[C2An]r1d
+{
+	push16be(0xd0fa|(r1d<<9));
+	push16be(0|c2sr<16>(is));
+}
+macro add.w,add @is(pc,@[C2Dns]r2s),@[C2An]r1d
+{
+	push16be(0xd0fb|(r1d<<9));
+	push16be(0|((r2s&7)<<12)|c2sr<8>(is)|(((r2s>>3)&0x1)<<11));
+}
+macro add.l @[C2Dn]r1s,@[C2An]r1d
+{
+	push16be(0xd1c0|r1s|(r1d<<9));
+}
+macro add.l @[C2An]r1s,@[C2An]r1d
+{
+	push16be(0xd1c8|r1s|(r1d<<9));
+}
+macro add.l (@[C2An]r1s),@[C2An]r1d
+{
+	push16be(0xd1d0|r1s|(r1d<<9));
+}
+macro add.l (@[C2An]r1s)+,@[C2An]r1d
+{
+	push16be(0xd1d8|r1s|(r1d<<9));
+}
+macro add.l -(@[C2An]r1s),@[C2An]r1d
+{
+	push16be(0xd1e0|r1s|(r1d<<9));
+}
+macro add.l @is(@[C2An]r1s),@[C2An]r1d
+{
+	push16be(0xd1e8|r1s|(r1d<<9));
+	push16be(0|c2sr<16>(is));
+}
+macro add.l @is(@[C2An]r1s,@[C2Dns]r2s),@[C2An]r1d
+{
+	push16be(0xd1f0|r1s|(r1d<<9));
+	push16be(0|((r2s&7)<<12)|c2sr<8>(is)|(((r2s>>3)&0x1)<<11));
+}
+macro add.l (@is).w,@[C2An]r1d
+{
+	push16be(0xd1f8|(r1d<<9));
+	push16be(0|c2sr<16>(is));
+}
+macro add.l (@is).l,@[C2An]r1d
+{
+	push16be(0xd1f9|(r1d<<9));
+	push32be(0|c2ur<32>(is));
+}
+macro add.l #@is,@[C2An]r1d
+{
+	push16be(0xd1fc|(r1d<<9));
+	push32be(0|c2ur<32>(is));
+}
+macro add.l @is(pc),@[C2An]r1d
+{
+	push16be(0xd1fa|(r1d<<9));
+	push16be(0|c2sr<16>(is));
+}
+macro add.l @is(pc,@[C2Dns]r2s),@[C2An]r1d
+{
+	push16be(0xd1fb|(r1d<<9));
+	push16be(0|((r2s&7)<<12)|c2sr<8>(is)|(((r2s>>3)&0x1)<<11));
+}
 macro adda.w,adda @[C2Dn]r1s,@[C2An]r1d
 {
 	push16be(0xd0c0|r1s|(r1d<<9));
