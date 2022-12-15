@@ -91,6 +91,27 @@
 				}
 			]
 		},
+		"68000":{
+			"description" : "Plain 68000 with 16MB of RAM for embedded projects",
+			"super" : "c2i",
+			"include" : "c2/h/c2i.h",
+			"arguments" : "--address-range 0x0 0x1000000 --out - + {title}.bin",
+			"source":[
+				"c2i.cpp":{
+					"flags" : "-O2"
+				}
+			],
+			"template":[
+				"asm.cpp":{
+					"target" : "{title}.cpp"
+					"c2" : true
+					"flags" : "-O0"
+				},
+				"68000.s":{
+					"target" : "{title}.s"
+				}
+			]
+		},
 		"void":{
 			"description" : "Void c2 project, no target architecture for custom assembly of binaries and hacking",
 			"super" : "c2i",
