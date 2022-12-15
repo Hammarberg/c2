@@ -92,38 +92,8 @@ stok *c2a::clone(const stok *t)
 	return n;
 }
 	
-/*
-static char *read_file(const char *file)
-{
-	FILE *fp = fopen(file, "r");
-	if(!fp)
-		return nullptr;
-
-	fseek(fp, 0, SEEK_END);
-	size_t size = ftell(fp);
-	fseek(fp, 0, SEEK_SET);
-
-	char *data = new char[size];
-	fread(data, 1, size, fp);
-	fclose(fp);
-	
-	return data;
-}
-*/
-
 c2a::~c2a()
 {
-	/*
-	for(auto i : macros)
-	{
-		std::vector<cmacro *> &v = i.second;
-		
-		for(size_t r=0; r<v.size(); r++)
-		{
-			delete v[r];
-		}
-	}
-	*/
 }
 
 stok *c2a::get_next_nonspace(toklink &link, bool unlink)
@@ -343,16 +313,6 @@ bool c2a::match_macro_parameters(const std::vector<stok *> &def, const std::vect
 		outargs.clear();
 		outisarray.clear();
 		
-		/*
-		for(int l=0; l<NUM_RDEF; l++)
-		{
-			std::cout << ridx[l] << " ";
-		}
-		std::cout << "\n";
-		
-		int a = 5;
-		*/
-		
 		// Methodical sanity checks here
 		for(int l=0, v=0; l<NUM_RDEF; l++)
 		{
@@ -438,9 +398,7 @@ bool c2a::match_macro_parameters(const std::vector<stok *> &def, const std::vect
 						}
 						
 						args.push_back(d);
-						//std::cout << d->format().c_str();
 					}
-					//std::cout << "\n";
 					
 					if(bc)
 					{
@@ -1345,9 +1303,6 @@ void c2a::s_parse2(toklink &link)
 		if(!o)
 			break;
 		
-		// Fixup preprocessor line and file markers
-		//printf("\"%s\" line %d fileindex %d\n", o->name, line, fileindex);
-		
 		if(o->fileindex != fileindex || o->line != line)
 		{
 			fileindex = o->fileindex;
@@ -1541,13 +1496,9 @@ void c2a::process(const char *infile, const char *outfile)
 	
 	tokoutfile write(outfile);
 	
-	//printf("\n---------------------------------------\n");
-
 	link.restart();
 	while((o = link.pull_tok()) != nullptr)
 	{
-		//printf("%s",o->name);
-		//fflush(stdout);
 		write.push_tok(o);
 	}
 }
