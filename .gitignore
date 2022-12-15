@@ -13,4 +13,5 @@
 /examples/**/*.prg
 /examples/**/*.sym
 /examples/**/*.rom
+/examples/**/*.bin
 /x64/
