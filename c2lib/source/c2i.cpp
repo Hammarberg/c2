@@ -115,12 +115,12 @@ void c2i::c2_corg::restore(int64_t a, int64_t w)
 
 void sinternal::get_sorted_vars(std::vector<std::pair<std::string, int64_t>> &out)
 {
-	std::map<int64_t, std::string> sorted;
+	std::multimap<int64_t, std::string> sorted;
 	
 	for(auto i=registered_vars.begin(); i!=registered_vars.end(); i++)
 	{
 		if(!strstr(i->first.c_str(), "c2_auto_"))
-			sorted[i->second->get()] = i->first;
+			sorted.insert({i->second->get(),i->first});
 	}
 	
 	for(auto i=sorted.begin(); i!=sorted.end(); i++)
