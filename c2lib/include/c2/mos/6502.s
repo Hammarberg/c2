@@ -12,6 +12,7 @@
 */
 
 #pragma once
+#include "c2/c2.s"
 
 /*
 ADC  Add Memory to Accumulator with Carry
