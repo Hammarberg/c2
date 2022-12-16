@@ -62,7 +62,8 @@ static bool loadfile(const char *file, std::string &out)
 	out.resize(n);
 	char *p = &(out[0]);
 
-	fread(p, 1, n, fp);
+	n = fread(p, 1, n, fp);
+	out.resize(n);
 		
 	fclose(fp);
 	return true;
