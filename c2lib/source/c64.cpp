@@ -34,6 +34,7 @@ c64::c64(cmdi *pcmd)
 	c2_set_ram(0, 0x10000);
 	
 	c2_cmd.add_info("--out-prg", "-op", "<from> <to> [filename]: Outputs a Commodore PRG. Parameters are the same as for --out");
+	c2_cmd.add_info("--out-rle", "-rle", "<from> <to> [filename]: Outputs a Commodore RLE compressed PRG. Can compress $0200-$ffff. Parameters are the same as for --out");
 	c2_cmd.add_info("--vice-cmd", "-vc", "[filename]: Outputs a VICE comapatible monitor command file contianing labels and breakpoints. Use -moncommands <filename> as VICE arguments.");
 	
 	sc64internal *p = new sc64internal;
@@ -266,6 +267,83 @@ void c64::c2_post()
 		uint16_t hdr = uint16_t(from);
 		fwrite(&hdr, 1, sizeof(hdr), fp);
 		fwrite(RAM+from-RAM_base, 1, to - from, fp);
+		
+		if(fp != stdout)
+			fclose(fp);
+	});
+	
+	c2_cmd.invoke("--out-rle", 2, 3, [&](int arga, const char *argc[])
+	{
+		int64_t from,to;
+		
+		if(!c2_resolve(argc[0], from))
+			throw "--out-rle could not resolve 'from' address";
+		
+		if(!c2_resolve(argc[1], to))
+			throw "--out-rle could not resolve 'to' address";
+			
+		if(from > to || from < RAM_base || from >= RAM_base+RAM_size || to < RAM_base || to >= RAM_base+RAM_size)
+			throw "--out-rle addresses out of range";
+			
+		FILE *fp = stdout;
+		if(arga == 3)
+		{
+			fp = fopen(argc[2], "wb");
+			if(!fp)
+				throw "--out-rle could not open file for writing";
+		}
+		
+#include "c64_depack.c"
+#include "c64_depack_enum.c"
+
+		int size = int(to - from);
+		uint8_t *ram = RAM+from-RAM_base;
+		
+		int lit = 0;
+		uint8_t b=0;
+		fwrite(&b, 1, 1, fp);
+		for(int r = 0; r<size;)
+		{
+			int l;
+			b = ram[r];
+			for(l=1; r+l<size && l<128; l++)
+			{
+				if(b != ram[r+l])
+					break;
+			}
+			
+			if(l >= 3)
+			{
+				if(lit)
+				{
+					fwrite(&lit, 1, 1, fp);
+					lit = 0;
+				}
+				
+				fwrite(&b, 1, 1, fp);
+				int t = 0 - l;
+				fwrite(&t, 1, 1, fp);
+				
+				r += l;
+			}
+			else
+			{
+				lit++;
+				fwrite(&b, 1, 1, fp);
+				
+				if(lit == 127)
+				{
+					fwrite(&lit, 1, 1, fp);
+					lit = 0;
+				}
+				r++;
+			}
+		}
+		if(lit)
+		{
+			fwrite(&lit, 1, 1, fp);
+			lit = 0;
+		}
 		
 		if(fp != stdout)
 			fclose(fp);

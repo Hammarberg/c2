@@ -1,0 +1,20 @@
+{
+	"title" : "rle",
+	"basedir":".",
+	"arguments" : "--out-c - + ../../c2lib/source/c64_depack.c --dump-enum ../../c2lib/source/c64_depack_enum.c",
+	"execute" : "",
+	"files":[
+		"rle.cpp":{
+			"c2" : true,
+			"flags" : "-O0"
+		},
+		"source/c2i.cpp":{
+			"external" : true,
+			"flags" : "-O2"
+		},
+		"source/c64.cpp":{
+			"external" : true,
+			"flags" : "-O2"
+		}
+	]
+}

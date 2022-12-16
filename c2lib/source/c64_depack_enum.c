@@ -1,0 +1,22 @@
+enum e_rle{
+	depack_tmp = 0x9a,
+	depack = 0x9a,
+	depack_copydown = 0x9b,
+	depack_csh = 0x9b,
+	depack_csl = 0x9d,
+	depack_cs = 0xa1,
+	depack_cd = 0xa4,
+	depack_dx = 0xaa,
+	depack_rle = 0xb3,
+	depack_da = 0xc2,
+	depack_reenter = 0xc8,
+	depack_sa = 0xd6,
+	depack_subsrc = 0xe0,
+	depack_subdst = 0xeb,
+	depack_pop = 0xf7,
+	depack_exit = 0x100,
+	depack_jump = 0x10f,
+	depack_end = 0x112,
+	copystart = 0x82a,
+	copyend = 0x8a2
+};
