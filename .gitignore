@@ -9,7 +9,7 @@
 /c2.exe
 /c2.mk
 /compile_flags.txt
-/examples/**/imm/
+/**/imm/
 /examples/**/*.prg
 /examples/**/*.sym
 /examples/**/*.rom
