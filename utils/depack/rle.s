@@ -46,11 +46,12 @@ depack:
 .cd:		sta $0000,y
 			iny
 			bne .cs
-.dx:		dex
-			bmi .reenter
+.dx:		cpx #0
+			beq .reenter
+			dex
 			inc .cs+2
 			inc .cd+2
-			bne .cs		//bra sinse it always jumps
+			bne .cs		//bra since it always jumps
 
 .rle:		clc
 			sbc #0
@@ -60,7 +61,7 @@ depack:
 			jsr .subdst
 			jsr .pop
 			dey
-.da:		sta $ffff,y
+.da:		sta $0000,y
 			dey
 			bpl -
 
@@ -73,7 +74,7 @@ depack:
 			jsr .subsrc
 			dey
 
-.sa:		lda $ffff,y
+.sa:		lda $0000,y
 			sta (.da+1),y
 			dey
 			bpl -
@@ -108,7 +109,7 @@ depack:
 			lda #$37
 			sta $01
 			cli
-.jump:		jmp $ffff
+.jump:		jmp $0000
 
 .end:
 			@ = @

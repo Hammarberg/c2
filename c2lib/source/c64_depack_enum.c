@@ -1,12 +1,12 @@
 enum e_rle{
-	depack_tmp = 0x9a,
-	depack = 0x9a,
-	depack_copydown = 0x9b,
-	depack_csh = 0x9b,
-	depack_csl = 0x9d,
-	depack_cs = 0xa1,
-	depack_cd = 0xa4,
-	depack_dx = 0xaa,
+	depack_tmp = 0x98,
+	depack = 0x98,
+	depack_copydown = 0x99,
+	depack_csh = 0x99,
+	depack_csl = 0x9b,
+	depack_cs = 0x9f,
+	depack_cd = 0xa2,
+	depack_dx = 0xa8,
 	depack_rle = 0xb3,
 	depack_da = 0xc2,
 	depack_reenter = 0xc8,
@@ -18,5 +18,5 @@ enum e_rle{
 	depack_jump = 0x10f,
 	depack_end = 0x112,
 	copystart = 0x82a,
-	copyend = 0x8a2
+	copyend = 0x8a4
 };
