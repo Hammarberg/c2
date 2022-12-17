@@ -282,7 +282,7 @@ void c64::c2_post()
 		if(!c2_resolve(argc[1], to))
 			throw "--out-rle could not resolve 'to' address";
 			
-		if(from > to || from < RAM_base || from >= RAM_base+RAM_size || to < RAM_base || to >= RAM_base+RAM_size)
+		if(from < 0x0200 || from > to || from < RAM_base || from >= RAM_base+RAM_size || to < RAM_base || to >= RAM_base+RAM_size)
 			throw "--out-rle addresses out of range";
 		
 		if(!c2_resolve(argc[2], start))
@@ -332,7 +332,7 @@ void c64::c2_post()
 				
 				stream.push(b, 1);
 				int t = 0 - l;
-				stream.push(t, t);
+				stream.push(t, t + 1);
 				
 				r += l;
 			}
@@ -386,6 +386,7 @@ void c64::c2_post()
 			
 			move_bytes = 0;
 			move_from = 0;
+			safe_depack_base = 0;
 		}
 		else
 		{
@@ -398,14 +399,12 @@ void c64::c2_post()
 			}
 			
 			memcpy(staging+save_to, &stream.stream[move_bytes], stream.stream.size() - move_bytes);
-			//memset(staging+save_to, 0x02, stream.stream.size() - move_bytes);
 			save_to += int(stream.stream.size()) - move_bytes;
 			
 			move_from = save_to;
 			depack_from = save_to;
 			
 			memcpy(staging+save_to, &stream.stream[0], move_bytes);
-			//memset(staging+save_to, 0x01, move_bytes);
 			save_to += move_bytes;
 		}
 		
@@ -416,6 +415,23 @@ void c64::c2_post()
 		
 		// Configure depacker
 		int offset = 256 - (move_bytes & 255);
+		
+		/*
+		printf(
+		"move_bytes       %x\n"
+		"offset           %x\n"
+		"move_from        %x\n"
+		"safe_depack_base %x\n"
+		"depack_to        %x\n"
+		"depack_from      %x\n",
+		move_bytes,
+		offset,
+		move_from,
+		safe_depack_base,
+		depack_to,
+		depack_from);
+		*/
+		
 		staging[copystart + depack_csl - depack + 1] = uint8_t(offset);
 		staging[copystart + depack_csh - depack + 1] = uint8_t(move_bytes  >> 8);
 		
@@ -481,7 +497,6 @@ void c64::c2_post()
 		if(fp != stdout)
 			fclose(fp);
 	});
-	
 }
 
 void c64::c64_vice(var v)
