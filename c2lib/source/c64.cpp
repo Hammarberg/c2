@@ -34,7 +34,7 @@ c64::c64(cmdi *pcmd)
 	c2_set_ram(0, 0x10000);
 	
 	c2_cmd.add_info("--out-prg", "-op", "<from> <to> [filename]: Outputs a Commodore PRG. Parameters are the same as for --out");
-	c2_cmd.add_info("--out-rle", "-rle", "<from> <to> <start> [filename]: Outputs a Commodore RLE compressed PRG. Can compress $0200-$ffff. Parameters are similar to --out with exception for the start address/label");
+	c2_cmd.add_info("--out-rle", "-rle", "<from> <to> <start> [filename] [-sei] [-1 <value>] Outputs a Commodore RLE compressed PRG. Can compress $0200-$ffff. Parameters are similar to --out with exception for the start address/label that can also take 'basic_startup' as argument");
 	c2_cmd.add_info("--vice-cmd", "-vc", "[filename]: Outputs a VICE comapatible monitor command file contianing labels and breakpoints. Use -moncommands <filename> as VICE arguments.");
 	
 	sc64internal *p = new sc64internal;
@@ -272,6 +272,19 @@ void c64::c2_post()
 			fclose(fp);
 	});
 	
+	bool sei = false;
+	c2_cmd.invoke("-sei", 0, 0, [&](int arga, const char *argc[])
+	{
+		sei = true;
+	});
+	
+	int64_t z1 = 0x37;
+	c2_cmd.invoke("-1", 1, 1, [&](int arga, const char *argc[])
+	{
+		if(!c2_resolve(argc[0], z1))
+			throw "-1 could not resolve 1 value";
+	});
+	
 	c2_cmd.invoke("--out-rle", 3, 4, [&](int arga, const char *argc[])
 	{
 		int64_t from,to,start;
@@ -284,9 +297,18 @@ void c64::c2_post()
 			
 		if(from < 0x0200 || from > to || from < RAM_base || from >= RAM_base+RAM_size || to < RAM_base || to >= RAM_base+RAM_size)
 			throw "--out-rle addresses out of range";
-		
-		if(!c2_resolve(argc[2], start))
-			throw "--out-rle could not resolve 'start' address";
+
+		bool basic_startup = false;
+		if(strcasecmp(argc[2],"basic_startup"))
+		{
+			if(!c2_resolve(argc[2], start))
+				throw "--out-rle could not resolve 'start' address";
+		}
+		else
+		{
+			basic_startup = true;
+			start = 0xa659;
+		}
 			
 		struct
 		{
@@ -447,6 +469,14 @@ void c64::c2_post()
 		staging[copystart + depack_sa - depack + 1] = uint8_t(depack_from & 255);
 		staging[copystart + depack_sa - depack + 2] = uint8_t(depack_from  >> 8);
 		
+		staging[copystart + depack_one - depack + 1] = uint8_t(z1);
+		
+		if(sei)
+			staging[copystart + depack_cli - depack + 0] = 0xea;
+		
+		if(!basic_startup)
+			staging[copystart + depack_jump - depack + 0] = 0x4c;
+			
 		staging[copystart + depack_jump - depack + 1] = uint8_t(start & 255);
 		staging[copystart + depack_jump - depack + 2] = uint8_t(start  >> 8);
 		

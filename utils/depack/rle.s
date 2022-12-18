@@ -107,10 +107,11 @@ depack:
 			sta depack,x
 			dex
 			bpl -
-			lda #$37
+.one:		lda #$37
 			sta $01
-			cli
-.jump:		jmp $0000
+.cli:		cli
+.jump:		jsr $a659
+			jmp $a7ae
 
 .end:
 			@ = @
