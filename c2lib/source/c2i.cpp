@@ -487,33 +487,33 @@ void c2i::c2_reset_pass()
 
 bool c2i::c2_assemble()
 {
-	c2_pre();
-	
-	c2_cmd.invoke("--address-range", 2, 2, [&](int arga, const char *argc[])
-	{
-		int64_t from,to;
-		
-		if(!c2_resolve(argc[0], from, false))
-			throw "--address-range could not resolve 'from' address";
-		
-		if(!c2_resolve(argc[1], to, false))
-			throw "--address-range could not resolve 'to' address";
-			
-		if(from >= to || from < 0 )
-			throw "--address-range addresses out of range";
-			
-		// Valid range of RAM
-		c2_set_ram(from, to-from);
-			
-	});
-	
 	sinternal *p = (sinternal *)pinternal;
 	bool result = true;
-	
-	std::vector<cmur3::shash> history;
 
 	try
 	{
+		c2_pre();
+		
+		c2_cmd.invoke("--address-range", 2, 2, [&](int arga, const char *argc[])
+		{
+			int64_t from,to;
+			
+			if(!c2_resolve(argc[0], from, false))
+				throw "--address-range could not resolve 'from' address";
+			
+			if(!c2_resolve(argc[1], to, false))
+				throw "--address-range could not resolve 'to' address";
+				
+			if(from >= to || from < 0 )
+				throw "--address-range addresses out of range";
+				
+			// Valid range of RAM
+			c2_set_ram(from, to-from);
+				
+		});
+		
+		std::vector<cmur3::shash> history;
+		
 		int64_t org_backup_a, org_backup_w;
 		c2_org.backup(org_backup_a, org_backup_w);
 			
@@ -593,8 +593,18 @@ bool c2i::c2_assemble()
 	
 	if(result)
 	{
-		c2_cmd.add_args(p->added_arg.c_str());
-		c2_post();
+		try
+		{
+			c2_cmd.add_args(p->added_arg.c_str());
+			c2_post();
+		}
+		catch(const char *str)
+		{
+			result = false;
+			std::string out = "error: ";
+			out += str;
+			fprintf(stderr, "%s\n", out.c_str());
+		}
 	}
 	
 	return result;
