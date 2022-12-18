@@ -388,7 +388,7 @@ void c64::c2_post()
 		
 		int packed_data = save_to;
 		
-		int safe_depack_base = int(from) - (stream.safe + 16);
+		int safe_depack_base = int(from) - (stream.safe + 1);
 		
 		int move_bytes = 0;
 		int move_from = 0;
