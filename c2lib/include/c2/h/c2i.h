@@ -27,6 +27,8 @@ class c2i
 {
 public:
 
+	typedef int64_t cint;
+
 	class c2_corg
 	{
 	public:
