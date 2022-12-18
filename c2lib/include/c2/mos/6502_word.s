@@ -1,3 +1,16 @@
+/*
+	c2 - cross assembler
+	Copyright (C) 2022  John Hammarberg (crt@nospam.binarybone.com)
+
+	This file is part of c2.
+
+	c2 is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+	c2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License along with c2. If not, see <https://www.gnu.org/licenses/>.
+*/
+
 #pragma once
 
 //-------------------------------------------------------------------------------
@@ -5,7 +18,8 @@
 //-------------------------------------------------------------------------------
 
 // (d) = (s)
-macro move16 @s, @d {
+macro move16 @s, @d
+{
 	lda s
 	sta d
 	lda s+1
@@ -13,7 +27,8 @@ macro move16 @s, @d {
 }
 
 // (d+X) = (s)
-macro move16 @s, @d,x {
+macro move16 @s, @d,x
+{
 	lda s
 	sta d,x
 	lda s+1
@@ -21,7 +36,8 @@ macro move16 @s, @d,x {
 }
 
 // (d+Y) = (s)
-macro move16 @s, @d,y {
+macro move16 @s, @d,y
+{
 	lda s
 	sta d,y
 	lda s+1
@@ -29,7 +45,8 @@ macro move16 @s, @d,y {
 }
 
 // (d) = (s+X)
-macro move16 @s,x , @d {
+macro move16 @s,x , @d
+{
 	lda s,x
 	sta d
 	lda s+1,x
@@ -37,7 +54,8 @@ macro move16 @s,x , @d {
 }
 
 // (d+X) = (s+X)
-macro move16 @s,x , @d,x {
+macro move16 @s,x , @d,x
+{
 	lda s,x
 	sta d,x
 	lda s+1,x
@@ -45,7 +63,8 @@ macro move16 @s,x , @d,x {
 }
 
 // (d+Y) = (s+X)
-macro move16 @s,x , @d,y {
+macro move16 @s,x , @d,y
+{
 	lda s,x
 	sta d,y
 	lda s+1,x
@@ -53,7 +72,8 @@ macro move16 @s,x , @d,y {
 }
 
 // (d) = (s+Y)
-macro move16 @s,y , @d {
+macro move16 @s,y , @d
+{
 	lda s,y
 	sta d
 	lda s+1,y
@@ -61,7 +81,8 @@ macro move16 @s,y , @d {
 }
 
 // (d+X) = (s+Y)
-macro move16 @s,y , @d,x {
+macro move16 @s,y , @d,x
+{
 	lda s,y
 	sta d,x
 	lda s+1,y
@@ -69,7 +90,8 @@ macro move16 @s,y , @d,x {
 }
 
 // (d+Y) = (s+Y)
-macro move16 @s,y , @d,y {
+macro move16 @s,y , @d,y
+{
 	lda s,y
 	sta d,y
 	lda s+1,y
@@ -77,7 +99,8 @@ macro move16 @s,y , @d,y {
 }
 
 // (d) = (s) using X
-macro move16x @s, @d {
+macro move16x @s, @d
+{
 	ldx s
 	stx d
 	ldx s+1
@@ -85,7 +108,8 @@ macro move16x @s, @d {
 }
 
 // (d) = i
-macro move16 #@i, @d {
+macro move16 #@i, @d
+{
 	lda #i&255
 	sta d
 	lda #i>>8
@@ -93,7 +117,8 @@ macro move16 #@i, @d {
 }
 
 // (d+X) = i
-macro move16 #@i, @d,x {
+macro move16 #@i, @d,x
+{
 	lda #i&255
 	sta d,x
 	lda #i>>8
@@ -101,7 +126,8 @@ macro move16 #@i, @d,x {
 }
 
 // (d+Y) = i
-macro move16 #@i, @d,y {
+macro move16 #@i, @d,y
+{
 	lda #i&255
 	sta d,y
 	lda #i>>8
@@ -109,7 +135,8 @@ macro move16 #@i, @d,y {
 }
 
 // (d) = i using X
-macro move16x #@i, @d {
+macro move16x #@i, @d
+{
 	ldx #i&255
 	stx d
 	ldx #i>>8
@@ -117,24 +144,27 @@ macro move16x #@i, @d {
 }
 
 // (d) = (d) + 1
-macro inc16 @d {
+macro inc16 @d
+{
 	inc d
-	bne .br
+	bne +
 	inc d+1
-.br:
+:
 }
 
 // (d) = (d) - 1
-macro dec16 @d {
+macro dec16 @d
+{
 	lda d
-	bne .br
+	bne +
 	dec d+1
-.br:
+:
 	dec d
 }
 
 // (d) = (d) + (s)
-macro add16 @s, @d {
+macro add16 @s, @d
+{
 	lda s
 	adc d
 	sta d
@@ -144,7 +174,8 @@ macro add16 @s, @d {
 }
 
 // (d) = (d) + i
-macro add16 #@i, @d {
+macro add16 #@i, @d
+{
 	lda #i&255
 	adc d
 	sta d
@@ -154,7 +185,8 @@ macro add16 #@i, @d {
 }
 
 // (d) = (d) + A
-macro adda16 @d {
+macro adda16 @d
+{
 	adc d
 	sta d
 	lda #0
@@ -163,7 +195,8 @@ macro adda16 @d {
 }
 
 // (d) = (d) - (s)
-macro sub16 @s, @d {
+macro sub16 @s, @d
+{
 	lda d
 	sbc s
 	sta d
@@ -173,7 +206,8 @@ macro sub16 @s, @d {
 }
 
 // (o) = (d) - (s)
-macro sub16 @s, @d, @o {
+macro sub16 @s, @d, @o
+{
 	lda d
 	sbc s
 	sta o
@@ -183,47 +217,64 @@ macro sub16 @s, @d, @o {
 }
 
 // (d) = (d) - i
-macro sub16 #@i, @d {
-	lda d
-	sbc #i&
-	sta d
-	bcs .br1
-	dec d+1
-.br1:
+macro sub16 #@i, @d
+{
+    if(i.bits() <= 8)
+    {
+		lda d
+		sbc #i
+		sta d
+		bcs +
+		dec d+1
+:
+	}
+	else
+	{
+		lda d
+		sbc #i&255
+		sta d
+		lda d+1
+		sbc #i>>8
+		sta d+1
+	}
 }
 
 // (d) = (d) - i, branch to br if high byte is unaffected
-macro sub16 #@i, @d, br:16 {
-	lda d
-	sbc #i
-	sta d
-	bcs br
-	dec d+1
-}
-
-// Macro overload for 16 bit immidiate value
-// (d) = (d) - i
-macro sub16 #i:16, @d {
-	lda d
-	sbc #i&255
-	sta d
-	lda d+1
-	sbc #i>>8
-	sta d+1
+macro sub16 #@i, @d, @br
+{
+    if(i.bits() <= 8)
+    {
+		lda d
+		sbc #i
+		sta d
+		bcs br
+		dec d+1
+	}
+	else
+	{
+		lda d
+		sbc #i&255
+		sta d
+		lda d+1
+		sbc #i>>8
+		sta d+1
+	}
 }
 
 // (d) = (d) - A
-macro suba16 @d {
+macro suba16 @d
+{
 	eor #$ff
 	adc d
 	sta d
-	bcs .br1
+	bcs +
 	dec d+1
-.br1:
+:
 }
 
 // (d) = (d) - A, branch to br if high byte is unaffected
-macro suba16 @d, br:16 {
+macro suba16 @d, @br
+{
 	eor #$ff
 	adc d
 	sta d
@@ -231,36 +282,9 @@ macro suba16 @d, br:16 {
 	dec d+1
 }
 
-// (d) exchange value with (s) via stack
-macro swap16 @s, @d {
-	lda d
-	pha
-	lda s
-	sta d
-	pla
-	sta s
-	lda d+1
-	pha
-	lda s+1
-	sta d+1
-	pla
-	sta s+1
-}
-
-// (d) exchange value with (s), garbage X
-macro swap16x @s, @d {
-	ldx d
-	lda s
-	sta d
-	stx s
-	ldx d+1
-	lda s+1
-	sta d+1
-	stx s+1
-}
-
 // (d) != (s), branch to br if not equal
-macro cmp16bne @s, @d, br:16 {
+macro cmp16bne @s, @d, @br
+{
 	lda s
 	cmp d
 	bne br
@@ -270,7 +294,8 @@ macro cmp16bne @s, @d, br:16 {
 }
 
 // (d) != i, branch to br if not equal
-macro cmp16bne #@i, @d, br:16 {
+macro cmp16bne #@i, @d, @br
+{
 	lda #i&255
 	cmp d
 	bne br
@@ -280,30 +305,33 @@ macro cmp16bne #@i, @d, br:16 {
 }
 
 // (d) == (s), branch to br if equal
-macro cmp16beq @s, @d, br:16 {
+macro cmp16beq @s, @d, @br
+{
 	lda s
 	cmp d
-	bne .br
+	bne +
 	lda s+1
 	cmp d+1
 	beq br
-.br:
+:
 }
 
 // (d) == (s), branch to br if equal
-macro cmp16beq #@i, @d, br:16 {
+macro cmp16beq #@i, @d, @br
+{
 	lda #i&255
 	cmp d
-	bne .br
+	bne +
 	lda #i>>8
 	cmp d+1
 	beq br
-.br:
+:
 }
 
 // Uses 8 bits of (s) and 16 bits of (d)
 // (d) = (d) * (s), uses one byte at (tmp), garbage X
-macro mul16 @s, @d, tmp:0 {
+macro mul16 @s, @d, @tmp
+{
 	lda s
 	sta tmp
 	lda #$00
@@ -338,7 +366,7 @@ macro push16 @s
 }
 
 // (Stack) = i
-macro push16 #i:16
+macro push16 #@i
 {
 	lda #i & 255
 	pha

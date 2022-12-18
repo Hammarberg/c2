@@ -84,20 +84,21 @@ depack:
 			lda .sa+1
 			sbc .tmp
 			sta .sa+1
-			bcs +
+			bcs ++
 			dec .sa+2
 .subdst:	sec
-			lda .da+1
+:			lda .da+1
 			sbc .tmp
 			sta .da+1
 			bcs +
 			dec .da+2
 :			rts
 .pop:
-			dec .sa+1
+			lda .sa+1
 			bne +
 			dec .sa+2
-:			lda (.sa+1,x)
+:			dec .sa+1
+			lda (.sa+1,x)
 			rts
 .exit:
 			// Restore zp
@@ -106,10 +107,11 @@ depack:
 			sta depack,x
 			dex
 			bpl -
-			lda #$37
+.one:		lda #$37
 			sta $01
-			cli
-.jump:		jmp $0000
+.cli:		cli
+.jump:		jsr $a659
+			jmp $a7ae
 
 .end:
 			@ = @
