@@ -13,7 +13,7 @@
 
 #pragma once
 #include <memory>
-
+#include <map>
 #include "tokfeed.h"
 #include "macro.h"
 #include "linear.h"
@@ -31,7 +31,7 @@ public:
 	~c2a();
 
 	// Map of discovered macro definitions
-	std::unordered_map<std::string, std::vector<std::shared_ptr<cmacro>>> macros;
+	std::unordered_map<std::string, std::multimap<int, std::shared_ptr<cmacro>>> macros;
 
 	// Information about each label
 	struct clabel

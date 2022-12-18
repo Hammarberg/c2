@@ -15,8 +15,10 @@ enum e_rle{
 	depack_subdst = 0xe9,
 	depack_pop = 0xf5,
 	depack_exit = 0x100,
+	depack_one = 0x10a,
+	depack_cli = 0x10e,
 	depack_jump = 0x10f,
-	depack_end = 0x112,
+	depack_end = 0x115,
 	copystart = 0x82a,
-	copyend = 0x8a6
+	copyend = 0x8a9
 };

@@ -266,6 +266,18 @@ public:
 	stok *pos = nullptr, *end = nullptr;
 	bool is_streaming = false;
 	
+	int count()
+	{
+		int n = 0;
+		stok *p = pchain->first;
+		while(p)
+		{
+			n++;
+			p = p->next;
+		}
+		return n;
+	}
+	
 	struct schain
 	{
 		stok *first = nullptr, *last = nullptr;

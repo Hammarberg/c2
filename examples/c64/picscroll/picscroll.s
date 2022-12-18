@@ -1,24 +1,9 @@
 #include "c2/c64/c64.s"
 #include "c2/c64/c64_vic2.s"
 #include "c2/c64/c64_irq.s"
+#include "c2/mos/6502_word.s"
 
 			// picscroll
-
-macro move16 #@i, @d
-{
-	lda #i&255
-	sta d
-	lda #i>>8
-	sta d+1
-}
-
-macro inc16 @d
-{
-	inc d
-	bne .br
-	inc d+1
-.br:
-}
 
 macro tile_sprites_x @num, @width, @left
 {
