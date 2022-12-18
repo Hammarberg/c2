@@ -308,6 +308,9 @@ void c64::c2_post()
 		{
 			basic_startup = true;
 			start = 0xa659;
+			
+			if(from > 0x0800)
+				from = 0x0800;
 		}
 			
 		struct
