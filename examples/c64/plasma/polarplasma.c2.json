@@ -1,7 +1,7 @@
 {
 	"title" : "polarplasma",
 	"basedir":".",
-	"arguments" : "--out-rle 0x0801 + codeStart polarplasma.prg --vice-cmd polarplasma.sym",
+	"arguments" : "--out-rle 0x0801 + basic_startup polarplasma.prg --vice-cmd polarplasma.sym",
 	"execute" : "x64sc -silent -moncommands polarplasma.sym polarplasma.prg",
 	"files":[
 		"polarplasma.cpp":{
