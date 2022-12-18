@@ -48,23 +48,23 @@ public:
 	struct c2_vardata
 	{
 		c2_vardata(int64_t in=0, int32_t ib=1, int32_t ia=0, int32_t ic=1)
-		: a(ia), b(ib), c(ic)
+		: c2va(ia), c2vb(ib), c2vc(ic)
 		{
-			v.n = in;
+			c2vv.c2vn = in;
 		}
 		
 		union
 		{
-			int64_t n;		//Value
-			int64_t *p;		//Or pointer to values
-		}v;
+			int64_t c2vn;		//Value
+			int64_t *c2vp;		//Or pointer to values
+		}c2vv;
 
-		uint32_t a;			//Allocated elements
-		int32_t b;			//Highest bit count
-		uint32_t c;			//Number of values, 1 minimum
-		char *s = nullptr;	//Holds temporary string buffer
+		uint32_t c2va;			//Allocated elements
+		int32_t c2vb;			//Highest bit count
+		uint32_t c2vc;			//Number of values, 1 minimum
+		char *c2vs = nullptr;	//Holds temporary string buffer
 		
-		int64_t get() const { if(!a){ return v.n; } return v.p[0]; }
+		int64_t get() const { if(!c2va){ return c2vv.c2vn; } return c2vv.c2vp[0]; }
 	};
 
 	template<typename T>
@@ -77,24 +77,24 @@ public:
 		c2_basevar(const char *name, void *dum) { c2_get_single()->register_var(name, this); }
 		template<typename I> c2_basevar(const c2_basevar<I> &o) { copy(o); }
 		c2_basevar(const c2_basevar &o) { copy(o); }
-		c2_basevar(int64_t n, uint32_t ib = 0) : c2_vardata(n) { b = ib ? ib : calc_bits(n); }
-		c2_basevar(int n) : c2_vardata(n) { b = calc_bits(n); }
-		c2_basevar(const c2_corg &o) : c2_vardata(o.orga) { b = calc_bits(o.orga); }
+		c2_basevar(int64_t n, uint32_t ib = 0) : c2_vardata(n) { c2vb = ib ? ib : calc_bits(n); }
+		c2_basevar(int n) : c2_vardata(n) { c2vb = calc_bits(n); }
+		c2_basevar(const c2_corg &o) : c2_vardata(o.orga) { c2vb = calc_bits(o.orga); }
 		
 		c2_basevar(std::initializer_list<int64_t> elements)
 		{
 			size_t count = elements.size();
-			a = c = count;
-			v.p = (int64_t *) c2i::c2_malloc(sizeof(int64_t) * count);
+			c2va = c2vc = count;
+			c2vv.c2vp = (int64_t *) c2i::c2_malloc(sizeof(int64_t) * count);
 			int32_t nb = 0;
 			size_t r=0;
 			for(auto i = elements.begin(); i != elements.end(); i++, r++)
 			{
-				int32_t cb = calc_bits(v.p[r] = *i);
+				int32_t cb = calc_bits(c2vv.c2vp[r] = *i);
 				if(cb > nb)
 					nb = cb;
 			}
-			b = nb;
+			c2vb = nb;
 		}
 		
 		c2_basevar(const char *pstr)
@@ -102,105 +102,105 @@ public:
 			if(pstr)
 			{
 				size_t count = c2i::c2_strlen(pstr);
-				a = c = count;
-				v.p = (int64_t *) c2i::c2_malloc(sizeof(int64_t) * count);
+				c2va = c2vc = count;
+				c2vv.c2vp = (int64_t *) c2i::c2_malloc(sizeof(int64_t) * count);
 				int32_t nb = 0;
 				for(size_t r=0; r<count; r++)
 				{
-					int32_t cb = calc_bits(v.p[r] = pstr[r]);
+					int32_t cb = calc_bits(c2vv.c2vp[r] = pstr[r]);
 					if(cb > nb)
 						nb = cb;
 				}
-				b = nb;
+				c2vb = nb;
 			}
 			else
 			{
-				a = 0;
-				b = c = 1;
-				v.n = 0;
+				c2va = 0;
+				c2vb = c2vc = 1;
+				c2vv.c2vn = 0;
 			}
 		}
 		
-		~c2_basevar() { internal_clear(); if(s){ c2i::c2_free(s); } }
+		~c2_basevar() { internal_clear(); if(c2vs){ c2i::c2_free(c2vs); } }
 		
 		template<typename I> c2_basevar &operator=(const c2_basevar<I> &o) { internal_clear(); copy(o); return *this; }
 		c2_basevar& operator=(const c2_basevar &o) { internal_clear(); copy(o); return *this; }
-		c2_basevar &operator=(int64_t n) { internal_clear(); v.n = n; a = 0; b = calc_bits(n); c = 1; return *this; }
-		c2_basevar &operator=(const c2_corg &o) { internal_clear(); v.n = o.orga; a = 0; b = calc_bits(o.orga); c = 1; return *this; }
+		c2_basevar &operator=(int64_t n) { internal_clear(); c2vv.c2vn = n; c2va = 0; c2vb = calc_bits(n); c2vc = 1; return *this; }
+		c2_basevar &operator=(const c2_corg &o) { internal_clear(); c2vv.c2vn = o.orga; c2va = 0; c2vb = calc_bits(o.orga); c2vc = 1; return *this; }
 		
-		int64_t &operator[](int64_t n) { b = 0; return getat(n); }
-		operator int64_t&() { b = 0; return getat(0); }
+		int64_t &operator[](int64_t n) { c2vb = 0; return getat(n); }
+		operator int64_t&() { c2vb = 0; return getat(0); }
 		
-		size_t size() const { return c; }
+		size_t size() const { return c2vc; }
 		
-		void clear() { internal_clear(); a = b = v.n = 0; c = 1; }
+		void clear() { internal_clear(); c2va = c2vb = c2vv.c2vn = 0; c2vc = 1; }
 		
-		int32_t bits() { internal_bits(); return b; }
+		int32_t bits() { internal_bits(); return c2vb; }
 		
 		const char *str()
 		{
-			s = (char *)c2i::c2_realloc(s, c + 1);
-			char *p = s;
+			c2vs = (char *)c2i::c2_realloc(c2vs, c2vc + 1);
+			char *p = c2vs;
 			
-			for(size_t r=0; r<c; r++, p++)
+			for(size_t r=0; r<c2vc; r++, p++)
 			{
 				*p = char(getat(r));
 			}
 			
 			*p = 0;
 			
-			return s;
+			return c2vs;
 		}
 		
 		int value() const { return get(); }
 		
 	private:
-		void internal_clear() { if(a){ c2i::c2_free(v.p); } }
+		void internal_clear() { if(c2va){ c2i::c2_free(c2vv.c2vp); } }
 		
 		template<typename I> void copy(const c2_basevar<I> &o)
 		{
-			if(!o.a)
+			if(!o.c2va)
 			{
-				a = o.a;
-				b = o.b;
-				c = o.c;
-				v.n = o.v.n;
+				c2va = o.c2va;
+				c2vb = o.c2vb;
+				c2vc = o.c2vc;
+				c2vv.c2vn = o.c2vv.c2vn;
 			}
 			else
 			{
-				c = a = o.c;
-				b = o.b;
-				v.p = (int64_t *)c2i::c2_malloc(sizeof(int64_t[c]));
-				c2i::c2_memcpy(v.p, o.v.p, sizeof(int64_t[c]));
+				c2vc = c2va = o.c2vc;
+				c2vb = o.c2vb;
+				c2vv.c2vp = (int64_t *)c2i::c2_malloc(sizeof(int64_t[c2vc]));
+				c2i::c2_memcpy(c2vv.c2vp, o.c2vv.c2vp, sizeof(int64_t[c2vc]));
 			}
 		}
 		
-		int64_t &getat(int64_t n){ if(!n && !a){ return v.n; } ensurearray(n); return v.p[n]; }
+		int64_t &getat(int64_t n){ if(!n && !c2va){ return c2vv.c2vn; } ensurearray(n); return c2vv.c2vp[n]; }
 		
 		void ensurearray(int64_t n)
 		{
 			if(n < 0)
 				throw "negative";
 			
-			if(n < c)
+			if(n < c2vc)
 				return;
 			
-			if(n < a)
+			if(n < c2va)
 			{
-				c = uint32_t(n) + 1;
+				c2vc = uint32_t(n) + 1;
 				return;
 			}
 			
-			int64_t on = a ? v.p[0] : v.n;
-			int64_t oa = a;
+			int64_t on = c2va ? c2vv.c2vp[0] : c2vv.c2vn;
+			int64_t oa = c2va;
 			
-			a = uint32_t(n) * 2;
-			c = uint32_t(n) + 1;
+			c2va = uint32_t(n) * 2;
+			c2vc = uint32_t(n) + 1;
 			
-			v.p = (int64_t *)c2i::c2_realloc(oa ? v.p : nullptr, sizeof(int64_t) * a);
-			c2i::c2_memset((void *)&v.p[oa], 0, sizeof(int64_t) * (a - oa));
+			c2vv.c2vp = (int64_t *)c2i::c2_realloc(oa ? c2vv.c2vp : nullptr, sizeof(int64_t) * c2va);
+			c2i::c2_memset((void *)&c2vv.c2vp[oa], 0, sizeof(int64_t) * (c2va - oa));
 			
-			v.p[0] = on;
+			c2vv.c2vp[0] = on;
 		}
 		
 		static int32_t calc_bits(int64_t n)
@@ -227,20 +227,20 @@ public:
 		
 		void internal_bits()
 		{
-			if(!b)
+			if(!c2vb)
 			{
-				if(a)
+				if(c2va)
 				{
-					for(uint32_t r=0; r<c; r++)
+					for(uint32_t r=0; r<c2vc; r++)
 					{
-						int32_t bb = calc_bits(v.p[r]);
-						if(bb > b)
-							b = bb;
+						int32_t bb = calc_bits(c2vv.c2vp[r]);
+						if(bb > c2vb)
+							c2vb = bb;
 					}
 				}
 				else
 				{
-					b = calc_bits(v.n);
+					c2vb = calc_bits(c2vv.c2vn);
 				}
 			}
 		}
