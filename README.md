@@ -17,7 +17,7 @@
 * CP/M support.
 * ~~Cleanup error reporting.~~
 * Bug: C++ errors can sometimes be one line off.
-* C64 RLE packer 0200-ffff.
+* ~~C64 RLE packer 0200-ffff.~~
 * ~~c2i interface to add to post command line.~~
 * Set pre-processor switch.
 * Set variable switch.
@@ -256,7 +256,7 @@ macro move_byte @src, @dst
         move_byte #123, $1000
         move_byte $1000, $2000
 ```
-Matching of a macro is done in the order they are declared. When using paranthesis in expressions, consider these examples:
+Macro are matched against declared macros with the most parameter/operators first. While it's legal to completely wrap your expression in paranthesises, this can however interfere with macro matching if you are not careful. Consider these examples:
 ```
 macro dowork @input
 {
@@ -268,8 +268,14 @@ macro dowork (@input)
         //Second
 }
 
-        dowork 5*(3+1)          //Matches only the first
-        dowork (5*(3+1))        //Matches the first but would also match the second, is that intentional?
+        dowork 5*(3+1)          //Tests second first, matches the first
+        dowork (5*(3+1))        //Matches the second, is this intended?
+```
+A concrete example in 6502 assembly:
+```
+        lda variable+2,y        //lda @n,y is matched
+        lda (variable+2),y      //lda (@n),y indirect zero page is matched
+        lda 2+(variable),y      //lda @n,y is matched
 ```
 ### Indexed input
 ### Variadic input
@@ -298,7 +304,7 @@ Besides the executable, c2 is also dependent on its library to operate. The libr
 
 It's possible to copy, modify or extend parts of c2lib and place those modifications in your local directory to override.
 ## Include files & search order
-Additional include search paths can be added with one or multiple `--include <path>` or `-i <path>`. This works for both pre-processor includes as well as incbin or c2 file system.
+Additional include search paths can be added with one or multiple `--include <path>` or `-i <path>`. This works for both pre-processor includes as well as incbin and c2 file system.
 
 It searches the explicitly set paths first followed by the include folders in c2lib.
 # Defined targets / Templates
@@ -310,6 +316,8 @@ A plain 6502 template with 64KB of RAM.
 Commodore 64 with provided utilities.
 ### c64vice
 Commodore 64 with provided utilities configured to auto-lauch in VICE (x64) with symbols and optional breakpoints.
+### atari2600
+Atari2600 with 4KB of ROM at $f000
 ## c65
 ## 68000
 ## 68020
