@@ -439,7 +439,7 @@ bool c2a::match_macro(stok *io, toklink &link)
 		return false;
 	}
 	
-	std::vector<std::shared_ptr<cmacro>> &v = i->second;
+	auto &v = i->second;
 	
 	stok *pend = o = o->get_next_nonspace();
 	
@@ -454,9 +454,9 @@ bool c2a::match_macro(stok *io, toklink &link)
 	std::vector<std::vector<stok *>> outargs;
 	std::vector<bool> outisarray;
 		
-	for(size_t r=0; r<v.size(); r++)
+	for(auto mi = v.rbegin(); mi != v.rend(); mi++)
 	{
-		cmacro *m = v[r].get();
+		cmacro *m = mi->second.get();
 		//m->print();
 		m->signature.restart();
 		
@@ -805,21 +805,21 @@ void c2a::parse_macro(toklink &link)
 		
 		if(i == macros.end())
 		{
-			macros[name].push_back(m);
+			macros[name].insert({signature.count(), m});
 		}
 		else
 		{
-			std::vector<std::shared_ptr<cmacro>> &v = i->second;
+			auto &v = i->second;
 			
-			for(size_t r=0; r<v.size(); r++)
+			for(auto mi = v.begin(); mi != v.end(); mi++)
 			{
-				if(v[r]->cmp(*m.get()))
+				if(mi->second->cmp(*m.get()))
 				{
 					error(title, "Macro already defined");
 				}
 			}
 			
-			i->second.push_back(m);
+			i->second.insert({signature.count(), m});
 		}
 	}
 	
