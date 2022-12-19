@@ -58,3 +58,6 @@ macro postarg @arg
 
 #define repeat(TIMES) for(int c2repeatcount=0;c2repeatcount<(TIMES);c2repeatcount++)
 #define REPEAT repeat
+
+#define rrepeat(TIMES) for(int c2repeatcount=(TIMES)-1;c2repeatcount>=0;c2repeatcount--)
+#define RREPEAT rrepeat
