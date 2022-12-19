@@ -841,42 +841,42 @@ macro bit @n
 
 macro bpl @n
 {
-	byte $10, n-@-2
+	byte $10, c2sr<8>(n-@-2)
 }
 
 macro bmi @n
 {
-	byte $30, n-@-2
+	byte $30, c2sr<8>(n-@-2)
 }
 
 macro bvc @n
 {
-	byte $50, n-@-2
+	byte $50, c2sr<8>(n-@-2)
 }
 
 macro bvs @n
 {
-	byte $70, n-@-2
+	byte $70, c2sr<8>(n-@-2)
 }
 
 macro bcc @n
 {
-	byte $90, n-@-2
+	byte $90, c2sr<8>(n-@-2)
 }
 
 macro bcs @n
 {
-	byte $b0, n-@-2
+	byte $b0, c2sr<8>(n-@-2)
 }
 
 macro bne @n
 {
-	byte $d0, n-@-2
+	byte $d0, c2sr<8>(n-@-2)
 }
 
 macro beq @n
 {
-	byte $f0, n-@-2
+	byte $f0, c2sr<8>(n-@-2)
 }
 
 // BRK

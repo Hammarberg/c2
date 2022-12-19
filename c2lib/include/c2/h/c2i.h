@@ -279,6 +279,12 @@ public:
 		return s.n == n;
 	}
 	
+	template<int BITS> bool c2st(int64_t n)
+	{
+		struct {int64_t n:BITS;}s; s.n = n;
+		return s.n == n;
+	}
+	
 	template<int BITS> int64_t c2ur(int64_t n)
 	{
 		struct {uint64_t n:BITS;}s; s.n = n;
