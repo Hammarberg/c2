@@ -108,7 +108,7 @@ public:
 
 	cmda command;
 	
-	bool use_clang = true;
+	std::string compiler;
 
 	std::filesystem::path basedir;
 	std::filesystem::path intermediatedir = "imm";
@@ -360,7 +360,7 @@ public:
 		data->dependency.clear();
 
 		char buf[1024];
-		std::string command = use_clang ? "clang " : "g++ ";
+		std::string command = compiler + " ";
 		command += lib_generate_includes(c2) + " -MM -MG " + quote_path(file);
 		std::string output;
 		
@@ -576,6 +576,43 @@ public:
 		}
 	}
 	
+	void set_compiler()
+	{
+		compiler = lib_cfg_get_string("compiler");
+		if(!compiler.size())
+		{
+			// Try auto detect
+			static const char *list[]={"clang++","clang","g++","gcc", nullptr};
+			std::string tmp;
+			for(int r=0; list[r]; r++)
+			{
+				bool found = false;
+				
+				try
+				{
+					tmp = list[r];
+					tmp += " --version";
+					sh_execute(tmp.c_str());
+					found = true;
+				}
+				catch(const char *str)
+				{
+				}
+				
+				if(found)
+				{
+					compiler = list[r];
+					break;
+				}
+			}
+		}
+		
+		if(!compiler.size())
+		{
+			throw "No compiler found in path. Either add clang/gcc to system path or specify the path in config";
+		}
+	}
+	
 	bool load_project(const char* projectfile)
 	{
 		std::string bdata, tmp;
@@ -600,6 +637,7 @@ public:
 
 		chdir(basedir.string().c_str());
 		lib_basepath();	// Let clibrary know we are in the project folder
+		set_compiler();
 
 		// Intermediate
 		tmp = cfg->Get("intermediate").GetString();
@@ -725,7 +763,7 @@ public:
 				dirty_link = true;
 				extract_dependencies(f, final_file.string(), f->c2);
 
-				cmd = use_clang ? "clang " : "g++ ";
+				cmd = compiler + " ";
 				if(!f->c2)
 				{
 					cmd += lib_generate_includes(f->c2);
@@ -747,7 +785,7 @@ public:
 					std::string i = make_intermediate_path(make_ext(file_subpath, ".ii"));
 					std::string ii = make_intermediate_path(make_ext(file_subpath, ".ii.ii"));
 					
-					precmd = use_clang ? "clang " : "g++ ";
+					precmd = compiler + " ";
 					precmd += lib_generate_includes(true);
 
 					if(f->flags.size())
@@ -798,7 +836,7 @@ public:
 				fprintf(stderr, "%s is dirty\n", link_target.c_str());
 			}
 			
-			cmd = use_clang ? "clang " : "g++ ";
+			cmd = compiler + " ";
 			cmd += " -g -shared -o " + quote_path(link_target);
 			for(size_t r=0; r<files.size(); r++)
 			{

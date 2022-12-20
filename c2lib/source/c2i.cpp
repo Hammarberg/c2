@@ -141,7 +141,7 @@ bool sinternal::lookup_var(const std::string &in, int64_t &out)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// c2file
+// c2_file
 ///////////////////////////////////////////////////////////////////////////////
 
 struct c2file_data
@@ -151,21 +151,21 @@ struct c2file_data
 };
 
 
-c2i::c2file::c2file(const char *file)
+c2i::c2_file::c2_file(const char *file)
 {
 	c2file_data *p = new c2file_data;
 	pinternal = (void *)p;
 	open(file);
 }
 
-c2i::c2file::~c2file()
+c2i::c2_file::~c2_file()
 {
 	close();
 	c2file_data *p = (c2file_data *)pinternal;
 	delete p;
 }
 
-bool c2i::c2file::open(const char *file)
+bool c2i::c2_file::open(const char *file)
 {
 	close();
 	
@@ -191,7 +191,7 @@ bool c2i::c2file::open(const char *file)
 	return false;
 }
 
-void c2i::c2file::close()
+void c2i::c2_file::close()
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	if(p->fp)
@@ -202,13 +202,13 @@ void c2i::c2file::close()
 	}
 }
 
-int64_t c2i::c2file::size()
+int64_t c2i::c2_file::size()
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	return p->size;
 }
 
-int64_t c2i::c2file::seek(int64_t newpos)
+int64_t c2i::c2_file::seek(int64_t newpos)
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	if(newpos < 0 || newpos > p->size)
@@ -220,19 +220,19 @@ int64_t c2i::c2file::seek(int64_t newpos)
 	return newpos;
 }
 
-int64_t c2i::c2file::pos()
+int64_t c2i::c2_file::pos()
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	return (int64_t)ftell(p->fp);
 }
 
-bool c2i::c2file::eof()
+bool c2i::c2_file::eof()
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	return feof(p->fp) != 0;
 }
 
-int64_t c2i::c2file::pop8()
+int64_t c2i::c2_file::pop8()
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	uint8_t d;
@@ -240,7 +240,7 @@ int64_t c2i::c2file::pop8()
 	return d;
 }
 
-int64_t c2i::c2file::pop16le()
+int64_t c2i::c2_file::pop16le()
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	uint16_t d;
@@ -248,7 +248,7 @@ int64_t c2i::c2file::pop16le()
 	return d;
 }
 
-int64_t c2i::c2file::pop16be()
+int64_t c2i::c2_file::pop16be()
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	uint16_t d;
@@ -256,7 +256,7 @@ int64_t c2i::c2file::pop16be()
 	return swap_endian(d);
 }
 
-int64_t c2i::c2file::pop32le()
+int64_t c2i::c2_file::pop32le()
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	uint32_t d;
@@ -264,7 +264,7 @@ int64_t c2i::c2file::pop32le()
 	return d;
 }
 
-int64_t c2i::c2file::pop32be()
+int64_t c2i::c2_file::pop32be()
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	uint32_t d;
@@ -272,7 +272,7 @@ int64_t c2i::c2file::pop32be()
 	return swap_endian(d);
 }
 
-int64_t c2i::c2file::pop64le()
+int64_t c2i::c2_file::pop64le()
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	int64_t d;
@@ -280,7 +280,7 @@ int64_t c2i::c2file::pop64le()
 	return d;
 }
 
-int64_t c2i::c2file::pop64be()
+int64_t c2i::c2_file::pop64be()
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	int64_t d;
@@ -288,7 +288,7 @@ int64_t c2i::c2file::pop64be()
 	return swap_endian(d);
 }
 
-int64_t c2i::c2file::read(void *ptr, int64_t size)
+int64_t c2i::c2_file::read(void *ptr, int64_t size)
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	int rs = fread(ptr, 1, size, p->fp);
@@ -892,7 +892,7 @@ void c2i::c2_post()
 void c2i::loadbin(const char *path, size_t offset, size_t length)
 {
 	
-	c2file fp;
+	c2_file fp;
 	
 	if(!fp.open(path))
 	{
@@ -934,7 +934,7 @@ void c2i::loadbin(const char *path, size_t offset, size_t length)
 c2i::var c2i::loadvar(const char *path, size_t offset, size_t length)
 {
 	var v;
-	c2file fp;
+	c2_file fp;
 	
 	if(!fp.open(path))
 	{

@@ -44,7 +44,8 @@ bool ctemplate::loadfile(const char *file, std::string &out)
 	out.resize(n);
 	char *p = &(out[0]);
 
-	fread(p, 1, n, fp);
+	size_t read = fread(p, 1, n, fp);
+	out.resize(read);
 		
 	fclose(fp);
 	return true;
@@ -63,7 +64,8 @@ bool ctemplate::loadfile_direct(const char *file, std::string &out)
 	out.resize(n);
 	char *p = &(out[0]);
 
-	fread(p, 1, n, fp);
+	size_t read = fread(p, 1, n, fp);
+	out.resize(read);
 		
 	fclose(fp);
 	return true;
