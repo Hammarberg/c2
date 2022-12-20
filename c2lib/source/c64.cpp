@@ -517,7 +517,7 @@ void c64::c2_post()
 		
 		for(size_t r=0;r<sorted.size();r++)
 		{
-			fprintf(fp, "add_label %04x .%s\n", sorted[r].second, sorted[r].first.c_str());
+			fprintf(fp, "add_label %04lx .%s\n", sorted[r].second, sorted[r].first.c_str());
 		}
 		
 		sc64internal *c64ip = (sc64internal *)c64_internal;
@@ -593,7 +593,7 @@ void c64::loadsid(const char *path, var &init, var &play)
 		uint32_t speed;		//Big endian
 	}head;
 	
-	c2file fp;
+	c2_file fp;
 	if(!fp.open(path))
 	{
 		c2_error("SID file not found");

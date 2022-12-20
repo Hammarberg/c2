@@ -337,11 +337,11 @@ public:
 	
 	void c2_log(c2_eloglevel level, const char *file, int line, const char *format, ...);
 	
-	class c2file
+	class c2_file
 	{
 	public:
-		c2file(const char *file = nullptr);
-		~c2file();
+		c2_file(const char *file = nullptr);
+		~c2_file();
 		bool open(const char *file);
 		void close();
 		int64_t size();
