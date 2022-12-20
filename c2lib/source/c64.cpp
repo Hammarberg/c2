@@ -1,4 +1,4 @@
-/*
+﻿/*
 	c2 - cross assembler
 	Copyright (C) 2022  John Hammarberg (crt@nospam.binarybone.com)
 
@@ -18,6 +18,11 @@
 #include <cstdio>
 #include <cstdarg>
 #include <climits>
+
+#ifdef _WIN32
+#define strcasecmp _stricmp
+#endif
+
 
 struct sc64internal
 {
