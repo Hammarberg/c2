@@ -15,6 +15,8 @@
 #endif
 
 #include "library.h"
+#include "template.h"
+#include "json.h"
 #include <cstdlib>
 #ifdef _WIN32
 #include <windows.h>
@@ -22,6 +24,11 @@
 #include <unistd.h>
 #endif
 #include <limits.h>
+
+#define ENV_C2LIB_HOME "C2LIB_HOME"
+#define C2LIB "c2lib"
+#define NIX_GLOBAL "/usr/lib/" C2LIB
+#define C2CONFIG "config.c2.json"
 
 clibrary::clibrary()
 {
@@ -140,16 +147,24 @@ void clibrary::lib_initialize(const std::vector<std::filesystem::path> &expaths)
 #endif
 		}
 	}
+	
+	// Load config in order
+	load_config();
 }
 
 void clibrary::lib_basepath()
 {
+	// Project is known, set any library overrides
 	std::filesystem::path base = C2LIB;
 	
 	if(std::filesystem::is_directory(base))
 	{
 		push_path(base, true);
 	}
+	
+	// Override with any project specific config
+	base /= C2CONFIG;
+	load_config(base.string().c_str());
 }
 
 void clibrary::push_path(const std::filesystem::path &path, bool first)
@@ -287,4 +302,53 @@ std::string clibrary::quote_path(std::string path)
 	}
 
 	return path;
+}
+
+void clibrary::load_config()
+{
+	for(size_t r=0; r<libraries.size(); r++)
+	{
+		std::filesystem::path path = libraries[r] / C2CONFIG;
+		load_config(path.string().c_str());
+	}
+}
+
+void clibrary::load_config(const char *file)
+{
+	std::string buf;
+	if(!ctemplate::loadfile_direct(file, buf))
+		return;
+
+	std::unique_ptr<json::base> cfg(json::base::Decode(buf.c_str()));
+	
+	// Templates
+	json::array* p = (json::array*)cfg->Find("config");
+	if (p)
+	{
+		if (p->GetType() != json::type::ARRAY)
+		{
+			throw "config type not array";
+		}
+
+		for (size_t r = 0; r < p->data.size(); r++)
+		{
+			json::pair* ppair = (json::pair*)p->data[r];
+			if (ppair->GetType() != json::type::PAIR)
+			{
+				throw "Config type not pair";
+			}
+			
+			config[ppair->first] = ppair->second->GetString();
+		}
+	}
+}
+
+std::string clibrary::lib_cfg_get_string(const char *name)
+{
+	auto i = config.find(name);
+	
+	if(i == config.end())
+		return "";
+		
+	return i->second;
 }

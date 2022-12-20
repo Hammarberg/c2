@@ -14,12 +14,8 @@
 #pragma once
 #include <filesystem>
 #include <vector>
+#include <map>
 #include <cstdio>
-
-
-#define ENV_C2LIB_HOME "C2LIB_HOME"
-#define C2LIB "c2lib"
-#define NIX_GLOBAL "/usr/lib/" C2LIB
 
 /*
  * Library path search order:
@@ -52,6 +48,8 @@ public:
 	void lib_generate_includes_array(std::vector<std::string> &out);
 
 	static std::string quote_path(std::string path);
+	
+	std::string lib_cfg_get_string(const char *name);
 
 private:
 
@@ -60,5 +58,9 @@ private:
 	std::vector<std::filesystem::path> libraries;
 	std::vector<std::filesystem::path> library_include_paths;
 	std::vector<std::filesystem::path> user_include_paths;
+	
+	void load_config();
+	void load_config(const char *file);
+	std::map<std::string,std::string> config;
 };
 
