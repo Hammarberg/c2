@@ -1,4 +1,4 @@
-/*
+﻿/*
 	c2 - cross assembler
 	Copyright (C) 2022  John Hammarberg (crt@nospam.binarybone.com)
 
@@ -16,112 +16,152 @@
 
 macro lbpl @n
 {
-	if(c2st<8>(@+1-n))
+	static int longb = 0;
+	static int rel = 0;
+	rel = int(n) > int(@);
+	if(c2st<8>(@+1-n + longb*3*rel))
 	{
+		longb = 0;
 		bpl n
 	}
 	else
 	{
+		longb = 1;
 		bmi +
 		jmp n
-:
 	}
+:
 }
 
 macro lbmi @n
 {
-	if(c2st<8>(@+1-n))
+	static int longb = 0;
+	static int rel = 0;
+	rel = int(n) > int(@);
+	if(c2st<8>(@+1-n + longb*3*rel))
 	{
+		longb = 0;
 		bmi n
 	}
 	else
 	{
+		longb = 1;
 		bpl +
 		jmp n
-:
 	}
+:
 }
 
 macro lbvc @n
 {
-	if(c2st<8>(@+1-n))
+	static int longb = 0;
+	static int rel = 0;
+	rel = int(n) > int(@);
+	if(c2st<8>(@+1-n + longb*3*rel))
 	{
+		longb = 0;
 		bvc n
 	}
 	else
 	{
+		longb = 1;
 		bvs +
 		jmp n
-:
 	}
+:
 }
 
 macro lbvs @n
 {
-	if(c2st<8>(@+1-n))
+	static int longb = 0;
+	static int rel = 0;
+	rel = int(n) > int(@);
+	if(c2st<8>(@+1-n + longb*3*rel))
 	{
+		longb = 0;
 		bvs n
 	}
 	else
 	{
+		longb = 1;
 		bvc +
 		jmp n
-:
 	}
+:
 }
 
 macro lbcc @n
 {
-	if(c2st<8>(@+1-n))
+	static int longb = 0;
+	static int rel = 0;
+	rel = int(n) > int(@);
+	if(c2st<8>(@+1-n + longb*3*rel))
 	{
+		longb = 0;
 		bcc n
 	}
 	else
 	{
+		longb = 1;
 		bcs +
 		jmp n
-:
 	}
+:
 }
 
 macro lbcs @n
 {
-	if(c2st<8>(@+1-n))
+	static int longb = 0;
+	static int rel = 0;
+	rel = int(n) > int(@);
+	if(c2st<8>(@+1-n + longb*3*rel))
 	{
+		longb = 0;
 		bcs n
 	}
 	else
 	{
+		longb = 1;
 		bcc +
 		jmp n
+	}
 :
-	}
-}
-
-macro lbne @n
-{
-	if(c2st<8>(@+1-n))
-	{
-		bne n
-	}
-	else
-	{
-		beq +
-		jmp n
-:
-	}
 }
 
 macro lbeq @n
 {
-	if(c2st<8>(@+1-n))
+	static int longb = 0;
+	static int rel = 0;
+	rel = int(n) > int(@);
+	if(c2st<8>(@+1-n + longb*3*rel))
 	{
+		longb = 0;
 		beq n
 	}
 	else
 	{
+		longb = 1;
 		bne +
 		jmp n
-:
 	}
+:
+}
+
+macro lbne @n
+{
+	static int longb = 0;
+	static int rel = 0;
+	rel = int(n) > int(@);
+	if(c2st<8>(@+1-n + longb*3*rel))
+	{
+		longb = 0;
+		bne n
+	}
+	else
+	{
+		longb = 1;
+		beq +
+		jmp n
+	}
+:
 }
