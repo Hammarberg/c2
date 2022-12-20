@@ -1,4 +1,4 @@
-/*
+﻿/*
 	c2 - cross assembler
 	Copyright (C) 2022  John Hammarberg (crt@nospam.binarybone.com)
 
@@ -13,6 +13,8 @@
 
 #pragma once
 #include "6502.s"
+
+// For reference: https://csdb.dk/release/?id=212346
 
 ///////////////////////
 
@@ -444,7 +446,7 @@ macro jam
 
 ///////////////////////
 
-macro dop,nop2
+macro dop,nop3
 {
 	byte $04, $00
 }
