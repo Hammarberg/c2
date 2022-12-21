@@ -337,8 +337,13 @@ void clibrary::load_config(const char *file)
 			{
 				throw "Config type not pair";
 			}
-			
-			config[ppair->first] = ppair->second->GetString();
+
+			std::string sec = ppair->second->GetString();
+
+			if (sec.size())
+			{
+				config[ppair->first] = sec;
+			}
 		}
 	}
 }

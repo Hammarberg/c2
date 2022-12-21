@@ -368,7 +368,9 @@ public:
 		{
 			fprintf(stderr, "Executing: %s\n", command.c_str());
 		}
-
+#ifdef _WIN32
+		command = "\"" + command + "\"";
+#endif
 		FILE *ep = popen(command.c_str(), "r");
 		
 		if(!ep)
@@ -538,7 +540,12 @@ public:
 			fprintf(stderr ,"Executing: %s\n", str);
 		}
 		char buf[1024];
-		FILE *ep = popen(str, "r");
+
+		std::string tmp = str;
+#ifdef _WIN32
+		tmp = "\"" + tmp + "\"";
+#endif
+		FILE *ep = popen(tmp.c_str(), "r");
 		if(!ep)
 		{
 			throw "Error executing command";
@@ -578,7 +585,7 @@ public:
 	
 	void set_compiler()
 	{
-		compiler = lib_cfg_get_string("compiler");
+		compiler = quote_path(lib_cfg_get_string("compiler"));
 		if(!compiler.size())
 		{
 			// Try auto detect
@@ -595,7 +602,7 @@ public:
 					sh_execute(tmp.c_str());
 					found = true;
 				}
-				catch(const char *str)
+				catch(const char *)
 				{
 				}
 				

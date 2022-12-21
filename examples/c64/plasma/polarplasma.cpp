@@ -1,6 +1,5 @@
 #include "c2/c64/c64.h"
 #include <cmath>
-#include <iostream>
 
 class c2_project_polarplasma : public c64
 {
