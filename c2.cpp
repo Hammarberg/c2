@@ -44,10 +44,9 @@
 #define getcwd _getcwd
 #endif
 
-
 #define TITLE "c2 cross assembler 0.5  Copyright (C) 2022  John Hammarberg (CRT)\n"
 
-const uint32_t MAGIC_VERSION = 1337*1337+3;
+const uint32_t MAGIC_VERSION = 1337*1337+4;
 
 static bool loadfile(const char *file, std::string &out)
 {
@@ -418,7 +417,8 @@ public:
 				if(*p == ' ' || *p == 0x0d || *p == 0x0a) break;
 				else if(*p == '\\')
 				{
-					d += '\\';
+					if(p[1] != ' ')
+						d += '\\';
 					p++;
 				}
 				d += *p;
