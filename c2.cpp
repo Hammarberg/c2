@@ -533,7 +533,7 @@ public:
 		return file.substr(0, file.rfind('.')) + ext;
 	}
 	
-	void sh_execute(const char *str)
+	void sh_execute(const char *str, bool silent = false)
 	{
 		if(verbose)
 		{
@@ -541,10 +541,7 @@ public:
 		}
 		char buf[1024];
 
-		std::string tmp = str;
-#ifdef _WIN32
-		tmp = "\"" + tmp + "\"";
-#endif
+		std::string tmp = quote_path(str);
 		FILE *ep = popen(tmp.c_str(), "r");
 		if(!ep)
 		{
@@ -577,7 +574,10 @@ public:
 				}				
 			}
 			
-			fprintf(stderr ,"%s\n", output.c_str());
+			if (!silent)
+			{
+				fprintf(stderr, "%s\n", output.c_str());
+			}
 			
 			throw "Compile error";
 		}
@@ -589,7 +589,12 @@ public:
 		if(!compiler.size())
 		{
 			// Try auto detect
-			static const char *list[]={"clang++","clang","g++","gcc", nullptr};
+			static const char *list[]={
+				"clang++","clang","g++","gcc",
+#ifdef _WIN32
+				"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\Llvm\\x64\\bin\\clang++",
+#endif
+				nullptr};
 			std::string tmp;
 			for(int r=0; list[r]; r++)
 			{
@@ -597,9 +602,10 @@ public:
 				
 				try
 				{
-					tmp = list[r];
-					tmp += " --version";
-					sh_execute(tmp.c_str());
+					tmp = "\"";
+					tmp = quote_path(list[r]);
+					tmp += " --version 2>&1\"";
+					sh_execute(tmp.c_str(), true);
 					found = true;
 				}
 				catch(const char *)
@@ -608,7 +614,7 @@ public:
 				
 				if(found)
 				{
-					compiler = list[r];
+					compiler = quote_path(list[r]);
 					break;
 				}
 			}
@@ -616,7 +622,7 @@ public:
 		
 		if(!compiler.size())
 		{
-			throw "No compiler found in path. Either add clang/gcc to system path or specify the path in config";
+			throw "No compiler found in path. Either add clang/gcc to system path or specify the full path in config";
 		}
 	}
 	
@@ -859,11 +865,9 @@ public:
 			fprintf(stderr, "Shared object path: '%s'\n", link_target.c_str());
 		}
 
-		if(!load_module(link_target.c_str()))
+		if(!load_module())
 		{
-			std::filesystem::path link_target_full = std::filesystem::absolute(link_target);
-			if(!load_module(link_target_full.string().c_str()))
-				throw "Failed to load shared object";
+			throw "Failed to load shared object";
 		}
 
 		c2i *p = c2_object_instance(&command);
@@ -909,18 +913,33 @@ public:
 	HMODULE hasm;
 #endif
 	
-	bool load_module(const char *path)
+	bool load_module()
 	{
 		if(!hasm)
 		{
+			if (verbose)
+			{
+				fprintf(stderr, "Attempting to load shared object %s\n", get_link_target().c_str());
+			}
 #ifndef _WIN32
-			hasm = dlopen(path, RTLD_LAZY);
+			hasm = dlopen(get_link_target.c_str(), RTLD_LAZY);
 #else
-			hasm = LoadLibraryA(path);
+			hasm = LoadLibraryA(get_link_target().c_str());
+
+			if (!hasm)
+			{
+				std::filesystem::path link_target_full = std::filesystem::absolute(get_link_target());
+
+				if (verbose)
+				{
+					fprintf(stderr, "Attempting to load shared object %s\n", link_target_full.string().c_str());
+				}
+
+				hasm = LoadLibraryA(link_target_full.string().c_str());
+			}
 #endif
 			if(!hasm)
 				return false;
-
 #ifndef _WIN32
 			c2_object_instance = (c2i *(*)(cmdi *)) dlsym(hasm, "c2_get_object_instance");
 #else
@@ -928,6 +947,11 @@ public:
 #endif
 			if(!c2_object_instance)
 			{
+				if (verbose)
+				{
+					fprintf(stderr, "Failed to resolve c2_get_object_instance\n");
+				}
+
 				unload_module();
 				return false;
 			}
@@ -1042,7 +1066,7 @@ int main(int arga, char *argc[])
 			if(loaded)
 			{
 				// Try load and instance shared object
-				if(proj.load_module(proj.get_link_target().c_str()))
+				if(proj.load_module())
 				{
 					proj.c2_object_instance(&proj.command);
 				}
