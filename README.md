@@ -54,6 +54,10 @@ Put the c2 executable root in your path. Make sure the c2lib/ directory is next 
 ### Windows
 When installing VS2022, make sure to check the ticker to also install clang if you don't already have it installed.
 
+This PC -> Properties
+Advanced system settings
+
+
 C:\Users\<your user name>\AppData\Local\c2lib
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\Llvm\x64\bin\
 
