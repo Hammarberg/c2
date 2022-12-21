@@ -594,10 +594,12 @@ public:
 		{
 			// Try auto detect
 			static const char *list[]={
-				"clang++","clang","g++","gcc",
+				"clang++","clang",
 #ifdef _WIN32
+				"C:\\Program Files\\LLVM\\bin\\clang++",
 				"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\Llvm\\x64\\bin\\clang++",
 #endif
+				"g++","gcc",
 				nullptr};
 			std::string tmp;
 			for(int r=0; list[r]; r++)
