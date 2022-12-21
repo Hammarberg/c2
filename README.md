@@ -57,6 +57,7 @@ When installing VS2022, make sure to check the ticker to also install clang if y
 This PC -> Properties
 Advanced system settings
 
+https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.6/LLVM-15.0.6-win64.exe
 
 C:\Users\<your user name>\AppData\Local\c2lib
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\Llvm\x64\bin\
