@@ -535,13 +535,17 @@ public:
 	
 	void sh_execute(const char *str, bool silent = false)
 	{
-		if(verbose)
-		{
-			fprintf(stderr ,"Executing: %s\n", str);
-		}
 		char buf[1024];
 
+#ifdef _WIN32
 		std::string tmp = quote_path(str);
+#else
+		std::string tmp = str;
+#endif
+		if(verbose)
+		{
+			fprintf(stderr ,"Executing: %s\n", tmp.c_str());
+		}
 		FILE *ep = popen(tmp.c_str(), "r");
 		if(!ep)
 		{
@@ -602,9 +606,8 @@ public:
 				
 				try
 				{
-					tmp = "\"";
 					tmp = quote_path(list[r]);
-					tmp += " --version 2>&1\"";
+					tmp += " --version 2>&1";
 					sh_execute(tmp.c_str(), true);
 					found = true;
 				}
@@ -922,7 +925,7 @@ public:
 				fprintf(stderr, "Attempting to load shared object %s\n", get_link_target().c_str());
 			}
 #ifndef _WIN32
-			hasm = dlopen(get_link_target.c_str(), RTLD_LAZY);
+			hasm = dlopen(get_link_target().c_str(), RTLD_LAZY);
 #else
 			hasm = LoadLibraryA(get_link_target().c_str());
 
