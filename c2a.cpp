@@ -500,7 +500,7 @@ bool c2a::match_macro(stok *io, toklink &link)
 			// The first op from the macro should be '{', push it
 			o = m->pull_tok();
 			assert(o && *o->name == '{');
-			stok *rpos,*apos;
+			stok *rpos;
 			out.push_tok(rpos = clone(o));
 			
 			//Avoid some preprocessor directions
@@ -516,7 +516,7 @@ bool c2a::match_macro(stok *io, toklink &link)
 			// Push the rest of the macro
 			while((o = m->pull_tok()))
 			{
-				out.push_tok(apos = clone(o));
+				out.push_tok(clone(o));
 			}
 			
 			// Restore namespace
@@ -1468,7 +1468,7 @@ void c2a::c_parse(toklink &link)
 	after = link.link(maketok(c2_asm, "\n", etype::SPACE, -1), after);
 	after = link.link(maketok(c2_asm, autolabel("root").c_str(), etype::ALPHA, 0), after);
 	after = link.link(maketok(c2_asm, ":", etype::OP, 1), after);
-	after = link.link(maketok(c2_asm, "\n", etype::SPACE, 2), after);
+	/*after =*/ link.link(maketok(c2_asm, "\n", etype::SPACE, 2), after);
 	
 	s_parse0(link);
 	c2_end = link.pull_tok();
