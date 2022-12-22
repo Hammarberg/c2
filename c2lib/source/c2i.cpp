@@ -572,7 +572,12 @@ bool c2i::c2_assemble()
 		out += str;
 		p->log.push_back(std::pair<c2_eloglevel, std::string>(c2_eloglevel::error, out));
 	}
-	
+	catch (...)
+	{
+		result = false;
+		fprintf(stderr, "Unhandled exception\n");
+	}
+
 	std::vector<std::pair<c2_eloglevel, std::string>> &log = p->log;
 	
 	for(size_t r=0; r<log.size();r++)
