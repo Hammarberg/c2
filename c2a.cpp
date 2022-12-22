@@ -118,26 +118,27 @@ stok *c2a::get_next_nonspace(toklink &link, bool unlink)
 	return o;
 }
 
-int c2a::bracketcount(const stok *o)
+int64_t c2a::bracketcount(int64_t bc, const stok *o)
 {
 	char c = *o->name;
 	
 	switch(c)
 	{
 		case '(':
-			return 1;
+			return (bc+3)*2;
 		case '{':
-			return 1000;
+			return (bc+5)*2;
 		case '[':
-			return 1000000;
+			return (bc+7)*2;
 		case ')':
-			return -1;
+			return (bc/2)-3;
 		case '}':
-			return -1000;
+			return (bc/2)-5;
 		case ']':
-			return -1000000;
+			return (bc/2)-7;
 	};
-	return 0;
+	
+	return bc;
 }
 
 std::string c2a::autolabel(const char *hint, bool local)
@@ -384,11 +385,11 @@ bool c2a::match_macro_parameters(const std::vector<stok *> &def, const std::vect
 				}
 				else
 				{
-					int bc = 0;
+					int64_t bc = 0;
 					for(;start<end;start++)
 					{
 						stok *d = par[start];
-						bc += bracketcount(d);
+						bc = bracketcount(bc, d);
 						
 						if(isarray == false && bc == 0 && *d->name == ',')
 						{
@@ -996,14 +997,14 @@ void c2a::s_parse1(toklink &link)
 						if((o->ord == 0 || label_declared) && *op[2]->name == '=')
 						{
 							bool multiple = false;
-							int bc = 0;
+							int64_t bc = 0;
 							stok *n = o;
 							while(o->is_same_line(n = n->get_next()))
 							{
 								if(!n)
 									error(o, "Unexpected end of file");
 								
-								bc += bracketcount(n);
+								bc = bracketcount(bc, n);
 								
 								if(bc == 0 && *n->name == ',')
 								{
