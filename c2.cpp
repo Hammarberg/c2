@@ -110,7 +110,7 @@ public:
 	std::string compiler;
 
 	std::filesystem::path basedir;
-	std::filesystem::path intermediatedir = "imm";
+	std::filesystem::path intermediatedir = ".im";
 	std::string title = "noname";
 	std::string arguments;
 	std::string execute;
