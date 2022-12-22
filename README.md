@@ -1,29 +1,18 @@
-# c2 cross assembler
+﻿# c2 cross assembler
 ### TODO and wish list
 * Optimize C++ label template generation to greatly improve compile times.
-* ~~Support local & global library folders.~~
-* ~~Support user template/library configuration.~~
-* ~~c2 file object to be exposed in c2i (also used by incbin internally).~~
-* ~~Interface to stream stdout from external tools back into assembly.~~
-* Automatic clang or gcc detection.
-* c2 config in c2lib path.
 * Option to bypass project file and only use switches.
-* Cleanup/rewrite 6502 utilities and word extension.
 * Support 65816, 65C02, 65802
 * Finish 68000 support.
 * Amiga hunk format and utility classes.
 * Zilog 80 support.
 * 8080 support.
 * CP/M support.
-* ~~Cleanup error reporting.~~
 * Bug: C++ errors can sometimes be one line off.
-* ~~C64 RLE packer 0200-ffff.~~
-* ~~c2i interface to add to post command line.~~
 * Set pre-processor switch.
 * Set variable switch.
 * Flag and hash+store switches to intermediate data that would affect compile outcome.
 * Cache labels between builds.
-* ~~Atari 2600 target template.~~
 * More, deeper and prettier README.
 ## Overview
 c2 is an assembler wrapper top of a C++ compiler. c2 stems from retro/hobby assembler programming and the initial targets are common 8 and 16 bit platforms but doesn't have to be limited to that. It's architecture independent in the sense that all assembly pseudo opcodes are built with macros. Macro files can be included with the standard C pre-processor.
@@ -48,20 +37,27 @@ You should have received a copy of the GNU General Public License along with c2.
 ### Contributors
 John Hammarberg, Jocelyn Houle, Johan Samuelsson
 ## Build & Installation
-Put the c2 executable root in your path. Make sure the c2lib/ directory is next to c2 and that a 64 bit compatible clang or gcc is in path. The later might not always be the case for Windows.
+c2 requires llvm/clang++ or gcc++ for both building c2 itself and for running c2.
+
+Put the c2 executable in your path. Make sure the c2lib/ directory is next to c2 or two levels above (see c2lib section) and that a 64 bit compatible clang or gcc is in path.
 ### GNU/Linux/BSD
 `make`
+
+And set path.
 ### Windows
-When installing VS2022, make sure to check the ticker to also install clang if you don't already have it installed.
+c2 can be build with either VS2022 or clang/LLVM. If you don't already have clang installed, you will have to install it anyways since it's a dependency that is used by c2 during assembly.
 
-This PC -> Properties
-Advanced system settings
+clone or unzip c2 to an empty folder.
+#### Option 1 clang
+The easiest and recommended method is to install [clang/LLVM](https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.6/LLVM-15.0.6-win64.exe). Use the default installation path and/or select to set environment variables and path so c2 can find clang. If clang is not in path, c2 will look for clang at `C:\Program Files\LLVM\bin\clang++`.
 
-https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.6/LLVM-15.0.6-win64.exe
+Run `WindowsLLVMBuild.bat` and a c2 executable should be created in the same folder.
+#### Option 2 VS2022
+If you prefer or already have [Visual Studion 2022 Community](https://visualstudio.microsoft.com/vs/community/) or better installed you can use that. However, you also need to select during install, or modify an existing installation to include clang tools as they are provided as an option in the VS installer. If clang is not in path, c2 will look for clang at `C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\Llvm\\x64\bin\clang++`.
 
-C:\Users\<your user name>\AppData\Local\c2lib
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\Llvm\x64\bin\
-
+Run `WindowsVSBuild.bat` and a c2 executable should be created under `x64\Release\c2.exe`.
+#### PATH
+My Computer -> Properties -> Advanced System Settings -> Environment Variables -> Edit path for either User or System. Set the path to the directory where `c2.exe` was built to.
 # Usage
 ## Command line
 `c2 --help`
