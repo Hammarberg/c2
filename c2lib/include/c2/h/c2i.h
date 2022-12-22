@@ -245,7 +245,7 @@ public:
 			}
 		}
 		
-		static bool inrange(int bits, int64_t n){return n < (1LL<<bits) && n >= (-1LL<<(bits-1));}
+		static bool inrange(int bits, int64_t n){return n < (1LL<<bits) && n >= 0-(1LL<<(bits-1));}
 	};
 	
 	typedef c2_basevar<c2_void> var;
