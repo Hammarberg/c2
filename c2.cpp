@@ -915,7 +915,7 @@ public:
 #ifndef _WIN32
 	void *hasm = nullptr;
 #else
-	HMODULE hasm;
+	HMODULE hasm = nullptr;
 #endif
 	
 	bool load_module()
