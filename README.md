@@ -8,6 +8,7 @@
 * Zilog 80 support.
 * 8080 support.
 * CP/M support.
+* Templates for vic20, c264
 * Bug: C++ errors can sometimes be one line off.
 * Set pre-processor switch.
 * Set variable switch.
@@ -58,6 +59,8 @@ If you prefer or already have [Visual Studion 2022 Community](https://visualstud
 Run `WindowsVSBuild.bat` and a c2 executable should be created under `x64\Release\c2.exe`. You may of course also open the solution in VS2022 and build there.
 #### PATH
 My Computer -> Properties -> Advanced System Settings -> Environment Variables -> Edit path for either User or System. Set the path to the directory where `c2.exe` was built to.
+
+If you are using VICE emulator with c2, it's great to also set x64sc.exe to path and it will launch into vice automatically.
 # Usage
 ## Command line
 `c2 --help`
@@ -232,6 +235,14 @@ This will be expanded back to:
 ```
         byte 0xea
 ```
+### Macro alias
+Aliases for macros can be declared with a comma separated list.
+```
+macro nop,slack,nada
+{
+        byte 0xea
+}
+```
 Macros contain its own label namespace. Local labels can therefore be used inside a macro without risk of conflict. Global labels inside a macro has some use cases but is generally a bad idea since the macro can only be referenced once. For referencing data inside an expanded macro, look at indexed labels.
 ### Macro inputs
 Macro inputs are carried in variables and are declared in the header of the macro. When a macro reference is examined for a match with a macro, arguments are examined against the declared header. Declared inputs are prefixed with `@` and are followed by a label name to carry that input. Other characters are matched litterally to the reference.
@@ -245,7 +256,7 @@ macro move_byte @src, @dst
 }
         move_byte $1000, $1001
 ```
-To recall `move_byte`, it's name must be referenced followed by at least one whitespace, a number or other expression for `@src`, a comma (`,`) and another expression for `@dst`. Note that `@` is in this context used to prefix a variable name in the macro header (not to be confused with ORG).
+To recall `move_byte`, its name must be referenced followed by at least one whitespace, a number or other expression for `@src`, a comma (`,`) and another expression for `@dst`. Note that `@` is in this context used to prefix a variable name in the macro header (not to be confused with ORG).
 #### Macro overloading
 Macros can be overloaded using the same name but with unique input declarations.
 ```
@@ -262,7 +273,7 @@ macro move_byte @src, @dst
         move_byte #123, $1000
         move_byte $1000, $2000
 ```
-The difference between the teo macros in this case is the prefix `#` for `@src`. It would have to be matched litterally.
+The difference between the tese macros in this case is the prefix `#` for `@src`. It must be matched litterally.
 
 A referenced macro is matched against declared macros with the most parameter/operators first. While it's legal to completely wrap your expression in paranthesises, this can however interfere with macro matching if you are not careful. Consider these examples:
 
@@ -283,11 +294,13 @@ Syntax:
 ```
 Example:
 ```
-macro set_color @[black,white.red.cyan,purple,green,blue,yellow]col
+macro set_color @[black,white,red,cyan,purple,green,blue,yellow]col
 {
         lda #col
         sta #d021
 }
+
+        set_color green
 ```
 ### Variadic input
 A variadic input must to be the last input of a macro declaration and it expects one or more comma separated expressions. The result is a string input.
@@ -307,6 +320,7 @@ macro store_data @address, @data...
                 sta address+i
         }
 }
+        store_data $1000, 23, 24*2, -100, $bd
 ```
 ## C pre-processor
 ## Inline C++
@@ -336,24 +350,17 @@ It's possible to copy, modify or extend parts of c2lib and place those modificat
 Additional include search paths can be added with one or multiple `--include <path>` or `-i <path>`. This works for both pre-processor includes as well as incbin and c2 file system.
 
 c2 searches the explicitly set paths first followed by the include folders in c2lib.
+### c2config
 # Defined targets / Templates
 ## 6502
 A plain 6502 template with 64KB of RAM.
-## vic20
-## c264
 ## c64
 Commodore 64 with provided utilities.
 ### c64vice
 Commodore 64 with provided utilities configured to auto-lauch in VICE (x64) with symbols and optional breakpoints.
 ### atari2600
 Atari2600 with 4KB of ROM at $f000
-## c65
 ## 68000
-## 68020
-## ocs
-## ecs
-## z80
-## msx
-## 8080
+Highly experimental for c2 development, 68k CPU support is b0rken/buggy at best
 ## void
 A plain template containing no included assembly pseudo opcodes. Useful for experimentation or rendering of binaries using macros and meta-programming. 10MB of RAM is allocated in the default project file, add more as needed.
