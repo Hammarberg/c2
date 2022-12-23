@@ -41,7 +41,7 @@ John Hammarberg, Jocelyn Houle, Johan Samuelsson
 c2 requires llvm/clang++ or g++ for both building c2 itself and for running c2. At this point c2 has only been tested on 64 bit hosts with little endian.
 
 Put the c2 executable in your path. Make sure the c2lib/ directory is next to c2 or two levels above (see c2lib section) and that a 64 bit compatible clang++ or g++ is in path.
-### GNU/Linux/BSD
+### GNU/Linux/BSD/OSX
 `make`
 
 And set path.
@@ -60,7 +60,7 @@ Run `WindowsVSBuild.bat` and a c2 executable should be created under `x64\Releas
 #### PATH
 My Computer -> Properties -> Advanced System Settings -> Environment Variables -> Edit path for either User or System. Set the path to the directory where `c2.exe` was built to.
 
-If you are using VICE emulator with c2, it's great to also set x64sc.exe to path and it will launch into vice automatically.
+If you are using VICE emulator with c2, it's great to also set `x64sc.exe` to path and it will launch automatically.
 # Usage
 ## Command line
 `c2 --help`
@@ -79,7 +79,7 @@ Optionally you can create the destination path with c2 directly.
 
 `c2 --create-project c64vice myawesomeproject sources/hack`
 
-When executing c2 without arguments in a project folder, it will build/assemble and automatically.
+When executing c2 without arguments in a project folder, it will build/assemble and depending on the template, it can automatically launch an emulator if in path.
 # Syntax
 ## Comments
 Only C/C++ style comments are supported. This might hurt for some people used to `;` as comment prefix.
@@ -182,9 +182,11 @@ data[index]:
 c2 provides a variable type, internally it holds up to 64 bits signed.
 
 Syntax: `var <name> [= expression]`
-
 ```
         var x = 5
+        // When declaring and assigning a variable, there is no need to add a ';', but it won't hurt either.
+        // If you re-assign it, it will be needed
+        x = 10;
 ```
 Currently, variables doesn't support label namespaces (design decisions yet to be made) and works more like C++ variables. If you need to limit a scope of a variable you can use C++ scopes:
 ```
@@ -199,15 +201,29 @@ Variables can hold and remenber explicit bit counts:
         lda src //Absolute rather than zero page addressing mode
 ```
 Variables declared inside macros are automatically scoped to the macro.
+### Indexed, array & string variables
+A variable can be used as an array or string.
+```
+        var x = {12,34,$56}
+        var y = "hollow world"
+
+        c2_info("Assembling PETSCII: %s", y.str());
+        petscii y
+
+        // Use of member method .size()
+        for(size_t i=0; i<x.size(); i++)
+        {
+                byte x[i]
+        }
+```
 ### C/C++ variables
-You are free to use C/C++ variables in almost all cases where you would use an assembler variable. Just remember to apply `;` as in C-syntax.
+You are free to use C/C++ variables in almost all cases where you would use a c2 variable. Just remember to apply `;` as in C-syntax.
 
 Example:
 ```
         int y = $1234 + offset;
+        move.b y, d0
 ```
-### Indexed variables
-### String variables
 ## Macros
 In its simplest form, macros are pieces of declared information that can be recalled by a reference at any point. They are expanded inline at the point of reference. When c2 encounters an alphanumerical, declared macros are searched for a match.
 
@@ -358,7 +374,7 @@ A plain 6502 template with 64KB of RAM.
 ## c64
 Commodore 64 with provided utilities.
 ### c64vice
-Commodore 64 with provided utilities configured to auto-lauch in VICE (x64) with symbols and optional breakpoints.
+Commodore 64 with provided utilities configured to auto-lauch in VICE (x64sc) with symbols and optional breakpoints.
 ### atari2600
 Atari2600 with 4KB of ROM at $f000
 ## 68000
