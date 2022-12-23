@@ -24,16 +24,6 @@
 #define strcasecmp _stricmp
 #endif
 
-std::string escape_var(const char *pstr)
-{
-	return "";
-}
-
-std::string unescape_var(const char *pstr)
-{
-	return "";
-}
-
 uint16_t c2a::explicit_bitcount(const char *s)
 {
 	if(s[0] != '0' || !s[1])
@@ -1359,17 +1349,6 @@ void c2a::s_parse2(toklink &link)
 				}
 			}
 			break;
-			/*
-			case etype::OP:
-			{
-				switch(*o->name)
-				{
-					default:
-					break;
-				};
-			}
-			break;
-			*/
 			default:
 			break;
 		};
