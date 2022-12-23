@@ -88,7 +88,7 @@ void clibrary::lib_initialize(const std::vector<std::filesystem::path> &expaths)
 #if defined(_WIN32) || defined(_WIN64) || defined(__APPLE__)
 		const char* envpath = getenv(ENV_C2LIB_HOME);
 #else
-		const char *home = secure_getenv("HOME");
+		const char *envpath = secure_getenv(ENV_C2LIB_HOME);
 #endif
 		if(envpath)
 		{
