@@ -10,6 +10,7 @@
 /c2.mk
 /compile_flags.txt
 /**/imm/
+/**/.im/
 /examples/**/*.prg
 /examples/**/*.sym
 /examples/**/*.rom
