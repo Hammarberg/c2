@@ -14,6 +14,8 @@
 #pragma once
 #include "6502.s"
 
+#define C2_6502_UNINTENDED
+
 // For reference: https://csdb.dk/release/?id=212346
 
 ///////////////////////

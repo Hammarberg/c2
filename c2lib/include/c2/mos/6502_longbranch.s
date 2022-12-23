@@ -11,6 +11,9 @@
 	You should have received a copy of the GNU General Public License along with c2. If not, see <https://www.gnu.org/licenses/>.
 */
 #pragma once
+#include "6502.s"
+
+#define C2_6502_LONGBRANCH
 
 // Long branch
 

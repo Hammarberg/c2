@@ -14,6 +14,8 @@
 #pragma once
 #include "c2/c2.s"
 
+#define C2_6502
+
 /*
 ADC  Add Memory to Accumulator with Carry
 
