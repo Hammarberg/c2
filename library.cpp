@@ -18,10 +18,13 @@
 #include "template.h"
 #include "json.h"
 #include <cstdlib>
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
 #else
 #include <unistd.h>
+#endif
+#if defined(__APPLE__)
+#include <mach-o/dyld.h>
 #endif
 #include <limits.h>
 
@@ -52,8 +55,10 @@ void clibrary::lib_initialize(const std::vector<std::filesystem::path> &expaths)
 	// Get user/local path
 	//const char *home = getenv("HOME");
 	{
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 		const char* home = getenv("LOCALAPPDATA");
+#elif defined(__APPLE__)
+		const char *home = getenv("HOME");
 #else
 		const char *home = secure_getenv("HOME");
 #endif
@@ -80,12 +85,11 @@ void clibrary::lib_initialize(const std::vector<std::filesystem::path> &expaths)
 	
 	// From environment path
 	{
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64) || defined(__APPLE__)
 		const char* envpath = getenv(ENV_C2LIB_HOME);
 #else
-		const char *envpath = secure_getenv(ENV_C2LIB_HOME);
+		const char *home = secure_getenv("HOME");
 #endif
-		
 		if(envpath)
 		{
 			std::filesystem::path tmp = envpath;
@@ -97,7 +101,7 @@ void clibrary::lib_initialize(const std::vector<std::filesystem::path> &expaths)
 		}
 	}
 	
-#ifndef _WIN32
+#if !(defined(_WIN32) || defined(_WIN64))
 	// Global path
 	{
 		std::filesystem::path tmp = NIX_GLOBAL;
@@ -111,9 +115,13 @@ void clibrary::lib_initialize(const std::vector<std::filesystem::path> &expaths)
 
 	// Relative to executable
 	{	
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 		char result[MAX_PATH] = {0};
 		GetModuleFileNameA(NULL, result, MAX_PATH);
+#elif defined(__APPLE__)
+		char result[PATH_MAX] = {0};
+		uint32_t bufsize = PATH_MAX;
+		_NSGetExecutablePath(result, &bufsize);
 #else
 		char result[PATH_MAX] = {0};
 		/*ssize_t count =*/ readlink("/proc/self/exe", result, PATH_MAX);
@@ -129,7 +137,7 @@ void clibrary::lib_initialize(const std::vector<std::filesystem::path> &expaths)
 		}
 		else
 		{
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 			// Check one and two levels up, since MSVC puts binary under x64/Debug.
 			path = path.parent_path().parent_path().parent_path();
 			path /= C2LIB;
@@ -274,7 +282,7 @@ void clibrary::lib_generate_includes_array(std::vector<std::string> &out)
 	for(size_t r=0; r<user_include_paths.size(); r++)
 	{
 		tmp = user_include_paths[r].string();
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 		tmp += "\\";
 #else
 		tmp += "/";
@@ -285,7 +293,7 @@ void clibrary::lib_generate_includes_array(std::vector<std::string> &out)
 	for(size_t r=0; r<library_include_paths.size(); r++)
 	{
 		tmp = library_include_paths[r].string();
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 		tmp += "\\";
 #else
 		tmp += "/";

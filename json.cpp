@@ -11,7 +11,7 @@
 	You should have received a copy of the GNU General Public License along with c2. If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
@@ -285,7 +285,7 @@ namespace json
 	std::string integer::Encode(bool compact, int level, bool com)
 	{
 		char buf[64];
-#ifndef _MSC_VER
+#if !(defined(_WIN32) || defined(_WIN64) || defined(__APPLE__))
 		sprintf(buf, "%ld", data);
 #else
 		sprintf(buf, "%lld", data);

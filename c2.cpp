@@ -146,7 +146,7 @@ public:
 			struct stat data;
 			if(::stat(file, &data) >= 0)
 			{
-#ifdef	_WIN32
+#if defined(_WIN32) || defined(_WIN64) || defined(__APPLE__)
 				mtim = data.st_mtime;
 #else
 				mtim = uint64_t(data.st_mtim.tv_sec);
@@ -360,7 +360,7 @@ public:
 
 		char buf[1024];
 		std::string command = compiler + " ";
-		command += lib_generate_includes(c2) + " -MM -MG " + quote_path(file);
+		command += lib_generate_includes(c2) + " -std=c++17 -MM -MG " + quote_path(file);
 		std::string output;
 		
 		if (verbose)
@@ -796,7 +796,7 @@ public:
 #ifndef _WIN32
 				cmd += " -fpic";
 #endif
-				cmd += " -g -c -Wall -o " + quote_path(f->obj);
+				cmd += " -std=c++17 -g -c -Wall -o " + quote_path(f->obj);
 					
 				if(f->c2)
 				{
@@ -811,7 +811,7 @@ public:
 						precmd += " " + f->flags;
 					}
 
-					precmd += " -E " + quote_path(f->file->file) + " > " + quote_path(i);
+					precmd += " -std=c++17 -E " + quote_path(f->file->file) + " > " + quote_path(i);
  
 					sh_execute(precmd.c_str());
 					parser.process(i.c_str(), ii.c_str());
@@ -855,7 +855,7 @@ public:
 			}
 			
 			cmd = compiler + " ";
-			cmd += " -g -shared -o " + quote_path(link_target);
+			cmd += " -std=c++17 -g -shared -o " + quote_path(link_target);
 			for(size_t r=0; r<files.size(); r++)
 			{
 				cmd += " " + quote_path(files[r]->obj);
