@@ -15,7 +15,7 @@
 * Cache labels between builds.
 * More, deeper and prettier README.
 ## Overview
-c2 is an assembler wrapper top of a C++ compiler. c2 stems from retro/hobby assembler programming and the initial targets are common 8 and 16 bit platforms but doesn't have to be limited to that. It's architecture independent in the sense that all assembly pseudo opcodes are built with macros. Macro files can be included with the standard C pre-processor.
+c2 is an assembler wrapper top of a C++ compiler. It's architecture independent in the sense that all assembly pseudo opcodes are built with macros. Macro files can be included with the standard C pre-processor.
 
 Much of the syntax should be familiar to anyone with Assembly, C/C++, Java, JS, C# experience.
 
@@ -55,7 +55,7 @@ Run `WindowsLLVMBuild.bat` and a c2 executable should be created in the same fol
 #### Option 2 VS2022
 If you prefer or already have [Visual Studion 2022 Community](https://visualstudio.microsoft.com/vs/community/) or better installed you can use that. However, you also need to select during install, or modify an existing installation to include clang tools as they are provided as an option in the VS installer. If clang is not in path, c2 will look for clang at `C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\Llvm\\x64\bin\clang++`.
 
-Run `WindowsVSBuild.bat` and a c2 executable should be created under `x64\Release\c2.exe`.
+Run `WindowsVSBuild.bat` and a c2 executable should be created under `x64\Release\c2.exe`. You may of course also open the solution in VS2022 and build there.
 #### PATH
 My Computer -> Properties -> Advanced System Settings -> Environment Variables -> Edit path for either User or System. Set the path to the directory where `c2.exe` was built to.
 # Usage
@@ -119,7 +119,7 @@ Example: `@ = @, $0200`
 
 This would keep writing to the current ORG but change addressing as it would be located at `$0200`. The code would obviously have to be relocated to `$0200` before being executed. To reset the addressing pointer, just assign ORG to itself with one argument like: `@ = @`
 ## Labels
-Labels represents an address. Labels are global in the assembly namespace, must to be unique and declared first on a line.
+Labels represents an address. Labels are global in the assembly namespace, must be unique and declared first on a line.
 
 Syntax: `<name>:`
 
@@ -153,7 +153,7 @@ data:
 .end:
 ```
 ### Anonymous labels
-Anonymous labels doesn't have to be unique and are declared with a single colon at the beginning of a line.
+Anonymous labels are declared with a single colon at the beginning of a line and can only be referenced with relative addressing.
 
 Example:
 ```
@@ -161,18 +161,21 @@ Example:
         bpl -
 ```
 ### Relative label addressing
-When referencing a label, it's normally done by name. Anonymous labels can only be referenced with a relative count from the current location. To reference the previous label use a single `-`, to reference two labels back use `--`, etc. In the same way, use one or more`+` to reference forward labels.
+When referencing a label, it's normally done by name. Anonymous labels can only be referenced with a relative count from the current location. To reference any previous label, use a single `-`, to reference two labels back use `--`, etc. In the same way, use one or more`+` to reference forward labels.
 ### Indexed labels
-Indexed labels are global in nature but they won't provide a namespace for local labels. They have to be declared and referenced with an index number or a variable.
+Indexed labels are global in nature but they won't provide a namespace for local labels. They have to be declared and referenced with an index number or a variable. They are meant as a tool to address auto-generated code or expaded macros.
 
 Syntax: `<name>[<index>]:`
 
 Example:
 ```
-data[0]: byte $bd
-data[1]: byte $ff
+for(int index=0; index<20; index++)
+{
+data[index]:
+        //Other code or data here
+}
 ```
-## Variables
+## c2 variables
 c2 provides a variable type, internally it holds up to 64 bits signed.
 
 Syntax: `var <name> [= expression]`
@@ -201,12 +204,13 @@ Example:
         int y = $1234 + offset;
 ```
 ### Indexed variables
+### String variables
 ## Macros
 In its simplest form, macros are pieces of declared information that can be recalled by a reference at any point. They are expanded inline at the point of reference. When c2 encounters an alphanumerical, declared macros are searched for a match.
 
 Syntax:
 ```
-macro <name> [arguments]
+macro <name>,[alias] [arguments]
 {
         [contents]
 }
@@ -228,9 +232,9 @@ This will be expanded back to:
 ```
         byte 0xea
 ```
-Macros contain its own label namespace. Local labels can therefore be used inside a macro without risk of conflict. Global labels inside a macro is generally a bad idea since the macro can only be referenced once. For referencing data inside an expanded macro, look at indexed labels.
+Macros contain its own label namespace. Local labels can therefore be used inside a macro without risk of conflict. Global labels inside a macro has some use cases but is generally a bad idea since the macro can only be referenced once. For referencing data inside an expanded macro, look at indexed labels.
 ### Macro inputs
-Macro inputs are carried in c2 variables and are declared in the header of the macro.
+Macro inputs are carried in variables and are declared in the header of the macro. When a macro reference is examined for a match with a macro, arguments are examined against the declared header. Declared inputs are prefixed with `@` and are followed by a label name to carry that input. Other characters are matched litterally to the reference.
 
 Example:
 ```
@@ -239,12 +243,9 @@ macro move_byte @src, @dst
         lda src
         sta dst
 }
-
         move_byte $1000, $1001
 ```
-`@` is in this context used to prefix a variable name in the macro header (not to be confused with ORG). Other literals declared in the header have to match the reference.
-
-Syntax: `@<name>`
+To recall `move_byte`, it's name must be referenced followed by at least one whitespace, a number or other expression for `@src`, a comma (`,`) and another expression for `@dst`. Note that `@` is in this context used to prefix a variable name in the macro header (not to be confused with ORG).
 #### Macro overloading
 Macros can be overloaded using the same name but with unique input declarations.
 ```
@@ -261,29 +262,52 @@ macro move_byte @src, @dst
         move_byte #123, $1000
         move_byte $1000, $2000
 ```
-Macro are matched against declared macros with the most parameter/operators first. While it's legal to completely wrap your expression in paranthesises, this can however interfere with macro matching if you are not careful. Consider these examples:
-```
-macro dowork @input
-{
-        //First
-}
+The difference between the teo macros in this case is the prefix `#` for `@src`. It would have to be matched litterally.
 
-macro dowork (@input)
-{
-        //Second
-}
+A referenced macro is matched against declared macros with the most parameter/operators first. While it's legal to completely wrap your expression in paranthesises, this can however interfere with macro matching if you are not careful. Consider these examples:
 
-        dowork 5*(3+1)          //Tests second first, matches the first
-        dowork (5*(3+1))        //Matches the second, is this intended?
-```
 A concrete example in 6502 assembly:
 ```
         lda variable+2,y        //lda @n,y is matched
         lda (variable+2),y      //lda (@n),y indirect zero page is matched
         lda 2+(variable),y      //lda @n,y is matched
 ```
+### String input
+As input is handled in c2 variables, strings are valid expressions.
 ### Indexed input
+A macro input can be indexed much like a zero based C enum by declaring the input with a comma separated list within square backets.
+
+Syntax:
+```
+@[<comma separated list>]<name>
+```
+Example:
+```
+macro set_color @[black,white.red.cyan,purple,green,blue,yellow]col
+{
+        lda #col
+        sta #d021
+}
+```
 ### Variadic input
+A variadic input must to be the last input of a macro declaration and it expects one or more comma separated expressions. The result is a string input.
+
+Syntax:
+```
+@<name>...
+```
+Example:
+```
+macro store_data @address, @data...
+{
+        // Unrolled store
+        for(size_t i=0; i<data.size(); i++)
+        {
+                lda #data[i]
+                sta address+i
+        }
+}
+```
 ## C pre-processor
 ## Inline C++
 ### C++ expressions
@@ -305,13 +329,13 @@ Besides the executable, c2 is also dependent on its library to operate. The libr
 * Nix home folder as `.c2lib` or `c2lib`. For windows `%LOCALAPPDATA%\c2lib`
 * At location of environment variable `C2LIB_HOME`
 * Nix global path `/usr/lib/c2lib`
-* Alongside executable
+* Alongside executable and two folders above the executable.
 
-It's possible to copy, modify or extend parts of c2lib and place those modifications in your local directory to override.
+It's possible to copy, modify or extend parts of c2lib and place those modifications in your local directory to override. This is highly recommended if you want to add your own templates or macro extensions.
 ## Include files & search order
 Additional include search paths can be added with one or multiple `--include <path>` or `-i <path>`. This works for both pre-processor includes as well as incbin and c2 file system.
 
-It searches the explicitly set paths first followed by the include folders in c2lib.
+c2 searches the explicitly set paths first followed by the include folders in c2lib.
 # Defined targets / Templates
 ## 6502
 A plain 6502 template with 64KB of RAM.
