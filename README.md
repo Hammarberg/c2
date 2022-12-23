@@ -38,9 +38,9 @@ You should have received a copy of the GNU General Public License along with c2.
 ### Contributors
 John Hammarberg, Jocelyn Houle, Johan Samuelsson
 ## Build & Installation
-c2 requires llvm/clang++ or gcc++ for both building c2 itself and for running c2.
+c2 requires llvm/clang++ or g++ for both building c2 itself and for running c2. At this point c2 has only been tested on 64 bit hosts with little endian.
 
-Put the c2 executable in your path. Make sure the c2lib/ directory is next to c2 or two levels above (see c2lib section) and that a 64 bit compatible clang or gcc is in path.
+Put the c2 executable in your path. Make sure the c2lib/ directory is next to c2 or two levels above (see c2lib section) and that a 64 bit compatible clang++ or g++ is in path.
 ### GNU/Linux/BSD
 `make`
 
@@ -48,12 +48,12 @@ And set path.
 ### Windows
 c2 can be build with either VS2022 or clang/LLVM. If you don't already have clang installed, you will have to install it anyways since it's a dependency that is used by c2 during assembly.
 
-clone or unzip c2 to an empty folder.
-#### Option 1 clang
+Clone or unzip c2 to an empty folder.
+#### Option 1: clang
 The easiest and recommended method is to install [clang/LLVM](https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.6/LLVM-15.0.6-win64.exe). Use the default installation path and/or select to set environment variables and path so c2 can find clang. If clang is not in path, c2 will look for clang at `C:\Program Files\LLVM\bin\clang++`.
 
 Run `WindowsLLVMBuild.bat` and a c2 executable should be created in the same folder.
-#### Option 2 VS2022
+#### Option 2: VS2022
 If you prefer or already have [Visual Studion 2022 Community](https://visualstudio.microsoft.com/vs/community/) or better installed you can use that. However, you also need to select during install, or modify an existing installation to include clang tools as they are provided as an option in the VS installer. If clang is not in path, c2 will look for clang at `C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\Llvm\\x64\bin\clang++`.
 
 Run `WindowsVSBuild.bat` and a c2 executable should be created under `x64\Release\c2.exe`. You may of course also open the solution in VS2022 and build there.
@@ -65,7 +65,7 @@ If you are using VICE emulator with c2, it's great to also set x64sc.exe to path
 ## Command line
 `c2 --help`
 
-Note that the help listing can extend with project specific options when a project file is loaded or detected.
+Note that the help listing will extend with project specific options when a project file is loaded or detected.
 ## Templates overview
 ## Project files
 ## Your first simple project tutorial
@@ -79,7 +79,7 @@ Optionally you can create the destination path with c2 directly.
 
 `c2 --create-project c64vice myawesomeproject sources/hack`
 
-When executing c2 without arguments in a project folder, it will build/assemble automatically.
+When executing c2 without arguments in a project folder, it will build/assemble and automatically.
 # Syntax
 ## Comments
 Only C/C++ style comments are supported. This might hurt for some people used to `;` as comment prefix.
@@ -90,7 +90,7 @@ Binary, prefixed with `0b` or `%` as in `0b10101010` or `%10100111001`.
 
 Hexadecimal, prefixed with `0x` or `$` as in `0xfffd` or `$0x1B46B1`.
 
-Octal numbers looks a lot like decimal number but are prefixed with a `0` as in `020, 02471`. Beware of this if you have a habit of prefixing decimal numbers with `0` for purey estetical reasons.
+Octal numbers looks a lot like decimal number but are prefixed with a `0` as in `020, 02471`. Beware of this if you have a habit of prefixing decimal numbers with `0` for esthetics.
 
 ### Explicit bit size
 You can explicitly force a bit size by prefixing hexadecimal, binary or octal numbers.
@@ -166,7 +166,7 @@ Example:
 ### Relative label addressing
 When referencing a label, it's normally done by name. Anonymous labels can only be referenced with a relative count from the current location. To reference any previous label, use a single `-`, to reference two labels back use `--`, etc. In the same way, use one or more`+` to reference forward labels.
 ### Indexed labels
-Indexed labels are global in nature but they won't provide a namespace for local labels. They have to be declared and referenced with an index number or a variable. They are meant as a tool to address auto-generated code or expaded macros.
+Indexed labels are global in nature but they won't provide a namespace for local labels. They have to be declared and referenced with an index number or a variable. They are meant as a tool to address auto-generated code or expanded macros.
 
 Syntax: `<name>[<index>]:`
 
@@ -193,7 +193,7 @@ Currently, variables doesn't support label namespaces (design decisions yet to b
         //Other code here
 }
 ```
-Variables can hold and remeber explicit bit counts:
+Variables can hold and remenber explicit bit counts:
 ```
         var src = $0002
         lda src //Absolute rather than zero page addressing mode
@@ -242,10 +242,11 @@ macro nop,slack,nada
 {
         byte 0xea
 }
+        slack //same as nop
 ```
 Macros contain its own label namespace. Local labels can therefore be used inside a macro without risk of conflict. Global labels inside a macro has some use cases but is generally a bad idea since the macro can only be referenced once. For referencing data inside an expanded macro, look at indexed labels.
 ### Macro inputs
-Macro inputs are carried in variables and are declared in the header of the macro. When a macro reference is examined for a match with a macro, arguments are examined against the declared header. Declared inputs are prefixed with `@` and are followed by a label name to carry that input. Other characters are matched litterally to the reference.
+Macro inputs are carried in variables and are declared in the header of the macro. When a macro reference is examined for a match with a macro, arguments are examined against the declared header. Declared inputs are prefixed with `@` and are followed by a label name to carry that input. Other characters are matched literally to the reference.
 
 Example:
 ```
@@ -256,7 +257,7 @@ macro move_byte @src, @dst
 }
         move_byte $1000, $1001
 ```
-To recall `move_byte`, its name must be referenced followed by at least one whitespace, a number or other expression for `@src`, a comma (`,`) and another expression for `@dst`. Note that `@` is in this context used to prefix a variable name in the macro header (not to be confused with ORG).
+To recall `move_byte`, its name must be referenced followed by at least one white space, a number or other expression for `@src`, a comma (`,`) and another expression for `@dst`. Note that `@` is in this context used to prefix a variable name in the macro header (not to be confused with ORG).
 #### Macro overloading
 Macros can be overloaded using the same name but with unique input declarations.
 ```
@@ -273,9 +274,9 @@ macro move_byte @src, @dst
         move_byte #123, $1000
         move_byte $1000, $2000
 ```
-The difference between the tese macros in this case is the prefix `#` for `@src`. It must be matched litterally.
+The difference between the these macros in this case is the prefix `#` for `@src`. It must be matched literally.
 
-A referenced macro is matched against declared macros with the most parameter/operators first. While it's legal to completely wrap your expression in paranthesises, this can however interfere with macro matching if you are not careful. Consider these examples:
+A referenced macro is matched against declared macros with the most parameter/operators first. While it's legal to completely wrap your expression in parentheses, this can however interfere with macro matching if you are not careful. Consider these examples:
 
 A concrete example in 6502 assembly:
 ```
@@ -286,7 +287,7 @@ A concrete example in 6502 assembly:
 ### String input
 As input is handled in c2 variables, strings are valid expressions.
 ### Indexed input
-A macro input can be indexed much like a zero based C enum by declaring the input with a comma separated list within square backets.
+A macro input can be indexed much like a zero based C enum by declaring the input with a comma separated list with literals within square brackets. An input have to match one of the literals specified and the variable will hold the ordinal value.
 
 Syntax:
 ```
@@ -338,7 +339,7 @@ Besides the executable, c2 is also dependent on its library to operate. The libr
 
 `template` contains templated base files referenced by `templates.c2.json`. These are copied and translated to your project folder when creating a new project.
 ### c2lib search order
-* In the project path alongsone `<project>.c2.json`
+* In the project path alongside `<project>.c2.json`
 * Explicitly set with `--c2-library-dir`
 * Nix home folder as `.c2lib` or `c2lib`. For windows `%LOCALAPPDATA%\c2lib`
 * At location of environment variable `C2LIB_HOME`
