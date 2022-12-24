@@ -286,9 +286,9 @@ namespace json
 	{
 		char buf[64];
 #if !(defined(_WIN32) || defined(_WIN64) || defined(__APPLE__))
-		sprintf(buf, "%ld", data);
+		snprintf(buf, sizeof(buf), "%ld", data);
 #else
-		sprintf(buf, "%lld", data);
+		snprintf(buf, sizeof(buf), "%lld", data);
 #endif
 		return _level(compact, level) + std::string(buf) + (com ? "," : "");
 	}
@@ -301,7 +301,7 @@ namespace json
 	std::string floating::Encode(bool compact, int level, bool com)
 	{
 		char buf[64];
-		sprintf(buf, "%g", data);
+		snprintf(buf, sizeof(buf), "%g", data);
 		return _level(compact, level) + std::string(buf) + (com ? "," : "");
 	}
 };

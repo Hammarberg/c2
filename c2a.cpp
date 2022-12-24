@@ -163,9 +163,9 @@ stok *c2a::preprocessprefix(stok *o, toklink &link)
 	
 	char tmp[1024];
 	if(*n->name == 0x0a)
-		sprintf(tmp, "# %d \"%s\"\n", o->line, files[o->fileindex].c_str());
+		snprintf(tmp, sizeof(tmp), "# %d \"%s\"\n", o->line, files[o->fileindex].c_str());
 	else
-		sprintf(tmp, "\n# %d \"%s\"\n", o->line, files[o->fileindex].c_str());
+		snprintf(tmp, sizeof(tmp), "\n# %d \"%s\"\n", o->line, files[o->fileindex].c_str());
 
 	link.link(maketok(o, tmp), n);
 	return n;
@@ -469,7 +469,7 @@ bool c2a::match_macro(stok *io, toklink &link)
 			out.restart(io->get_prev());
 
 			// Push debug stack
-			sprintf(ctmp, "\n{c2_scope_push(%d,%d);\n", int(io->fileindex), io->line);
+			snprintf(ctmp, sizeof(ctmp), "\n{c2_scope_push(%d,%d);\n", int(io->fileindex), io->line);
 			out.push_tok(maketok(io, ctmp, etype::ALPHA));
 			
 			//Prepare lambda header
@@ -564,7 +564,7 @@ bool c2a::match_macro(stok *io, toklink &link)
 								}
 								
 								char numtmp[64];
-								sprintf(numtmp,"%d", int(*p));
+								snprintf(numtmp, sizeof(numtmp), "%d", int(*p));
 								out.push_tok(maketok(io, numtmp, etype::NUM, 10));
 								
 								p++;
@@ -610,7 +610,7 @@ bool c2a::match_macro(stok *io, toklink &link)
 			out.push_tok(maketok(io, ";", etype::OP));
 			
 			// Pop debug stack
-			sprintf(ctmp, "c2_scope_pop();}\n");
+			snprintf(ctmp, sizeof(ctmp), "c2_scope_pop();}\n");
 			out.push_tok(maketok(io, ctmp, etype::ALPHA));
 			
 			//Clear macro call
@@ -1250,7 +1250,7 @@ void c2a::s_parse1(toklink &link)
 				if(bits)
 				{
 					char tmp[64];
-					sprintf(tmp, "var(%s,%d)", o->name, bits);
+					snprintf(tmp, sizeof(tmp), "var(%s,%d)", o->name, bits);
 					stok *n = maketok(o, tmp);
 					link.unlink(o);
 					link.link(n, o->get_prev());
@@ -1495,11 +1495,11 @@ void c2a::error(stok *o, const char *format, ...)
 	
 	if(o)
 	{
-		sprintf(errbuf, "%s:%d: error: %s", files[o->fileindex].c_str(), o->line, tmp);
+		snprintf(errbuf, sizeof(errbuf), "%s:%d: error: %s", files[o->fileindex].c_str(), o->line, tmp);
 	}
 	else
 	{
-		sprintf(errbuf, "error: %s", tmp);
+		snprintf(errbuf, sizeof(errbuf), "error: %s", tmp);
 	}
 	
 	throw errbuf;
