@@ -48,26 +48,6 @@
 
 const uint32_t MAGIC_VERSION = 1337*1337+4;
 
-static bool loadfile(const char *file, std::string &out)
-{
-	FILE *fp = fopen(file, "r");
-	if(!fp)
-		return false;
-	
-	fseek(fp, 0, SEEK_END);
-	size_t n = ftell(fp);
-	fseek(fp, 0, SEEK_SET);
-	
-	out.resize(n);
-	char *p = &(out[0]);
-
-	n = fread(p, 1, n, fp);
-	out.resize(n);
-		
-	fclose(fp);
-	return true;
-}
-
 static void save(FILE *fp, const std::string &s)
 {
 	const char *p = s.c_str();
@@ -634,7 +614,7 @@ public:
 	bool load_project(const char* projectfile)
 	{
 		std::string bdata, tmp;
-		if(!loadfile(projectfile, bdata))
+		if(!lib_load_file_direct(projectfile, bdata))
 			return false;
 			
 		// Stat projectfile before changing directory

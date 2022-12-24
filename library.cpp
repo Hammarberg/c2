@@ -212,6 +212,39 @@ FILE *clibrary::lib_fopen(const char *file, const char *mode)
 	return fp;
 }
 
+bool clibrary::lib_load_file_direct(const char *path, std::string &out)
+{
+	FILE *fp = fopen(path, "r");
+	if(!fp)
+		return false;
+		
+	lib_utf_read(fp, out);
+		
+	fclose(fp);
+	return true;
+}
+
+size_t clibrary::lib_utf_read(FILE *fp, char *buf, size_t size)
+{
+	size_t read = fread(buf, 1, size, fp);
+	
+	return read;
+}
+
+void clibrary::lib_utf_read(FILE *fp, std::string &out)
+{
+	fseek(fp, 0, SEEK_END);
+	size_t n = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
+	
+	out.resize(n);
+	char *p = &(out[0]);
+
+	size_t read = lib_utf_read(fp, p, n);
+	out.resize(read);
+}
+
+
 std::filesystem::path clibrary::lib_get_file_path(const char *file)
 {
 	for(size_t r=0; r<libraries.size(); r++)
@@ -324,7 +357,7 @@ void clibrary::load_config()
 void clibrary::load_config(const char *file)
 {
 	std::string buf;
-	if(!ctemplate::loadfile_direct(file, buf))
+	if(!lib_load_file_direct(file, buf))
 		return;
 
 	std::unique_ptr<json::base> cfg(json::base::Decode(buf.c_str()));

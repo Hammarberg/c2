@@ -18,6 +18,7 @@
 #endif
 
 #include "linear.h"
+#include "library.h"
 #include <cstdio>
 #include <cstring>
 
@@ -44,7 +45,7 @@ public:
 		fseek(fp, 0, SEEK_SET);
 
 		char *data = (char *)mem.alloc(size + 1);
-		size_t read = fread(data, 1, size, fp);
+		size_t read = clibrary::lib_utf_read(fp, data, size);
 		fclose(fp);
 		data[read] = 0;
 

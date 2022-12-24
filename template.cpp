@@ -17,6 +17,7 @@
 
 #include "template.h"
 #include "json.h"
+#include "library.h"
 
 #include <cstdio>
 #include <memory>
@@ -31,41 +32,14 @@ ctemplate::~ctemplate()
 {
 }
 
+
 bool ctemplate::loadfile(const char *file, std::string &out)
 {
 	FILE *fp = lib.lib_fopen(file, "r");
 	if(!fp)
 		return false;
 	
-	fseek(fp, 0, SEEK_END);
-	size_t n = ftell(fp);
-	fseek(fp, 0, SEEK_SET);
-	
-	out.resize(n);
-	char *p = &(out[0]);
-
-	size_t read = fread(p, 1, n, fp);
-	out.resize(read);
-		
-	fclose(fp);
-	return true;
-}
-
-bool ctemplate::loadfile_direct(const char *file, std::string &out)
-{
-	FILE *fp = fopen(file, "r");
-	if(!fp)
-		return false;
-	
-	fseek(fp, 0, SEEK_END);
-	size_t n = ftell(fp);
-	fseek(fp, 0, SEEK_SET);
-	
-	out.resize(n);
-	char *p = &(out[0]);
-
-	size_t read = fread(p, 1, n, fp);
-	out.resize(read);
+	clibrary::lib_utf_read(fp, out);
 		
 	fclose(fp);
 	return true;
@@ -79,7 +53,7 @@ void ctemplate::list()
 	for(size_t r=0; r<out.size(); r++)
 	{
 		std::string buf;
-		if(!loadfile_direct(out[r].string().c_str(), buf))
+		if(!clibrary::lib_load_file_direct(out[r].string().c_str(), buf))
 			throw "Error loading " TEMPLATESFILE;
 
 		std::unique_ptr<json::base> cfg(json::base::Decode(buf.c_str()));
@@ -131,7 +105,7 @@ std::string ctemplate::create(int arga, const char *argc[])
 	for(size_t r=0; r<out.size() && t == nullptr; r++)
 	{
 		std::string buf;
-		if(!loadfile_direct(out[r].string().c_str(), buf))
+		if(!clibrary::lib_load_file_direct(out[r].string().c_str(), buf))
 			throw "Error loading " TEMPLATESFILE;
 
 		cfg.reset(json::base::Decode(buf.c_str()));

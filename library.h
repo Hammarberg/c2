@@ -38,19 +38,22 @@ public:
 	void lib_basepath();
 	
 	FILE *lib_fopen(const char *path, const char *mode);
+	static bool lib_load_file_direct(const char *path, std::string &out);
+	
+	static size_t lib_utf_read(FILE *fp, char *buf, size_t size);
+	static void lib_utf_read(FILE *fp, std::string &out);
 	
 	std::filesystem::path lib_get_file_path(const char *path);
 	void lib_get_file_path(const char *path, std::vector<std::filesystem::path> &out);
 	
 	void lib_add_include_path(const char *path);
-	
 	std::string lib_generate_includes(bool c2);
 	void lib_generate_includes_array(std::vector<std::string> &out);
 
-	static std::string quote_path(std::string path);
-	
 	std::string lib_cfg_get_string(const char *name);
 
+	static std::string quote_path(std::string path);
+	
 private:
 
 	void push_path(const std::filesystem::path &path, bool first = false);
