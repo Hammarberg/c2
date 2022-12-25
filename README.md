@@ -346,21 +346,23 @@ macro store_data @address, @data...
         store_data $1000, 23, 24*2, -100, $bd
 ```
 ## yourproject.cpp
-Your project comes with a .cpp-file. In most cases you can completely ignore this file as long as you keep it around as treat is as part of your peoject. To c2, this is your main source file as it itself includes your assembly file.
+Your project comes with a .cpp-file. In most cases you can completely ignore this file as long as you keep it around as treat is as part of your project. To c2, this is your main source file as it itself includes your assembly file.
 ```
-	void c2_pass() override
-	{
-		C2_SECTION_ASM
-		{
-			#include "yourasm.s"
-		}
-	}
+    void c2_pass() override
+    {
+        C2_SECTION_ASM
+        {
+            #include "yourasm.s"
+        }
+    }
 ```
-You might realize now that all of your assembly is included inside of the C++ method c2_pass(). This method and hence your expanded assembly macros are called multiple times, one for each pass. Each pass helps resolve references and conditionally expand any macros until everything is resolved or an error occured. For each pass, the binary assembly output is run through an 128 bit murmur3 hash. When 2 consecutive hashes match, assembly is considered complete. c2 will top with an error of a hash repeats itself non consucutilvely. This can happen if forward references cause a paradox, at wich point you should rethink your code. If c2 gets to pass 50, it will also stop with an error. This would likely be due to a bug in c2 or introcution of something random to the passes.
+You might realize now that all of your assembly is included inside of the C++ method c2_pass(). This method and hence your expanded assembly macros are called multiple times, one for each pass. Each pass helps resolve references and conditionally expand any macros until everything is resolved or an error occurred. For each pass, the binary assembly output is run through an 128 bit murmur3 hash. When 2 consecutive hashes match, assembly is considered complete. c2 will stop with an error of a hash repeats itself non consecutively. This can happen if resolving forward references gets stuck with paradoxes, at which point you should rethink your code. If c2 gets to pass 50, it will also stop with an error. This would likely be due to a bug in c2 or introduction of something random to the passes.
 
-`C2_SECTION_ASM` and the following scope is a marker for c2 to know where to limit macro expansion too. `C2_SECTION_TOP` marks the spot where c2 will insert auto-generated declarations.
+`C2_SECTION_ASM` and the following scope is a marker for c2 to know where to limit macro expansion to. `C2_SECTION_TOP` marks the spot where c2 will declare labels.
 
-If you need to add additional C/C++ include files, this is the proper place to do it. By default c2 doesn't expose more of the C/C++ namespace than necessary. For advaced programmers, here you can also add your project specific extensions.
+If you need to add additional C/C++ include files, this is the proper place to do it. By default c2 doesn't expose more of the C/C++ namespace than necessary. For advanced programmers, here you can also add your project specific extensions and even custom command line switches.
+
+`c2_pre()` and `c2_post()` can be extended with pre and post assembly code. Post will only be executed if the assembly is successful.
 ## C pre-processor
 There is not a lot to add here but you have the complete power of the C pre-processor. Some ideas and examples:
 ```
@@ -372,8 +374,9 @@ lda #LIMIT8BIT(258)
 sta SCREEN
 ```
 ## Inline C++
-All C/C++ loops, variables, if/else, case switches are available at your disposal. As your assembly source resides inside the C++ method `c2_pass()` there are some restrictions like you cannot declare a C function (see yourproject.cpp) but there are a few tricks.
+All C/C++ loops, variables, if/else, case switches are available at your disposal. As your assembly source resides inside the C++ method `c2_pass()` there are some logical restrictions. If you want to declare your own functions you must normally do that as member methods in the .cpp-file. A way to get around this is to declare a struct:
 ```
+        // Your assemblerfile.s
 struct
 {
         var mydata = loadvar("data.bin");
@@ -393,7 +396,6 @@ struct
 }mydata;
 
         lda #mydata.get_next_byte()
-
 ```
 ## Logging, warnings & errors
 ## c2 C++ interface
