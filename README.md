@@ -255,7 +255,9 @@ This will be expanded back to:
 ```
         byte 0xea
 ```
-Macros have to be declared before the point of it being referenced and expanded. However, macros can reference other macros not yet decalred as long as all macros are known at the time of reference/expansion.
+In this example, byte is also a macro that will be expanded.
+
+Macros have to be declared before the point of it being referenced and expanded. However, macros can reference other macros not yet declared as long as all macros are known at the time of reference/expansion.
 ### Macro namespace
 Macros contain its own label namespace. Local labels can therefore be used inside a macro without risk of conflict. Global labels inside a macro has some use cases but is generally a bad idea since the macro can only be referenced once. For referencing data inside an expanded macro, look at indexed labels.
 ### Macro alias
@@ -279,7 +281,7 @@ macro move_byte @src, @dst
 }
         move_byte $1000, $1001
 ```
-To recall `move_byte`, its name must be referenced followed by at least one white space, a number or other expression for `@src`, a comma (`,`) and another expression for `@dst`. Note that `@` is in this context used to prefix a variable name in the macro header (not to be confused with ORG).
+To recall `move_byte`, its name or alias must be referenced followed by at least one white space, a number or other expression for `@src`, a comma (`,`) and another expression for `@dst`. Note that `@` is in this context used to prefix a variable name in the macro header (not to be confused with ORG).
 #### Macro overloading
 Macros can be overloaded using the same name but with unique input declarations.
 ```
@@ -343,12 +345,58 @@ macro store_data @address, @data...
 }
         store_data $1000, 23, 24*2, -100, $bd
 ```
+## yourproject.cpp
+Your project comes with a .cpp-file. In most cases you can completely ignore this file as long as you keep it around as treat is as part of your peoject. To c2, this is your main source file as it itself includes your assembly file.
+```
+	void c2_pass() override
+	{
+		C2_SECTION_ASM
+		{
+			#include "yourasm.s"
+		}
+	}
+```
+You might realize now that all of your assembly is included inside of the C++ method c2_pass(). This method and hence your expanded assembly macros are called multiple times, one for each pass. Each pass helps resolve references and conditionally expand any macros until everything is resolved or an error occured. For each pass, the binary assembly output is run through an 128 bit murmur3 hash. When 2 consecutive hashes match, assembly is considered complete. c2 will top with an error of a hash repeats itself non consucutilvely. This can happen if forward references cause a paradox, at wich point you should rethink your code. If c2 gets to pass 50, it will also stop with an error. This would likely be due to a bug in c2 or introcution of something random to the passes.
+
+`C2_SECTION_ASM` and the following scope is a marker for c2 to know where to limit macro expansion too. `C2_SECTION_TOP` marks the spot where c2 will insert auto-generated declarations.
+
+If you need to add additional C/C++ include files, this is the proper place to do it. By default c2 doesn't expose more of the C/C++ namespace than necessary. For advaced programmers, here you can also add your project specific extensions.
 ## C pre-processor
+There is not a lot to add here but you have the complete power of the C pre-processor. Some ideas and examples:
+```
+#include "mymacros.s"
+#define SCREEN $0400
+#define LIMIT8BIT(X) ((X)&$ff)
+
+lda #LIMIT8BIT(258)
+sta SCREEN
+```
 ## Inline C++
-### C++ expressions
+All C/C++ loops, variables, if/else, case switches are available at your disposal. As your assembly source resides inside the C++ method `c2_pass()` there are some restrictions like you cannot declare a C function (see yourproject.cpp) but there are a few tricks.
+```
+struct
+{
+        var mydata = loadvar("data.bin");
+
+        size_t pos = 0;
+        int get_next_byte()
+        {
+                if(pos == mydata.size())
+                {
+                        return -1;
+                }
+
+                int val = mydata[pos];
+                pos++;
+                return val;
+        }
+}mydata;
+
+        lda #mydata.get_next_byte()
+
+```
 ## Logging, warnings & errors
 ## c2 C++ interface
-## yourproject.cpp / yourproject.s
 ### Custom C++ extensions
 ## c2lib directory
 Besides the executable, c2 is also dependent on its library to operate. The library contains necessary include files, source files and templates for project creation.
