@@ -54,7 +54,7 @@ The easiest and recommended method is to install [clang/LLVM](https://github.com
 
 Run `WindowsLLVMBuild.bat` and a c2 executable should be created in the same folder.
 #### Option 2: VS2022
-If you prefer or already have [Visual Studion 2022 Community](https://visualstudio.microsoft.com/vs/community/) or better installed you can use that. However, you also need to select during install, or modify an existing installation to include clang tools as they are provided as an option in the VS installer. If clang is not in path, c2 will look for clang at `C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\Llvm\\x64\bin\clang++`.
+If you prefer or already have [Visual Studion 2022 Community](https://visualstudio.microsoft.com/vs/community/) or better installed you can use that. However, you also need to select during install, or modify an existing installation to include clang tools as they are provided as an option in the VS installer. If clang is not in path, c2 will look for clang at `C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\Llvm\x64\bin\clang++`.
 
 Run `WindowsVSBuild.bat` and a c2 executable should be created under `x64\Release\c2.exe`. You may of course also open the solution in VS2022 and build there.
 #### PATH
@@ -255,6 +255,9 @@ This will be expanded back to:
 ```
         byte 0xea
 ```
+Macros have to be declared before the point of it being referenced and expanded. However, macros can reference other macros not yet decalred as long as all macros are known at the time of reference/expansion.
+### Macro namespace
+Macros contain its own label namespace. Local labels can therefore be used inside a macro without risk of conflict. Global labels inside a macro has some use cases but is generally a bad idea since the macro can only be referenced once. For referencing data inside an expanded macro, look at indexed labels.
 ### Macro alias
 Aliases for macros can be declared with a comma separated list.
 ```
@@ -264,7 +267,6 @@ macro nop,slack,nada
 }
         slack //same as nop
 ```
-Macros contain its own label namespace. Local labels can therefore be used inside a macro without risk of conflict. Global labels inside a macro has some use cases but is generally a bad idea since the macro can only be referenced once. For referencing data inside an expanded macro, look at indexed labels.
 ### Macro inputs
 Macro inputs are carried in variables and are declared in the header of the macro. When a macro reference is examined for a match with a macro, arguments are examined against the declared header. Declared inputs are prefixed with `@` and are followed by a label name to carry that input. Other characters are matched literally to the reference.
 
