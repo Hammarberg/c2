@@ -69,6 +69,8 @@ Note that the help listing will extend with project specific options when a proj
 ## Templates overview
 ## Project files
 ## Your first simple project tutorial
+c2 comes with a set of predefined templates for creating new projects.
+
 `c2 --list-templates`
 
 Create an empty folder for your project and step into it.
@@ -172,6 +174,8 @@ Syntax: `<name>[<index>]:`
 
 Example:
 ```
+        jmp data[10]
+
 for(int index=0; index<20; index++)
 {
 data[index]:
@@ -184,7 +188,7 @@ c2 provides a variable type, internally it holds up to 64 bits signed.
 Syntax: `var <name> [= expression]`
 ```
         var x = 5
-        // When declaring and assigning a variable, there is no need to add a ';', but it won't hurt either.
+        // When declaring and assigning a variable, there is no need to add a ';'.
         // If you re-assign it, it will be needed
         x = 10;
 ```
@@ -293,8 +297,6 @@ macro move_byte @src, @dst
 The difference between the these macros in this case is the prefix `#` for `@src`. It must be matched literally.
 
 A referenced macro is matched against declared macros with the most parameter/operators first. While it's legal to completely wrap your expression in parentheses, this can however interfere with macro matching if you are not careful. Consider these examples:
-
-A concrete example in 6502 assembly:
 ```
         lda variable+2,y        //lda @n,y is matched
         lda (variable+2),y      //lda (@n),y indirect zero page is matched
@@ -302,8 +304,8 @@ A concrete example in 6502 assembly:
 ```
 ### String input
 As input is handled in c2 variables, strings are valid expressions.
-### Indexed input
-A macro input can be indexed much like a zero based C enum by declaring the input with a comma separated list with literals within square brackets. An input have to match one of the literals specified and the variable will hold the ordinal value.
+### Enum input
+A macro input can be an enum much like a zero based C enum by declaring the input with a comma separated list with literals within square brackets. An input have to match one of the enum strings specified and the variable will hold the ordinal value.
 
 Syntax:
 ```
@@ -320,7 +322,7 @@ macro set_color @[black,white,red,cyan,purple,green,blue,yellow]col
         set_color green
 ```
 ### Variadic input
-A variadic input must to be the last input of a macro declaration and it expects one or more comma separated expressions. The result is a string input.
+A variadic input must to be the last input of a macro declaration and it expects one or more comma separated expressions. The result is an array/string input.
 
 Syntax:
 ```
