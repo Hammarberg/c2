@@ -90,7 +90,7 @@ Decimal: `0, 1337`
 
 Binary, prefixed with `0b` or `%` as in `0b10101010` or `%10100111001`.
 
-Hexadecimal, prefixed with `0x` or `$` as in `0xfffd` or `$0x1B46B1`.
+Hexadecimal, prefixed with `0x` or `$` as in `0xfffd` or `$1B46B1`.
 
 Octal numbers looks a lot like decimal number but are prefixed with a `0` as in `020, 02471`. Beware of this if you have a habit of prefixing decimal numbers with `0` for esthetics.
 
@@ -101,9 +101,9 @@ You can explicitly force a bit size by prefixing hexadecimal, binary or octal nu
         lda $0002
 ```
 ## ORG pointer
-Note, many classical assembler uses `*` for ORG but not c2. Instead the at (`@`) sign is used.
+Note, many classical assemblers use `*` for ORG but not c2. Instead the at (`@`) sign is used.
 
-Syntax: `@ = <label/address>`
+Syntax: `@ = <address/expression>`
 
 Example: `@ = 0xa00000` or `@ = base + $fe00`
 
