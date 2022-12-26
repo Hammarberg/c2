@@ -988,11 +988,13 @@ c2i::var c2i::loadvar(const char *path, size_t offset, size_t length)
 void c2i::loadstream(const char *cmd, size_t offset, size_t length)
 {
 #ifdef _WIN32
-	FILE *ep = popen(cmd, "b");
+	std::string command = cmd;
+	command = "\"" + command + "\"";
+	FILE *ep = popen(command.c_str(), "rb");
 #else
 	FILE *ep = popen(cmd, "r");
 #endif
-	
+
 	if(!ep)
 	{
 		ierror("Error executing stream command: %s", cmd);
@@ -1008,7 +1010,7 @@ void c2i::loadstream(const char *cmd, size_t offset, size_t length)
 		n = fread(&b, 1, sizeof(b), ep);
 		if(!n)
 		{
-			ierror("Requested offset (%d) to is beyond the end if the stream", int(offset));
+			ierror("Requested offset (%d) to is beyond the end of the stream", int(offset));
 			pclose(ep);
 			return;
 		}
