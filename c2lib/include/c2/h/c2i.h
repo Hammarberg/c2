@@ -389,6 +389,7 @@ public:
 	
 	bool c2_allow_overwrite = false;
 	bool c2_verbose = false;
+	bool c2_assembly_hash = false;
 
 	cmdi &c2_cmd;
 	

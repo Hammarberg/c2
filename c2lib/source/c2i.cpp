@@ -29,6 +29,8 @@
 
 #define ierror(...) c2_get_single()->c2_log(c2_eloglevel::error, nullptr, 0, __VA_ARGS__)
 #define iwarning(...) c2_get_single()->c2_log(c2_eloglevel::warning, nullptr, 0, __VA_ARGS__)
+#define iverbose(...) c2_get_single()->c2_log(c2_eloglevel::verbose, nullptr, 0, __VA_ARGS__)
+#define iinfo(...) c2_get_single()->c2_log(c2_eloglevel::info, nullptr, 0, __VA_ARGS__)
 
 template <typename T>
 T swap_endian(T u)
@@ -335,6 +337,7 @@ c2i::c2i(cmdi *pcmd)
 	c2_cmd.add_info("--dump-vars", "-dv", "[filename]: Output variables. If no filename is given, stdout will be used");
 	c2_cmd.add_info("--dump-enum", "-de", "[filename]: Output variables in C-style enum format. If no filename is given, stdout will be used");
 	c2_cmd.add_info("--address-range", "-ar", "<start> <end>: Override the valid address range available for the assembly to target. Addresses must be numerical");
+	c2_cmd.add_info("--assembly-hash", "-ash", "Verbosly outputs a hash for each assembly step.");
 
 	c2i::var a = "vice break";
 	c2i::var b = a;
@@ -460,6 +463,15 @@ void c2i::c2_poke(int64_t pos, int64_t data)
 		RAM[pos - RAM_base] = uint8_t(data);
 		RAM_use[pos - RAM_base] = 1;
 	}
+	
+	if(c2_assembly_hash)
+	{
+#ifndef _MSC_VER
+		iinfo("%016lx%016lx", p->hash_state.hash.h1, p->hash_state.hash.h2);
+#else
+		iinfo("%016llx%016llx", p->hash_state.hash.h1, p->hash_state.hash.h2);
+#endif
+	}
 }
 
 uint8_t c2i::c2_peek(int64_t pos)
@@ -528,22 +540,28 @@ bool c2i::c2_assemble()
 			c2_org.restore(org_backup_a, org_backup_w);
 			c2_reset_pass();
 			
-			fprintf(stderr, "Pass %d", pass);
+			if(!c2_assembly_hash)
+			{
+				fprintf(stderr, "Pass %d", pass);
+			}
 			c2_pass();
 			p->hash_state.finalize();
 			cmur3::shash hash = p->hash_state.hash;
 			
-			if(c2_verbose)
+			if(!c2_assembly_hash)
 			{
+				if(c2_verbose)
+				{
 #ifndef _MSC_VER
-				fprintf(stderr, ": %016lx%016lx\n", hash.h1, hash.h2);
+					fprintf(stderr, ": %016lx%016lx\n", hash.h1, hash.h2);
 #else
-				fprintf(stderr, ": %016llx%016llx\n", hash.h1, hash.h2);
+					fprintf(stderr, ": %016llx%016llx\n", hash.h1, hash.h2);
 #endif
-			}
-			else
-			{
-				fprintf(stderr, "\n");
+				}
+				else
+				{
+					fprintf(stderr, "\n");
+				}
 			}
 
 			if(history.size())
@@ -761,7 +779,10 @@ bool c2i::c2_resolve(const char *addr, int64_t &out, bool allow_labels)
 
 void c2i::c2_pre()
 {
-	
+	c2_cmd.invoke("--assembly-hash", 0, 0, [&](int arga, const char *argc[])
+	{
+		c2_assembly_hash = true;
+	});
 }
 
 void c2i::c2_post()
