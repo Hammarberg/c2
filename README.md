@@ -320,7 +320,7 @@ Example:
 macro set_color @[black,white,red,cyan,purple,green,blue,yellow]col
 {
         lda #col
-        sta #d021
+        sta $d021
 }
 
         set_color green
@@ -346,7 +346,7 @@ macro store_data @address, @data...
         store_data $1000, 23, 24*2, -100, $bd
 ```
 ## yourproject.cpp
-Your project comes with a .cpp-file. In most cases you can completely ignore this file as long as you keep it around as treat is as part of your project. To c2, this is your main source file as it itself includes your assembly file.
+Your project comes with a .cpp-file. In most cases you can completely ignore this file as long as you keep it around and treat is as part of your project. To c2, this is your main source file as it itself includes your assembly file.
 ```
     void c2_pass() override
     {
@@ -356,7 +356,7 @@ Your project comes with a .cpp-file. In most cases you can completely ignore thi
         }
     }
 ```
-You might realize now that all of your assembly is included inside of the C++ method c2_pass(). This method and hence your expanded assembly macros are called multiple times, one for each pass. Each pass helps resolve references and conditionally expand any macros until everything is resolved or an error occurred. For each pass, the binary assembly output is run through an 128 bit murmur3 hash. When 2 consecutive hashes match, assembly is considered complete. c2 will stop with an error of a hash repeats itself non consecutively. This can happen if resolving forward references gets stuck with paradoxes, at which point you should rethink your code. If c2 gets to pass 50, it will also stop with an error. This would likely be due to a bug in c2 or introduction of something random to the passes.
+You might realize now that all of your assembly is included inside of the C++ method c2_pass(). This method and hence your expanded assembly macros are called multiple times, once for each pass. Each pass helps resolve references and conditionally expand any macros until everything is resolved or an error occurred. For each pass, the binary assembly output is run through an 128 bit murmur3 hash. When 2 consecutive hashes match, assembly is considered complete. c2 will stop with an error of a hash repeats itself non consecutively. This can happen if resolving forward references gets stuck with paradoxes, at which point you should rethink your code. If c2 gets to pass 50, it will also stop with an error. This would likely be due to a bug in c2 or introduction of something random to the passes.
 
 `C2_SECTION_ASM` and the following scope is a marker for c2 to know where to limit macro expansion to. `C2_SECTION_TOP` marks the spot where c2 will declare labels.
 
@@ -398,6 +398,7 @@ struct
         lda #mydata.get_next_byte()
 ```
 ## Logging, warnings & errors
+`c2_error(const char *format, ...)`, `c2_info(const char *format, ...)`, `c2_verbose(const char *format, ...)`
 ## c2 C++ interface
 ### Custom C++ extensions
 ## c2lib directory
