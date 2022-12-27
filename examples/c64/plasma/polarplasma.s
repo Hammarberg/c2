@@ -321,9 +321,9 @@ tbl_colours:	fillbyte colourSet[1], 64
 
 		// sinus used for the plasma
 tbl_sinPlasma:	for(int i=0; i<256; i++)
-			byte (uint8_t) (sin(2*i*2*PI/256)*80)
+			byte (int) (sin(2*i*2*PI/256)*80)
 		
 		// sinus used for the "fade in"
 tbl_sinFade:	for(int i=0; i<256; i++)
-			byte (uint8_t) (i+sin(6*i*2*PI/256)*25)
+			byte (int) (i+sin(6*i*2*PI/256)*25)
 
