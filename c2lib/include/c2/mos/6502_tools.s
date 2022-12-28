@@ -60,7 +60,7 @@ macro memcpy @data...
 
 			if(data.size() < 3 || data.size() > 4)
 			{
-				c2_error("memcpy requires at least 3 arguments and max 4");
+				c2_error("memcpy requires 3 or 4 arguments");
 			}
 			else
 			{
@@ -150,17 +150,12 @@ macro memcpy @data...
 			}
 			else if(dir & forward)
 			{
-				var offset = 256 - (size & 255)
+				var offset = (256 - (size & 255)) & 255
 
-				multipoke tmp + 0, (src - offset) & 255, tmp + 1, (src - offset) >> 8, tmp + 2, (dst - offset) & 255, tmp + 3, (dst - offset) >> 8
+				multipoke tmp + 0, (src - offset) & 255, tmp + 1, ((src - offset) >> 8) - 1, tmp + 2, (dst - offset) & 255, tmp + 3, ((dst - offset) >> 8) - 1
 
-				ldx #(size >> 8) + 1
+				ldx #(size >> 8) + (size & 255 ? 1 : 0)
 				ldy #offset
-
-				if(offset)
-					bne ++
-				else
-					beq ++
 
 :				inc tmp + 1
 				inc tmp + 3
@@ -176,15 +171,10 @@ macro memcpy @data...
 			{
 				var offset = size & 255
 
-				multipoke tmp + 0, (src + size - offset) & 255, tmp + 1, (src + size - offset) >> 8, tmp + 2, (dst + size - offset) & 255, tmp + 3, (dst + size - offset) >> 8
+				multipoke tmp + 0, (src + size - offset) & 255, tmp + 1, ((src + size - offset) >> 8) + 1, tmp + 2, (dst + size - offset) & 255, tmp + 3, ((dst + size - offset) >> 8) + 1
 
-				ldx #(size >> 8) + 1
+				ldx #(size >> 8) + (size & 255 ? 1 : 0)
 				ldy #offset - 1
-
-				if(offset)
-					bne ++
-				else
-					beq ++
 
 :				dec tmp + 1
 				dec tmp + 3
@@ -210,7 +200,7 @@ macro memset @data...
 
 			if(data.size() < 3 || data.size() > 4)
 			{
-				c2_error("memset requires at least 3 arguments and max 4");
+				c2_error("memset requires 3 or 4 arguments");
 			}
 			else
 			{
@@ -280,14 +270,16 @@ macro memset @data...
 			}
 			else
 			{
-				var offset = 256 - (size & 255)
+				var offset = (256 - (size & 255)) & 255
 
-				multipoke tmp + 0, (dst - offset) & 255, tmp + 1, (dst - offset) >> 8
+				multipoke tmp + 0, (dst - offset) & 255, tmp + 1, ((dst - offset) >> 8) - 1
 
 				lda #value
 
-				if((size >> 8) + 1 != value)
-					ldx #(size >> 8) + 1
+				var calc = (size >> 8) + (size & 255 ? 1 : 0)
+
+				if(calc != value)
+					ldx #calc
 				else
 					tax
 
@@ -295,11 +287,6 @@ macro memset @data...
 					ldy #offset
 				else
 					tay
-
-				if(offset)
-					bne ++
-				else
-					beq ++
 
 :				inc tmp + 1
 
