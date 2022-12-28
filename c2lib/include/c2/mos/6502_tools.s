@@ -20,7 +20,7 @@
 // Tools
 //-------------------------------------------------------------------------------
 
-// Performs a series of optimized lda and sta without re-loading the same value twice. The format is address, data, address, data, ...
+// Performs a series of optimized lda and sta without re-loading the same value twice. The format is: address, data, address, data, ...
 macro multipoke @data...
 {
 	if(data.size() & 1)
@@ -49,10 +49,30 @@ macro multipoke @data...
 	}
 }
 
-// memcpy/memmove without self-modifying code. Handles overlapping buffers. May use all registers, $fb, $fc, $fd, $fe. The strategy is size over speed.
-macro memcpy @dst, @src, @size
+// memcpy/memmove without self-modifying code. Handles overlapping buffers. May use all registers and 4 addresses at tmpzp (default $fb). The strategy is size over speed.
+// Syntax memcpy <dst>, <src>, <size> [,tmpzp]
+macro memcpy @data...
 {
+			var dst = 0
+			var src = 0
+			var size = 0
 			var tmp = $fb
+
+			if(data.size() < 3 || data.size() > 4)
+			{
+				c2_error("memcpy requires at least 3 arguments and max 4");
+			}
+			else
+			{
+				dst = data[0];
+				src = data[1];
+				size = data[2];
+
+				if(data.size() == 4)
+				{
+					tmp = data[3];
+				}
+			}
 
 			enum
 			{
@@ -134,20 +154,23 @@ macro memcpy @dst, @src, @size
 
 				multipoke tmp + 0, (src - offset) & 255, tmp + 1, (src - offset) >> 8, tmp + 2, (dst - offset) & 255, tmp + 3, (dst - offset) >> 8
 
-				ldx #size >> 8
+				ldx #(size >> 8) + 1
 				ldy #offset
+
+				if(offset)
+					bne ++
+				else
+					beq ++
+
+:				inc tmp + 1
+				inc tmp + 3
 
 :				lda (tmp + 0),y
 				sta (tmp + 2),y
 				iny
 				bne -
-				cpx #0
-				beq +
 				dex
-				inc tmp + 1
-				inc tmp + 3
-				jmp -
-:
+				bne --
 			}
 			else if(dir & backward)
 			{
@@ -155,28 +178,51 @@ macro memcpy @dst, @src, @size
 
 				multipoke tmp + 0, (src + size - offset) & 255, tmp + 1, (src + size - offset) >> 8, tmp + 2, (dst + size - offset) & 255, tmp + 3, (dst + size - offset) >> 8
 
-				ldx #size >> 8
+				ldx #(size >> 8) + 1
 				ldy #offset - 1
+
+				if(offset)
+					bne ++
+				else
+					beq ++
+
+:				dec tmp + 1
+				dec tmp + 3
 
 :				lda (tmp + 0),y
 				sta (tmp + 2),y
 				dey
 				cpy #$ff
 				bne -
-				cpx #0
-				beq +
 				dex
-				dec tmp + 1
-				dec tmp + 3
-				jmp -
-:
+				bne --
 			}
 }
 
-// memset without self-modifying code. May use all registers, $fb and $fc, The strategy is size over speed.
-macro memset @dst, @value, @size
+// memset without self-modifying code. May use all registers and 2 addresses at tmpzp (default $fb). The strategy is size over speed.
+// Syntax memset <dst>, <value>, <size> [,tmpzp]
+macro memset @data...
 {
+			var dst = 0
+			var value = 0
+			var size = 0
 			var tmp = $fb
+
+			if(data.size() < 3 || data.size() > 4)
+			{
+				c2_error("memset requires at least 3 arguments and max 4");
+			}
+			else
+			{
+				dst = data[0];
+				value = data[1];
+				size = data[2];
+
+				if(data.size() == 4)
+				{
+					tmp = data[3];
+				}
+			}
 
 			// Calculate how large the unrolled code would be
 			var unroll_size = (dst.bits() <= 8 ? 2 : 3) * size
@@ -240,8 +286,8 @@ macro memset @dst, @value, @size
 
 				lda #value
 
-				if(size >> 8 != value)
-					ldx #size >> 8
+				if((size >> 8) + 1 != value)
+					ldx #(size >> 8) + 1
 				else
 					tax
 
@@ -250,14 +296,17 @@ macro memset @dst, @value, @size
 				else
 					tay
 
+				if(offset)
+					bne ++
+				else
+					beq ++
+
+:				inc tmp + 1
+
 :				sta (tmp + 0),y
 				iny
 				bne -
-				cpx #0
-				beq +
 				dex
-				inc tmp + 1
-				jmp -
-:
+				bne --
 			}
 }
