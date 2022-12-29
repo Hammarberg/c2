@@ -59,4 +59,14 @@ debug:
 	@echo LDFLAGS=$(LDFLAGS)
 	@echo LDLIBS=$(LDLIBS)
 
+install: all
+	install -d /usr/local/bin
+	install $(appname) /usr/local/bin
+	install -d /usr/local/lib
+	cp -r c2lib /usr/local/lib/
+
+uninstall: all
+	rm /usr/local/bin/$(appname)
+	rm -rf /usr/local/lib/c2lib
+
 include .depend

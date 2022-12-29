@@ -42,9 +42,11 @@ c2 requires llvm/clang++ or g++ for both building c2 itself and for running c2. 
 
 Put the c2 executable in your path. Make sure the c2lib/ directory is next to c2 or two levels above (see c2lib section) and that a 64 bit compatible clang++ or g++ is in path.
 ### GNU/Linux/BSD/OSX
-`make`
+`make` and `sudo make install`
 
-And set path.
+To uninstall, `sudo make uninstall`
+
+If necessary, modify Makefile to your needs. Currently it's set to use `clang++` but `g++` works just as well. `-march=native` is set. While this can give extra optimizations for your particular CPU, it makes the executable less portable and have to be removed if you want to compile on an ARM CPU.
 ### Windows
 c2 can be build with either VS2022 or clang/LLVM. If you don't already have clang installed, you will have to install it anyways since it's a dependency that is used by c2 during assembly.
 
