@@ -134,7 +134,7 @@ loop:   dex
         bpl loop
 ```
 ### Local labels
-A label can be local under its parent label namespace when prefixed with a dot. This greatly reduses the risk of label name conflicts.
+A label can be local under its parent label namespace when prefixed with a dot. This greatly reduces the risk of label name conflicts.
 
 Syntax: `.<name>:`
 
@@ -166,7 +166,7 @@ Example:
         bpl -
 ```
 ### Relative label addressing
-When referencing a label, it's normally done by name. Anonymous labels can only be referenced with a relative count from the current location. To reference any previous label, use a single `-`, to reference two labels back use `--`, etc. In the same way, use one or more`+` to reference forward labels.
+When referencing a label, it's normally done by name. Anonymous labels can only be referenced with a relative count from the current location. To reference the previous label, anonymous or not, use a single `-`, to reference two labels back use `--`. In the same way, use one or more`+` to reference forward labels.
 ### Indexed labels
 Indexed labels are global in nature but they won't provide a namespace for local labels. They have to be declared and referenced with an index number or a variable. They are meant as a tool to address auto-generated code or expanded macros.
 
