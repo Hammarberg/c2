@@ -30,7 +30,7 @@
 
 #define ENV_C2LIB_HOME "C2LIB_HOME"
 #define C2LIB "c2lib"
-#define NIX_GLOBAL "/usr/lib/" C2LIB
+#define NIX_GLOBAL "/usr/local/lib/" C2LIB
 #define C2CONFIG "config.c2.json"
 
 clibrary::clibrary()
