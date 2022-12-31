@@ -501,7 +501,7 @@ bool c2a::match_macro(stok *io, toklink &link)
 			out.push_tok(maketok(rpos, "c2_scope_internal_push", etype::ALPHA));
 			out.push_tok(maketok(rpos, " ", etype::SPACE));
 			
-			out.push_tok(maketok(io, autolabel(io->name).c_str(), etype::ALPHA, 0));		//Forcing ord
+			out.push_tok(maketok(io, autolabel("macro").c_str(), etype::ALPHA, 0));		//Forcing ord
 			out.push_tok(maketok(io, ":", etype::OP, 1));
 			
 			// Push the rest of the macro
@@ -1150,27 +1150,40 @@ void c2a::s_parse1(toklink &link)
 									else
 									{
 										// Root label setup
+										bool macrospace = mapname.size() >= 14 && mapname.substr(0, 14) == "c2_auto_macro_";
+										
 										std::string subname = "c2_sub_s" + mapname;
 										
 										s2 = "struct c2_sub_s" + mapname + " {\n";
 										psub = linkinit(maketok(o, s2.c_str()), link);
 										
-										s2 = "};\n";
-										linkinit(maketok(o, s2.c_str()), link);
-										
-										s2 = "c2_basevar<" + subname + "> " + stmp + "={\"" + mapname + "\",0};\n";
-										linkinit(maketok(o, s2.c_str()), link);
-										
-										stok *c;
-										if(o->ord < 2)
+										if(macrospace)
 										{
-											s2 = mapname + "=c2_org;";
-											link.link(c=maketok(plabel, s2.c_str()), plabel->get_prev());
+											s2 = "}"+mapname+";\n";
 										}
 										else
 										{
-											link.link(c=maketok(plabel, mapname.c_str()), plabel->get_prev());
-											link.link(maketok(plabel, "=c2_org;"), o->prev);
+											s2 = "};\n";
+										}
+										
+										linkinit(maketok(o, s2.c_str()), link);
+										
+										stok *c = nullptr;
+										if(!macrospace)
+										{
+											s2 = "c2_basevar<" + subname + "> " + stmp + "={\"" + mapname + "\",0};\n";
+											linkinit(maketok(o, s2.c_str()), link);
+											
+											if(o->ord < 2)
+											{
+												s2 = mapname + "=c2_org;";
+												link.link(c=maketok(plabel, s2.c_str()), plabel->get_prev());
+											}
+											else
+											{
+												link.link(c=maketok(plabel, mapname.c_str()), plabel->get_prev());
+												link.link(maketok(plabel, "=c2_org;"), o->prev);
+											}
 										}
 										
 										if(!indexed_label)
