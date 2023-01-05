@@ -48,15 +48,15 @@ To uninstall, `sudo make uninstall`
 
 If necessary, modify Makefile to your needs. Currently it's set to use `clang++` but `g++` works just as well. `-march=native` is set. While this can give extra optimizations for your particular CPU, it makes the executable less portable and have to be removed if you want to compile on an ARM CPU.
 ### Windows
-c2 can be build with either VS2022 or clang/LLVM. If you don't already have clang installed, you will have to install it anyways since it's a dependency that is used by c2 during assembly.
+c2 can be built with either VS2022 or clang/LLVM. If you don't already have clang installed, you will have to install it anyways since it's a dependency that is used by c2 during assembly.
 
 Clone or unzip c2 to an empty folder.
-#### Option 1: clang
+#### Option 1: clang/LLVM
 The easiest and recommended method is to install [clang/LLVM](https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.6/LLVM-15.0.6-win64.exe). Use the default installation path and/or select to set environment variables and path so c2 can find clang. If clang is not in path, c2 will look for clang at `C:\Program Files\LLVM\bin\clang++`.
 
 Run `WindowsLLVMBuild.bat` and a c2 executable should be created in the same folder.
 #### Option 2: VS2022
-If you prefer or already have [Visual Studion 2022 Community](https://visualstudio.microsoft.com/vs/community/) or better installed you can use that. However, you also need to select during install, or modify an existing installation to include clang tools as they are provided as an option in the VS installer. If clang is not in path, c2 will look for clang at `C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\Llvm\x64\bin\clang++`.
+If you prefer or already have [Visual Studio 2022 Community](https://visualstudio.microsoft.com/vs/community/) or better installed you can use that. However, you also need to select during install, or modify an existing installation to include clang tools as they are provided as an option in the VS installer. If clang is not in path, c2 will look for clang at `C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\Llvm\x64\bin\clang++`.
 
 Run `WindowsVSBuild.bat` and a c2 executable should be created under `x64\Release\c2.exe`. You may of course also open the solution in VS2022 and build there.
 #### PATH
@@ -79,7 +79,7 @@ Create an empty folder for your project and step into it.
 
 `c2 --create-project c64vice myawesomeproject`
 
-Optionally you can create the destination path with c2 directly.
+Optionally you can create the destination path with c2 directly. For Windows, use backslashes (`\`) for paths.
 
 `c2 --create-project c64vice myawesomeproject sources/hack`
 
