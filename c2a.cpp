@@ -340,7 +340,7 @@ bool c2a::match_macro_parameters(const std::vector<stok *> &def, const std::vect
 			{
 				bool isarray = ridx[l] == -2;
 				
-				outargs.push_back(std::vector<stok *>());
+				outargs.push_back({});
 				std::vector<stok *> &args = outargs[outargs.size()-1];
 				
 				// Sanity check potential argument
@@ -595,7 +595,7 @@ bool c2a::match_macro(stok *io, toklink &link)
 					
 					if(anon_valid)
 					{
-						anonymous.push_back(std::pair<stok *, stok *>(anon_first, anon_last));
+						anonymous.push_back({anon_first, anon_last});
 					}
 					
 					if(isarray)
@@ -764,7 +764,7 @@ void c2a::parse_macro(toklink &link)
 				signature.push_tok(maketok(o, "@", etype::OP));
 			}
 			
-			inputs.push_back(std::pair<std::string, std::vector<const char *>>(stmp, indexed_parm));
+			inputs.push_back({stmp, indexed_parm});
 			
 			o->mute();
 			lastparam = true;
@@ -939,7 +939,7 @@ void c2a::s_parse1(toklink &link)
 				{
 					scope_stack.push_back(scopeindex);
 					scopeindex = int32_t(scope_labels.size());
-					scope_labels.push_back(std::vector<const char *>());
+					scope_labels.push_back({});
 					o->mute();
 				}
 				else if(!strcasecmp("c2_scope_internal_pop", o->name))
@@ -1191,7 +1191,7 @@ void c2a::s_parse1(toklink &link)
 											parent_label = mapname;
 											root_labelindex = uint32_t(root_labels.size());
 											clabel &cr = labelmap[mapname] = clabel(c, root_labelindex, psub);
-											root_labels.push_back(std::pair<const char *, clabel *>(pstring, &cr));
+											root_labels.push_back({pstring, &cr});
 										}
 										else
 										{
