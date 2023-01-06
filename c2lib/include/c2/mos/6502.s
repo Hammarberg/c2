@@ -1654,7 +1654,7 @@ macro pla
 
 macro php
 {
-	push8($98);
+	push8($08);
 }
 
 macro plp
