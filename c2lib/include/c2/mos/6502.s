@@ -1,4 +1,4 @@
-/*
+﻿/*
 	c2 - cross assembler
 	Copyright (C) 2022  John Hammarberg (crt@nospam.binarybone.com)
 
@@ -697,29 +697,33 @@ TYA  Transfer Index Y to Accumulator
 
 macro adc #@n
 {
-	byte $69, n
+	push8($69);
+	push8(n);
 }
 
 macro adc (@n,x)
 {
-	byte $61, n
+	push8($61);
+	push8(n);
 }
 
 macro adc (@n),y
 {
-	byte $71, n
+	push8($71);
+	push8(n);
 }
 
 macro adc @n
 {
     if(n.bits() <= 8)
     {
-        byte $65, n
+        push8($65);
+        push8(n);
     }
     else
     {
-        byte $6d
-        word n
+        push8($6d);
+        push16le(n, true);
     }
 }
 
@@ -727,48 +731,53 @@ macro adc @n,x
 {
     if(n.bits() <= 8)
     {
-        byte $75, n
+        push8($75);
+        push8(n);
     }
     else
     {
-        byte $7d
-        word n
+        push8($7d);
+        push16le(n, true);
     }
 }
 
 macro adc @n,y
 {
-	byte $79
-	word n
+    push8($79);
+    push16le(n, true);
 }
 
 // AND
 
 macro and #@n
 {
-	byte $29, n
+	push8($29);
+	push8(n);
 }
 
 macro and (@n,x)
 {
-	byte $21, n
+	push8($21);
+	push8(n);
 }
 
 macro and (@n),y
 {
-	byte $31, n
+	push8($31);
+	push8(n);
 }
 
 macro and @n
 {
     if(n.bits() <= 8)
     {
-        byte $25, n
+        push8($25);
+        push8(n);
     }
     else
     {
-        byte $2d
-        word n
+        push8($2d);
+        push16le(n, true);
     }
 }
 
@@ -776,38 +785,40 @@ macro and @n,x
 {
     if(n.bits() <= 8)
     {
-        byte $35, n
+        push8($35);
+        push8(n);
     }
     else
     {
-        byte $3d
-        word n
+        push8($3d);
+        push16le(n, true);
     }
 }
 
 macro and @n,y
 {
-	byte $39
-	word n
+	push8($39);
+    push16le(n, true);
 }
 
 // ASL
 
 macro asl
 {
-	byte $0a
+	push8($0a);
 }
 
 macro asl @n
 {
     if(n.bits() <= 8)
     {
-        byte $06, n
+        push8($06);
+        push8(n);
     }
     else
     {
-        byte $0e
-        word n
+        push8($0e);
+        push16le(n, true);
     }
 }
 
@@ -815,12 +826,13 @@ macro asl @n,x
 {
     if(n.bits() <= 8)
     {
-        byte $16, n
+        push8($16);
+        push8(n);
     }
     else
     {
-        byte $1e
-        word n
+        push8($1e);
+        push16le(n, true);
 	}
 }
 
@@ -830,12 +842,13 @@ macro bit @n
 {
     if(n.bits() <= 8)
     {
-        byte $24, n
+        push8($24);
+        push8(n);
     }
     else
     {
-        byte $2c
-        word n
+        push8($2c);
+        push16le(n, true);
 	}
 }
 
@@ -843,78 +856,90 @@ macro bit @n
 
 macro bpl @n
 {
-	byte $10, c2sr<8>(n-@-2)
+	push8($10);
+	push8(c2sr<8>(n-@-1));
 }
 
 macro bmi @n
 {
-	byte $30, c2sr<8>(n-@-2)
+	push8($30);
+	push8(c2sr<8>(n-@-1));
 }
 
 macro bvc @n
 {
-	byte $50, c2sr<8>(n-@-2)
+	push8($50);
+	push8(c2sr<8>(n-@-1));
 }
 
 macro bvs @n
 {
-	byte $70, c2sr<8>(n-@-2)
+	push8($70);
+	push8(c2sr<8>(n-@-1));
 }
 
 macro bcc @n
 {
-	byte $90, c2sr<8>(n-@-2)
+	push8($90);
+	push8(c2sr<8>(n-@-1));
 }
 
 macro bcs @n
 {
-	byte $b0, c2sr<8>(n-@-2)
+	push8($b0);
+	push8(c2sr<8>(n-@-1));
 }
 
 macro bne @n
 {
-	byte $d0, c2sr<8>(n-@-2)
+	push8($d0);
+	push8(c2sr<8>(n-@-1));
 }
 
 macro beq @n
 {
-	byte $f0, c2sr<8>(n-@-2)
+	push8($f0);
+	push8(c2sr<8>(n-@-1));
 }
 
 // BRK
 
 macro brk
 {
-	byte $00
+	push8($0);
 }
 
 // CMP
 
 macro cmp #@n
 {
-	byte $c9, n
+	push8($c9);
+	push8(n);
 }
 
 macro cmp (@n,x)
 {
-	byte $c1, n
+	push8($c1);
+	push8(n);
 }
 
 macro cmp (@n),y
 {
-	byte $d1, n
+	push8($d1);
+	push8(n);
 }
 
 macro cmp @n
 {
     if(n.bits() <= 8)
     {
-        byte $c5, n
+        push8($c5);
+        push8(n);
     }
     else
     {
-        byte $cd
-        word n
+        push8($cd);
+        push16le(n, true);
 	}
 }
 
@@ -922,38 +947,41 @@ macro cmp @n,x
 {
     if(n.bits() <= 8)
     {
-        byte $d5, n
+        push8($d5);
+        push8(n);
     }
     else
     {
-        byte $dd
-        word n
+        push8($dd);
+        push16le(n, true);
     }
 }
 
 macro cmp @n,y
 {
-	byte $d9
-	word n
+	push8($d9);
+    push16le(n, true);
 }
 
 // CPX
 
 macro cpx #@n
 {
-	byte $e0, n
+	push8($e0);
+	push8(n);
 }
 
 macro cpx @n
 {
     if(n.bits() <= 8)
     {
-        byte $e4, n
+        push8($e4);
+        push8(n);
     }
     else
     {
-        byte $ec
-        word n
+        push8($ec);
+        push16le(n, true);
 	}
 }
 
@@ -961,19 +989,21 @@ macro cpx @n
 
 macro cpy #@n
 {
-	byte $c0, n
+	push8($c0);
+	push8(n);
 }
 
 macro cpy @n
 {
     if(n.bits() <= 8)
     {
-        byte $c4, n
+        push8($c4);
+        push8(n);
     }
     else
     {
-        byte $cc
-        word n
+        push8($cc);
+        push16le(n, true);
 	}
 }
 
@@ -983,12 +1013,13 @@ macro dec @n
 {
     if(n.bits() <= 8)
     {
-        byte $c6, n
+        push8($c6);
+        push8(n);
     }
     else
     {
-        byte $ce
-        word n
+        push8($ce);
+        push16le(n, true);
 	}
 }
 
@@ -996,12 +1027,13 @@ macro dec @n,x
 {
     if(n.bits() <= 8)
     {
-        byte $d6, n
+        push8($d6);
+        push8(n);
     }
     else
     {
-        byte $de
-        word n
+        push8($de);
+        push16le(n, true);
 	}
 }
 
@@ -1009,29 +1041,33 @@ macro dec @n,x
 
 macro eor #@n
 {
-	byte $49, n
+	push8($49);
+	push8(n);
 }
 
 macro eor (@n,x)
 {
-	byte $41, n
+	push8($41);
+	push8(n);
 }
 
 macro eor (@n),y
 {
-	byte $51, n
+	push8($51);
+	push8(n);
 }
 
 macro eor @n
 {
     if(n.bits() <= 8)
     {
-        byte $45, n
+        push8($45);
+        push8(n);
     }
     else
     {
-        byte $4d
-        word n
+        push8($4d);
+        push16le(n, true);
 	}
 }
 
@@ -1039,56 +1075,57 @@ macro eor @n,x
 {
     if(n.bits() <= 8)
     {
-        byte $55, n
+        push8($55);
+        push8(n);
     }
     else
     {
-        byte $5d
-        word n
+        push8($5d);
+        push16le(n, true);
 	}
 }
 
 macro eor @n,y
 {
-	byte $59
-	word n
+	push8($59);
+    push16le(n, true);
 }
 
 // Flag (Processor Status) Instructions
 
 macro clc
 {
-	byte $18
+	push8($18);
 }
 
 macro sec
 {
-	byte $38
+	push8($38);
 }
 
 macro cli
 {
-	byte $58
+	push8($58);
 }
 
 macro sei
 {
-	byte $78
+	push8($78);
 }
 
 macro clv
 {
-	byte $b8
+	push8($b8);
 }
 
 macro cld
 {
-	byte $d8
+	push8($d8);
 }
 
 macro sed
 {
-	byte $f8
+	push8($f8);
 }
 
 // INC
@@ -1097,12 +1134,13 @@ macro inc @n
 {
     if(n.bits() <= 8)
     {
-        byte $e6, n
+        push8($e6);
+        push8(n);
     }
     else
     {
-        byte $ee
-        word n
+        push8($ee);
+        push16le(n, true);
 	}
 }
 
@@ -1110,12 +1148,13 @@ macro inc @n,x
 {
     if(n.bits() <= 8)
     {
-        byte $f6, n
+        push8($f6);
+        push8(n);
     }
     else
     {
-        byte $fe
-        word n
+        push8($fe);
+        push16le(n, true);
 	}
 }
 
@@ -1123,52 +1162,55 @@ macro inc @n,x
 
 macro jmp (@n)
 {
-	byte $6c
-	word n
+	push8($6c);
+    push16le(n, true);
 }
 
 macro jmp @n
 {
-	byte $4c
-	word n
+	push8($4c);
+    push16le(n, true);
 }
 
 // JSR
 
 macro jsr @n
 {
-	byte $20
-	word n
+	push8($20);
+    push16le(n, true);
 }
 
 // LDA
 
 macro lda #@n
 {
-	byte $a9
-	byte n
+	push8($a9);
+	push8(n);
 }
 
 macro lda (@n,x)
 {
-	byte $a1, n
+	push8($a1);
+	push8(n);
 }
 
 macro lda (@n),y
 {
-	byte $b1, n
+	push8($b1);
+	push8(n);
 }
 
 macro lda @n
 {
     if(n.bits() <= 8)
     {
-        byte $a5, n
+        push8($a5);
+        push8(n);
     }
     else
     {
-        byte $ad
-        word n
+        push8($ad);
+        push16le(n, true);
 	}
 }
 
@@ -1176,38 +1218,41 @@ macro lda @n,x
 {
     if(n.bits() <= 8)
     {
-        byte $b5, n
+        push8($b5);
+        push8(n);
     }
     else
     {
-        byte $bd
-        word n
+        push8($bd);
+        push16le(n, true);
 	}
 }
 
 macro lda @n,y
 {
-	byte $b9
-	word n
+	push8($b9);
+    push16le(n, true);
 }
 
 // LDX
 
 macro ldx #@n
 {
-	byte $a2, n
+	push8($a2);
+	push8(n);
 }
 
 macro ldx @n
 {
     if(n.bits() <= 8)
     {
-        byte $a6, n
+        push8($a6);
+        push8(n);
     }
     else
     {
-        byte $ae
-        word n
+        push8($ae);
+        push16le(n, true);
 	}
 }
 
@@ -1215,12 +1260,13 @@ macro ldx @n,y
 {
     if(n.bits() <= 8)
     {
-        byte $b6, n
+        push8($b6);
+        push8(n);
     }
     else
     {
-        byte $be
-        word n
+        push8($be);
+        push16le(n, true);
 	}
 }
 
@@ -1228,19 +1274,21 @@ macro ldx @n,y
 
 macro ldy #@n
 {
-	byte $a0, n
+	push8($a0);
+	push8(n);
 }
 
 macro ldy @n
 {
     if(n.bits() <= 8)
     {
-        byte $a4, n
+        push8($a4);
+        push8(n);
     }
     else
     {
-        byte $ac
-        word n
+        push8($ac);
+        push16le(n, true);
 	}
 }
 
@@ -1248,12 +1296,13 @@ macro ldy @n,x
 {
     if(n.bits() <= 8)
     {
-        byte $b4, n
+        push8($b4);
+        push8(n);
     }
     else
     {
-        byte $bc
-        word n
+        push8($bc);
+        push16le(n, true);
 	}
 }
 
@@ -1261,19 +1310,20 @@ macro ldy @n,x
 
 macro lsr
 {
-	byte $4a
+	push8($4a);
 }
 
 macro lsr @n
 {
     if(n.bits() <= 8)
     {
-        byte $46, n
+        push8($46);
+        push8(n);
     }
     else
     {
-        byte $4e
-        word n
+        push8($4e);
+        push16le(n, true);
 	}
 }
 
@@ -1281,12 +1331,13 @@ macro lsr @n,x
 {
     if(n.bits() <= 8)
     {
-        byte $56, n
+        push8($56);
+        push8(n);
     }
     else
     {
-        byte $5e
-        word n
+        push8($5e);
+        push16le(n, true);
 	}
 }
 
@@ -1294,36 +1345,40 @@ macro lsr @n,x
 
 macro nop
 {
-	byte $ea
+	push8($ea);
 }
 
 // ORA
 
 macro ora #@n
 {
-	byte $09, n
+	push8($09);
+	push8(n);
 }
 
 macro ora (@n,x)
 {
-	byte $01, n
+	push8($01);
+	push8(n);
 }
 
 macro ora (@n),y
 {
-	byte $11, n
+	push8($11);
+	push8(n);
 }
 
 macro ora @n
 {
     if(n.bits() <= 8)
     {
-        byte $05, n
+        push8($05);
+        push8(n);
     }
     else
     {
-        byte $0d
-        word n
+        push8($0d);
+        push16le(n, true);
 	}
 }
 
@@ -1331,80 +1386,82 @@ macro ora @n,x
 {
     if(n.bits() <= 8)
     {
-        byte $15, n
+        push8($15);
+        push8(n);
     }
     else
     {
-        byte $1d
-        word n
+        push8($1d);
+        push16le(n, true);
 	}
 }
 
 macro ora @n,y
 {
-	byte $19
-	word n
+	push8($19);
+    push16le(n, true);
 }
 
 // Register Instructions 
 
 macro tax
 {
-	byte $aa
+	push8($aa);
 }
 
 macro txa
 {
-	byte $8a
+	push8($8a);
 }
 
 macro dex
 {
-	byte $ca
+	push8($ca);
 }
 
 macro inx
 {
-	byte $e8
+	push8($e8);
 }
 
 macro tay
 {
-	byte $a8
+	push8($a8);
 }
 
 macro tya
 {
-	byte $98
+	push8($98);
 }
 
 macro dey
 {
-	byte $88
+	push8($88);
 }
 
 macro iny
 {
-	byte $c8
+	push8($c8);
 }
 
 // ROL
 
 macro rol
 {
-	byte $2a
+	push8($2a);
 }
 
 macro rol @n
 {
     if(n.bits() <= 8)
     {
-        byte $26, n
+        push8($26);
+        push8(n);
     }
     else
     {
-        byte $2e
-        word n
+        push8($2e);
+        push16le(n, true);
 	}
 }
 
@@ -1412,12 +1469,13 @@ macro rol @n,x
 {
     if(n.bits() <= 8)
     {
-        byte $36, n
+        push8($36);
+        push8(n);
     }
     else
     {
-        byte $3e
-        word n
+        push8($3e);
+        push16le(n, true);
 	}
 }
 
@@ -1425,19 +1483,20 @@ macro rol @n,x
 
 macro ror
 {
-	byte $6a
+	push8($6a);
 }
 
 macro ror @n
 {
     if(n.bits() <= 8)
     {
-        byte $66, n
+        push8($66);
+        push8(n);
     }
     else
     {
-        byte $6e
-        word n
+        push8($6e);
+        push16le(n, true);
 	}
 }
 
@@ -1445,12 +1504,13 @@ macro ror @n,x
 {
     if(n.bits() <= 8)
     {
-        byte $76, n
+        push8($76);
+        push8(n);
     }
     else
     {
-        byte $7e
-        word n
+        push8($7e);
+        push16le(n, true);
 	}
 }
 
@@ -1458,43 +1518,47 @@ macro ror @n,x
 
 macro rti
 {
-	byte $40
+	push8($40);
 }
 
 // RTS
 
 macro rts
 {
-	byte $60
+	push8($60);
 }
 
 // SBC
 
 macro sbc #@n
 {
-	byte $e9, n
+	push8($e9);
+	push8(n);
 }
 
 macro sbc (@n,x)
 {
-	byte $e1, n
+	push8($e1);
+	push8(n);
 }
 
 macro sbc (@n),y
 {
-	byte $f1, n
+	push8($f1);
+	push8(n);
 }
 
 macro sbc @n
 {
     if(n.bits() <= 8)
     {
-        byte $e5, n
+        push8($e5);
+        push8(n);
     }
     else
     {
-        byte $ed
-        word n
+        push8($ed);
+        push16le(n, true);
 	}
 }
 
@@ -1502,43 +1566,47 @@ macro sbc @n,x
 {
     if(n.bits() <= 8)
     {
-        byte $f5, n
+        push8($f5);
+        push8(n);
     }
     else
     {
-        byte $fd
-        word n
+        push8($fd);
+        push16le(n, true);
 	}
 }
 
 macro sbc @n,y
 {
-	byte $f9
-	word n
+	push8($f9);
+    push16le(n, true);
 }
 
 // STA
 
 macro sta (@n,x)
 {
-	byte $81, n
+	push8($81);
+	push8(n);
 }
 
 macro sta (@n),y
 {
-	byte $91, n
+	push8($91);
+	push8(n);
 }
 
 macro sta @n
 {
     if(n.bits() <= 8)
     {
-        byte $85, n
+        push8($85);
+        push8(n);
     }
     else
     {
-        byte $8d
-        word n
+        push8($8d);
+        push16le(n, true);
 	}
 }
 
@@ -1546,70 +1614,73 @@ macro sta @n,x
 {
     if(n.bits() <= 8)
     {
-        byte $95, n
+        push8($95);
+        push8(n);
     }
     else
     {
-        byte $9d
-        word n
+        push8($9d);
+        push16le(n, true);
 	}
 }
 
 macro sta @n,y
 {
-	byte $99
-	word n
+	push8($99);
+    push16le(n, true);
 }
 
 // Stack Instructions
 
 macro txs
 {
-	byte $9a
+	push8($9a);
 }
 
 macro tsx
 {
-	byte $ba
+	push8($ba);
 }
 
 macro pha
 {
-	byte $48
+	push8($48);
 }
 
 macro pla
 {
-	byte $68
+	push8($68);
 }
 
 macro php
 {
-	byte $08
+	push8($98);
 }
 
 macro plp
 {
-    byte $28
+	push8($28);
 }
 
 // STX
 
 macro stx @n,y
 {
-    byte $96, n
+	push8($96);
+	push8(n);
 }
 
 macro stx @n
 {
     if(n.bits() <= 8)
     {
-        byte $86, n
+        push8($86);
+        push8(n);
     }
     else
     {
-        byte $8e
-        word n
+        push8($8e);
+        push16le(n, true);
     }
 }
 
@@ -1617,19 +1688,21 @@ macro stx @n
 
 macro sty @n,x
 {
-	byte $94, n
+	push8($94);
+	push8(n);
 }
 
 macro sty @n
 {
     if(n.bits() <= 8)
     {
-        byte $84, n
+        push8($84);
+        push8(n);
     }
     else
     {
-        byte $8c
-        word n
+        push8($8c);
+        push16le(n, true);
     }
 }
 
