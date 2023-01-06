@@ -352,7 +352,7 @@ c2i::~c2i()
 	delete [] RAM_use;
 }
 
-void c2i::push8(int64_t b)
+void c2i::push8(int64_t b, bool isaddr)
 {
 	if(!var::inrange(8, b))
 	{
@@ -362,7 +362,7 @@ void c2i::push8(int64_t b)
 	push(b);
 }
 
-void c2i::push16le(int64_t b)
+void c2i::push16le(int64_t b, bool isaddr)
 {
 	if(!var::inrange(16, b))
 	{
@@ -373,7 +373,7 @@ void c2i::push16le(int64_t b)
 	push(b>>8);
 }
 
-void c2i::push16be(int64_t b)
+void c2i::push16be(int64_t b, bool isaddr)
 {
 	if(!var::inrange(16, b))
 	{
@@ -384,7 +384,7 @@ void c2i::push16be(int64_t b)
 	push(b);
 }
 
-void c2i::push32le(int64_t b)
+void c2i::push32le(int64_t b, bool isaddr)
 {
 	if(!var::inrange(32, b))
 	{
@@ -397,7 +397,7 @@ void c2i::push32le(int64_t b)
 	push(b>>24);
 }
 
-void c2i::push32be(int64_t b)
+void c2i::push32be(int64_t b, bool isaddr)
 {
 	if(!var::inrange(32, b))
 	{
@@ -410,7 +410,7 @@ void c2i::push32be(int64_t b)
 	push(b);
 }
 
-void c2i::push64le(int64_t b)
+void c2i::push64le(int64_t b, bool isaddr)
 {
 	push(b);
 	push(b>>8);
@@ -422,7 +422,7 @@ void c2i::push64le(int64_t b)
 	push(b>>56);
 }
 
-void c2i::push64be(int64_t b)
+void c2i::push64be(int64_t b, bool isaddr)
 {
 	push(b>>56);
 	push(b>>48);

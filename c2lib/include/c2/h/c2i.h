@@ -262,13 +262,13 @@ public:
 	virtual void c2_pass() = 0;
 	virtual void c2_post();
 
-	virtual void push8(int64_t b);
-	virtual void push16le(int64_t b);
-	virtual void push16be(int64_t b);
-	virtual void push32le(int64_t b);
-	virtual void push32be(int64_t b);
-	virtual void push64le(int64_t b);
-	virtual void push64be(int64_t b);
+	virtual void push8(int64_t b, bool isaddr = false);
+	virtual void push16le(int64_t b, bool isaddr = false);
+	virtual void push16be(int64_t b, bool isaddr = false);
+	virtual void push32le(int64_t b, bool isaddr = false);
+	virtual void push32be(int64_t b, bool isaddr = false);
+	virtual void push64le(int64_t b, bool isaddr = false);
+	virtual void push64be(int64_t b, bool isaddr = false);
 	
 	int64_t c2_low_bound();
 	int64_t c2_high_bound();
