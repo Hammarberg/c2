@@ -56,8 +56,8 @@ macro postarg @arg
 	c2_add_arg(arg.str());
 }
 
-#define repeat(TIMES) for(int c2repeatcount=0;c2repeatcount<(TIMES);c2repeatcount++)
+#define repeat(TIMES) for(int c2repn=0;c2repn<(TIMES);c2repn++)
 #define REPEAT repeat
 
-#define rrepeat(TIMES) for(int c2repeatcount=(TIMES)-1;c2repeatcount>=0;c2repeatcount--)
+#define rrepeat(TIMES) for(int c2repn=(TIMES)-1;c2repn>=0;c2repn--)
 #define RREPEAT rrepeat
