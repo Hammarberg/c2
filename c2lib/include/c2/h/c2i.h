@@ -130,6 +130,7 @@ public:
 		
 		int64_t &operator[](int64_t n) { c2vb = 0; return getat(n); }
 		operator int64_t&() { c2vb = 0; return getat(0); }
+		int64_t getatlix(int64_t n) { return getat((n >= 0 && n < c2vc) ? n : 0); }
 		
 		size_t size() const { return c2vc; }
 		
@@ -368,8 +369,16 @@ public:
 
 	void c2_set_ram(int64_t base, int64_t size);
 	
-	void c2_scope_push(uint32_t fileindex, uint32_t line);
+	int64_t c2_scope_push(uint32_t fileindex, uint32_t line, uint32_t uid);
 	void c2_scope_pop();
+	struct c2_sscope
+	{
+		c2_sscope(uint32_t fileindex, uint32_t line, uint32_t uid);
+		~c2_sscope();
+	private:
+		int64_t lix_backup;
+	};
+	int64_t c2_lix = 0;
 	
 	static void *c2_malloc(size_t size);
 	static void c2_free(void *ptr);

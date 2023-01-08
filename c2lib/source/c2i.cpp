@@ -298,9 +298,26 @@ int64_t c2i::c2_file::read(void *ptr, int64_t size)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// c2i
+// c2_sscope
 ///////////////////////////////////////////////////////////////////////////////
 
+c2i::c2_sscope::c2_sscope(uint32_t fileindex, uint32_t line, uint32_t uid)
+{
+	c2i *i = c2i::c2_get_single();
+	lix_backup = i->c2_lix;
+	i->c2_lix = i->c2_scope_push(fileindex, line, uid);
+}
+
+c2i::c2_sscope::~c2_sscope()
+{
+	c2i *i = c2i::c2_get_single();
+	i->c2_scope_pop();
+	i->c2_lix = lix_backup;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// c2i
+///////////////////////////////////////////////////////////////////////////////
 
 #if defined(_WIN32)
 #define LIBRARY_API __declspec(dllexport)
@@ -491,6 +508,7 @@ void c2i::c2_reset_pass()
 	sinternal *p = (sinternal *)pinternal;
 	p->log.clear();
 	p->hash_state.seed();
+	p->scope_label_index_register.clear();
 	
 	memset(RAM, 0, RAM_size);
 	memset(RAM_use, 0, RAM_size);
@@ -1074,10 +1092,20 @@ void c2i::c2_add_arg(const char *format, ...)
 	delete [] buffer;
 }
 
-void c2i::c2_scope_push(uint32_t fileindex, uint32_t line)
+int64_t c2i::c2_scope_push(uint32_t fileindex, uint32_t line, uint32_t uid)
 {
 	sinternal *p = (sinternal *)pinternal;
 	p->stack_history.push_back(sdebugstack(fileindex, line));
+	
+	auto i = p->scope_label_index_register.find(uid);
+	if(i == p->scope_label_index_register.end())
+	{
+		p->scope_label_index_register.insert({uid, 0});
+		return 0;
+	}
+	
+	i->second++;
+	return i->second;
 }
 
 void c2i::c2_scope_pop()

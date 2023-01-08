@@ -154,6 +154,8 @@ struct sinternal
 	std::vector<std::string> files;
 	std::vector<std::string> include_paths;
 	std::unordered_map<std::string, c2i::c2_vardata *> registered_vars;
+
+	std::unordered_map<uint32_t, int64_t> scope_label_index_register;
 	
 	std::string title;
 	

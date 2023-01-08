@@ -59,6 +59,9 @@ public:
 	// Index of root labels
 	std::vector<std::pair<const char *, clabel *>> root_labels;
 
+	// Label index scopes for c2_lix, unique code point number
+	uint32_t scopelix = 0;
+	
 	// Scopes, used for no name label referencing
 	uint32_t scopeindex = 0;
 	std::vector<uint32_t> scope_stack;

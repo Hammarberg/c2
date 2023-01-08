@@ -468,10 +468,6 @@ bool c2a::match_macro(stok *io, toklink &link)
 			toklink out = link;
 			out.restart(io->get_prev());
 
-			// Push debug stack
-			snprintf(ctmp, sizeof(ctmp), "\n{c2_scope_push(%d,%d);\n", int(io->fileindex), io->line);
-			out.push_tok(maketok(io, ctmp, etype::ALPHA));
-			
 			//Prepare lambda header
 			out.push_tok(maketok(io, "[&]("));
 			for(size_t r=0;r<m->inputs.size();r++)
@@ -608,10 +604,6 @@ bool c2a::match_macro(stok *io, toklink &link)
 			
 			out.push_tok(maketok(io, ")", etype::OP));
 			out.push_tok(maketok(io, ";", etype::OP));
-			
-			// Pop debug stack
-			snprintf(ctmp, sizeof(ctmp), "c2_scope_pop();}\n");
-			out.push_tok(maketok(io, ctmp, etype::ALPHA));
 			
 			//Clear macro call
 			o = io;
@@ -1136,13 +1128,13 @@ void c2a::s_parse1(toklink &link)
 										stok *c;
 										if(o->ord < 2)
 										{
-											s2 = mapname + "=c2_org;";
+											s2 = mapname + "[c2_lix]=c2_org;";
 											link.link(c=maketok(plabel, s2.c_str()), plabel->get_prev());
 										}
 										else
 										{
 											link.link(c=maketok(plabel, mapname.c_str()), plabel->get_prev());
-											link.link(maketok(plabel, "=c2_org;"), o->prev);
+											link.link(maketok(plabel, "[c2_lix]=c2_org;"), o->prev);
 										}
 										
 										labelmap[mapname] = clabel(c, root_labelindex);
@@ -1356,12 +1348,32 @@ void c2a::s_parse2(toklink &link)
 					auto i = labelmap.find(stmp);
 					if(i != labelmap.end())
 					{
+						stmp += ".getatlix(c2_lix)";
 						link.link(maketok(o, stmp.c_str()), o);
 						o->mute();
 					}
 				}
 			}
 			break;
+			case etype::OP:
+			{
+				if(*o->name == '{')
+				{
+					stok *prev = o->get_prev_nonspace();
+					if(*prev->name == '(' || *prev->name == '=' || *prev->name == ',')
+					{
+						break;
+					}
+					
+					// Push debug stack and label index
+					char ctmp[256];
+					snprintf(ctmp, sizeof(ctmp), "c2_sscope c2_scope(%d,%d,%d);", int(o->fileindex), o->line, int(scopelix));
+					link.link(maketok(o, ctmp, etype::ALPHA), o);
+					scopelix++;
+				}
+			}
+			break;
+			
 			default:
 			break;
 		};
@@ -1410,7 +1422,10 @@ void c2a::s_parse2(toklink &link)
 			error(first, "Anonymous reference beyond scope");
 		}
 		
-		link.link(maketok(first, scope_labels[first->scopeindex][offset]), first);
+		std::string stmp = scope_labels[first->scopeindex][offset];
+		stmp += ".getatlix(c2_lix)";
+		
+		link.link(maketok(first, stmp.c_str()), first);
 	}
 }
 
