@@ -101,16 +101,16 @@ macro memcpy @data...
 			{
 				rrepeat(size)
 				{
-					lda src + c2repeatcount
-					sta dst + c2repeatcount
+					lda src + c2repn
+					sta dst + c2repn
 				}
 			}
 			else if(unroll_size <= looped_size && (dir & forward))
 			{
 				repeat(size)
 				{
-					lda src + c2repeatcount
-					sta dst + c2repeatcount
+					lda src + c2repn
+					sta dst + c2repn
 				}
 			}
 			else if(size <= 127 && (dir & backward))
@@ -226,7 +226,7 @@ macro memset @data...
 				lda #value
 				repeat(size)
 				{
-					sta dst + c2repeatcount
+					sta dst + c2repn
 				}
 			}
 			else if(size <= 127)
