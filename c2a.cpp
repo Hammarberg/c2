@@ -131,6 +131,29 @@ int64_t c2a::bracketcount(int64_t bc, const stok *o)
 	return bc;
 }
 
+int64_t c2a::rbracketcount(int64_t bc, const stok *o)
+{
+	char c = *o->name;
+	
+	switch(c)
+	{
+		case ')':
+			return (bc+3)*2;
+		case '}':
+			return (bc+5)*2;
+		case ']':
+			return (bc+7)*2;
+		case '(':
+			return (bc/2)-3;
+		case '{':
+			return (bc/2)-5;
+		case '[':
+			return (bc/2)-7;
+	};
+	
+	return bc;
+}
+
 std::string c2a::autolabel(const char *hint, bool local)
 {
 	std::string out = local ? ".c2_auto_" : "c2_auto_";
@@ -961,7 +984,7 @@ void c2a::s_parse1(toklink &link)
 								error(o, "Unexpected end of file");
 						}
 						
-						link.link(maketok(o, ";"), n->get_prev_nonspace());
+						link.link(maketok(o, ";", etype::OP), n->get_prev_nonspace());
 					}
 				}
 				else if((o->ord == 0 || label_declared) && match_macro(o, link))
@@ -1000,12 +1023,13 @@ void c2a::s_parse1(toklink &link)
 							if(multiple)
 							{
 								// Wrap arguments
-								link.link(maketok(o, "{"), op[2]);
-								link.link(maketok(o, "};"), n->get_prev_nonspace());
+								link.link(maketok(o, "{", etype::OP), op[2]);
+								stok *ta = link.link(maketok(o, "}", etype::OP), n->get_prev_nonspace());
+								link.link(maketok(o, ";", etype::OP), ta);
 							}
 							else
 							{
-								link.link(maketok(o, ";"), n->get_prev_nonspace());
+								link.link(maketok(o, ";", etype::OP), n->get_prev_nonspace());
 							}
 						}
 						
@@ -1166,15 +1190,18 @@ void c2a::s_parse1(toklink &link)
 											s2 = "c2_basevar<" + subname + "> " + stmp + "={\"" + mapname + "\",0};\n";
 											linkinit(maketok(o, s2.c_str()), link);
 											
+											stok *ta;
 											if(o->ord < 2)
 											{
-												s2 = mapname + "=c2_org;";
-												link.link(c=maketok(plabel, s2.c_str()), plabel->get_prev());
+												s2 = mapname + "=c2_org";
+												ta = link.link(c=maketok(plabel, s2.c_str()), plabel->get_prev());
+												link.link(maketok(plabel, ";", etype::OP), ta);
 											}
 											else
 											{
 												link.link(c=maketok(plabel, mapname.c_str()), plabel->get_prev());
-												link.link(maketok(plabel, "=c2_org;"), o->prev);
+												ta = link.link(maketok(plabel, "=c2_org"), o->prev);
+												link.link(maketok(plabel, ";", etype::OP), ta);
 											}
 										}
 										
@@ -1206,7 +1233,8 @@ void c2a::s_parse1(toklink &link)
 									if(indexed_label)
 									{
 										link.link(maketok(plabel, mapname.c_str()), plabel->get_prev());
-										link.link(maketok(plabel, "=c2_org;"), o->prev);
+										stok *ta = link.link(maketok(plabel, "=c2_org"), o->prev);
+										link.link(maketok(plabel, ";", etype::OP), ta);
 											
 										stok *after = link.link(maketok(plabel, autolabel("idx", true).c_str(), etype::ALPHA, 0), o);
 										link.link(maketok(plabel, ":", etype::OP, 1), after);
@@ -1371,13 +1399,12 @@ void c2a::s_parse2(toklink &link)
 						}
 						
 						int64_t bc = 0;
+						
 						while(prev)
 						{
-							bc = bracketcount(bc, prev);
-							
 							if(bc == 0)
 							{
-								if(*prev->name == ';')
+								if(prev->type == etype::BLOCK || *prev->name == ';' || *prev->name == '}')
 									break;
 								
 								if(!strcmp("struct", prev->name) || !strcmp("class", prev->name))
@@ -1388,6 +1415,11 @@ void c2a::s_parse2(toklink &link)
 								}
 							}
 							
+							if(prev->type == etype::OP)
+							{
+								bc = rbracketcount(bc, prev);
+							}
+							
 							prev = prev->get_prev_nonspace();
 						};
 						
@@ -1395,8 +1427,9 @@ void c2a::s_parse2(toklink &link)
 						{
 							// Push debug stack and label index
 							char ctmp[256];
-							snprintf(ctmp, sizeof(ctmp), "c2_sscope c2_scope(%d,%d,%d);", int(o->fileindex), o->line, int(scopelix));
-							link.link(maketok(o, ctmp, etype::ALPHA), o);
+							snprintf(ctmp, sizeof(ctmp), "c2_sscope c2_scope(%d,%d,%d)", int(o->fileindex), o->line, int(scopelix));
+							stok *ta = link.link(maketok(o, ctmp), o);
+							link.link(maketok(o, ";", etype::OP), ta);
 							scopelix++;
 						}
 					}

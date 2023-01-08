@@ -125,6 +125,7 @@ private:
 	stok *clone(const stok *o);
 	
 	static int64_t bracketcount(int64_t bc, const stok *o);
+	static int64_t rbracketcount(int64_t bc, const stok *o);
 	
 	uint32_t auto_num = 0;
 	std::string autolabel(const char *hint = nullptr, bool local = false);
