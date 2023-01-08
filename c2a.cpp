@@ -1275,6 +1275,9 @@ void c2a::s_parse2(toklink &link)
 	
 	uint16_t fileindex = 0;
 	uint32_t line = 0;
+	
+	bool isclass = false;
+	int64_t isclass_bc = 0;
 							
 	for(;;)
 	{
@@ -1357,19 +1360,54 @@ void c2a::s_parse2(toklink &link)
 			break;
 			case etype::OP:
 			{
-				if(*o->name == '{')
+				if(isclass == false)
 				{
-					stok *prev = o->get_prev_nonspace();
-					if(*prev->name == '(' || *prev->name == '=' || *prev->name == ',')
+					if(*o->name == '{')
 					{
-						break;
+						stok *prev = o->get_prev_nonspace();
+						if(*prev->name == '(' || *prev->name == '=' || *prev->name == ',')
+						{
+							break;
+						}
+						
+						int64_t bc = 0;
+						while(prev)
+						{
+							bc = bracketcount(bc, prev);
+							
+							if(bc == 0)
+							{
+								if(*prev->name == ';')
+									break;
+								
+								if(!strcmp("struct", prev->name) || !strcmp("class", prev->name))
+								{
+									isclass = true;
+									isclass_bc = bracketcount(isclass_bc, o);
+									break;
+								}
+							}
+							
+							prev = prev->get_prev_nonspace();
+						};
+						
+						if(isclass == false)
+						{
+							// Push debug stack and label index
+							char ctmp[256];
+							snprintf(ctmp, sizeof(ctmp), "c2_sscope c2_scope(%d,%d,%d);", int(o->fileindex), o->line, int(scopelix));
+							link.link(maketok(o, ctmp, etype::ALPHA), o);
+							scopelix++;
+						}
 					}
-					
-					// Push debug stack and label index
-					char ctmp[256];
-					snprintf(ctmp, sizeof(ctmp), "c2_sscope c2_scope(%d,%d,%d);", int(o->fileindex), o->line, int(scopelix));
-					link.link(maketok(o, ctmp, etype::ALPHA), o);
-					scopelix++;
+				}
+				else
+				{
+					isclass_bc = bracketcount(isclass_bc, o);
+					if(!isclass_bc)
+					{
+						isclass = false;
+					}
 				}
 			}
 			break;
