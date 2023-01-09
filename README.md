@@ -1,15 +1,15 @@
 ﻿# c2 cross assembler
 ### TODO and wish list
-* Optimize C++ label template generation to greatly improve compile times.
-* Option to bypass project file and only use switches.
-* Support 65816, 65C02, 65802
 * Finish 68000 support.
 * Amiga hunk format and utility classes.
+* Optimize C++ lambda to generation to greatly improve compile times.
+* Option to bypass project file and only use switches.
+* Support 65816, 65C02, 65802.
 * Zilog 80 support.
 * 8080 support.
 * CP/M support.
-* Templates for vic20, c264
-* Bug: C++ errors can sometimes be one line off.
+* Templates for vic20, c264.
+* Bug: C++ errors are one line off.
 * Set pre-processor switch.
 * Set variable switch.
 * Flag and hash+store switches to intermediate data that would affect compile outcome.
@@ -26,7 +26,7 @@ Some of the highlights:
 * Inline C++ for additional meta-programming
 * Multiple pass assembly for conditional code generation and forward references
 ### License
-Copyright (C) 2022  John Hammarberg (crt@nospam.binarybone.com)
+Copyright (C) 2022-2023  John Hammarberg (crt@nospam.binarybone.com)
 
 This file is part of c2.
 
@@ -416,10 +416,10 @@ Besides the executable, c2 is also dependent on its library to operate. The libr
 * Explicitly set with `--c2-library-dir`
 * Nix home folder as `.c2lib` or `c2lib`. For windows `%LOCALAPPDATA%\c2lib`
 * At location of environment variable `C2LIB_HOME`
-* Nix global path `/usr/lib/c2lib`
+* Nix global path `/usr/local/lib/c2lib`
 * Alongside executable and two folders above the executable.
 
-It's possible to copy, modify or extend parts of c2lib and place those modifications in your local directory to override. This is highly recommended if you want to add your own templates or macro extensions.
+It's possible to copy, modify or extend parts of c2lib and place those modifications in your local directory to override. This is highly recommended if you want to add your own reusable templates or macro extensions.
 ## Include files & search order
 Additional include search paths can be added with one or multiple `--include <path>` or `-i <path>`. This works for both pre-processor includes as well as incbin and c2 file system.
 
