@@ -487,7 +487,6 @@ bool c2a::match_macro(stok *io, toklink &link)
 		{
 			assert(outargs.size() == m->inputs.size());
 			
-			char ctmp[256];
 			toklink out = link;
 			out.restart(io->get_prev());
 
@@ -1311,9 +1310,15 @@ void c2a::s_parse2(toklink &link)
 	{
 		stok *o;
 		
+		stok *sl = nullptr;
+		int sline = 0;
 		for(;;)
 		{
 			o = link.pull_tok();
+			
+			if(!sl)
+				sl = o;
+			
 			if(!o)
 				break;
 				
@@ -1324,11 +1329,21 @@ void c2a::s_parse2(toklink &link)
 			else if(*o->name == '\n')
 			{
 				line++;
+				sline++;
 			}
 		}
 		
 		if(!o)
 			break;
+			
+		if(sline > 3)
+		{
+			while(sl != o)
+			{
+				sl->mute();
+				sl = sl->get_next();
+			}
+		}
 		
 		if(o->fileindex != fileindex || o->line != line)
 		{
