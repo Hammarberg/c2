@@ -977,7 +977,7 @@ int main(int arga, char *argc[])
 		proj.command.add_args(arga, argc);
 		
 		proj.command.add_info("--help", "-h", "Show this help");
-		proj.command.add_info("--license", "-gpl", "Show GPL3");
+		proj.command.add_info("--license", "-L", "Show GPL3");
 		proj.command.add_info("--rebuild", "-r", "Force a project rebuild");
 		proj.command.add_info("--no-execute", "-ne", "Do not execute anything after build");
 		proj.command.add_info("--no-build", "-nb", "Do not build");
