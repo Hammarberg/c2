@@ -1336,13 +1336,14 @@ void c2a::s_parse2(toklink &link)
 		if(!o)
 			break;
 			
-		if(sline > 3)
+		if(sline > 15)
 		{
 			while(sl != o)
 			{
 				sl->mute();
 				sl = sl->get_next();
 			}
+			line -= sline;
 		}
 		
 		if(o->fileindex != fileindex || o->line != line)

@@ -9,7 +9,6 @@
 * 8080 support.
 * CP/M support.
 * Templates for vic20, c264.
-* Bug: C++ errors are one line off.
 * Set pre-processor switch.
 * Set variable switch.
 * Flag and hash+store switches to intermediate data that would affect compile outcome.
