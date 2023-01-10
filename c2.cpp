@@ -776,7 +776,7 @@ public:
 #ifndef _WIN32
 				cmd += " -fpic";
 #endif
-				cmd += " -std=c++17 -g -c -Wall -o " + quote_path(f->obj);
+				cmd += " -std=c++17 -g -c -o " + quote_path(f->obj);
 					
 				if(f->c2)
 				{
@@ -803,7 +803,7 @@ public:
 				}
 				else
 				{
-					cmd += " ";
+					cmd += " -Wall ";
 					cmd += quote_path(final_file.string());
 				}
 				
