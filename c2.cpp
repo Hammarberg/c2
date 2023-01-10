@@ -834,8 +834,7 @@ public:
 				fprintf(stderr, "%s is dirty\n", link_target.c_str());
 			}
 			
-			cmd = compiler + " ";
-			cmd += " -std=c++17 -g -shared -o " + quote_path(link_target);
+			cmd = compiler + " -std=c++17 -g -shared -o " + quote_path(link_target);
 			for(size_t r=0; r<files.size(); r++)
 			{
 				cmd += " " + quote_path(files[r]->obj);
