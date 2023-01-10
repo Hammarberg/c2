@@ -43,7 +43,7 @@
         <Library Value="dl"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-D /home/john/Documents/git/c2/c2lib" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(ProjectPath)/examples/picscroll/" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-vD /home/john/Documents/git/c2/c2lib" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(ProjectPath)/examples/c64/picscroll/" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
