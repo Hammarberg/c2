@@ -660,7 +660,7 @@ public:
 			should_rebuild = true;
 		}
 		
-		command.invoke("--rebuild", 0, 0, [&](int arga, const char *argc[])
+		command.invoke("--rebuild", [&](int arga, const char *argc[])
 		{
 			should_rebuild = true;
 		});
@@ -726,7 +726,7 @@ public:
 	
 	void build(bool doexecute)
 	{
-		command.invoke("--include", 1, 1, [&](int arga, const char *argc[])
+		command.invoke("--include", [&](int arga, const char *argc[])
 		{
 			lib_add_include_path(argc[0]);
 		});
@@ -978,27 +978,27 @@ int main(int arga, char *argc[])
 		proj.command.add_info("--help", "-h", "Show this help");
 		proj.command.add_info("--license", "-L", "Show GPL3");
 		proj.command.add_info("--rebuild", "-r", "Force a project rebuild");
-		proj.command.add_info("--no-execute", "-ne", "Do not execute anything after build");
-		proj.command.add_info("--no-build", "-nb", "Do not build");
-		proj.command.add_info("--project", "-p", "<filename>: Explicitly load project file");
-		proj.command.add_info("--create-project", "-cp", "<template> <name> [path]: Creates a new project based on the specified template. If a path is given it will be created and used, otherwise the current directory is used");
-		proj.command.add_info("--list-templates", "-lt", "List available templates for project creation");
-		proj.command.add_info("--c2-library-dir", "-c2l", "<path>: Add a c2 library path");
-		proj.command.add_info("--include", "-i", "<path>: Add an include search path for source and binaries");
+		proj.command.add_info("--no-execute", "-X", "Do not execute anything after build");
+		proj.command.add_info("--no-build", "-B", "Do not build");
+		proj.command.add_info("--project", "-p", "<filename>: Explicitly load project file", 1);
+		proj.command.add_info("--create-project", "-c", "<template> <name> [path]: Creates a new project based on the specified template. If a path is given it will be created and used, otherwise the current directory is used", 2, 3);
+		proj.command.add_info("--list-templates", "-l", "List available templates for project creation");
+		proj.command.add_info("--c2-library-dir", "-D", "<path>: Add a c2 library path", 1);
+		proj.command.add_info("--include", "-i", "<path>: Add an include search path for source and binaries", 1);
 		proj.command.add_info("--verbose", "-v", "Output more information");
 		
 		bool doexecute = true;
 		bool dobuild = true;
 		std::string projpath;
 		
-		proj.command.invoke("--verbose", 0, 0, [&](int arga, const char *argc[])
+		proj.command.invoke("--verbose", [&](int arga, const char *argc[])
 		{
 			proj.verbose = true;
 		});
 		
 		{
 			std::vector<std::filesystem::path> exlib;
-			proj.command.invoke("--c2-library-dir", 1, 1, [&](int arga, const char *argc[])
+			proj.command.invoke("--c2-library-dir", [&](int arga, const char *argc[])
 			{
 				exlib.push_back(argc[0]);
 			});
@@ -1006,19 +1006,19 @@ int main(int arga, char *argc[])
 			proj.lib_initialize(exlib);
 		}
 		
-		proj.command.invoke("--no-execute", 0, 0, [&](int arga, const char *argc[])
+		proj.command.invoke("--no-execute", [&](int arga, const char *argc[])
 		{
 			doexecute = false;
 		});
 		
-		proj.command.invoke("--no-build", 0, 0, [&](int arga, const char *argc[])
+		proj.command.invoke("--no-build", [&](int arga, const char *argc[])
 		{
 			dobuild = false;
 		});
 		
 		bool loaded = false;
 		
-		proj.command.invoke("--project", 1, 1, [&](int arga, const char *argc[])
+		proj.command.invoke("--project", [&](int arga, const char *argc[])
 		{
 			projpath = argc[0];
 		});
@@ -1028,7 +1028,7 @@ int main(int arga, char *argc[])
 			projpath = proj.command.main();
 		}
 		
-		proj.command.invoke("--create-project", 2, 3, [&](int arga, const char *argc[])
+		proj.command.invoke("--create-project", [&](int arga, const char *argc[])
 		{
 			ctemplate tpl(proj);
 			projpath = tpl.create(arga, argc);
@@ -1045,7 +1045,7 @@ int main(int arga, char *argc[])
 			proj.command.add_args(proj.arguments.c_str());
 		}
 		
-		proj.command.invoke("--help", 0, 0, [&](int arga, const char *argc[])
+		proj.command.invoke("--help", [&](int arga, const char *argc[])
 		{
 			if(loaded)
 			{
@@ -1062,7 +1062,7 @@ int main(int arga, char *argc[])
 			doexecute = false;
 		});
 		
-		proj.command.invoke("--license", 0, 0, [&](int arga, const char *argc[])
+		proj.command.invoke("--license", [&](int arga, const char *argc[])
 		{
 			fprintf(stderr, TITLE);
 
@@ -1074,7 +1074,7 @@ int main(int arga, char *argc[])
 			doexecute = false;
 		});
 		
-		proj.command.invoke("--list-templates", 0, 0, [&](int arga, const char *argc[])
+		proj.command.invoke("--list-templates", [&](int arga, const char *argc[])
 		{
 			ctemplate tpl(proj);
 			tpl.list();

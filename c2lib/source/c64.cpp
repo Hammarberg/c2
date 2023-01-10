@@ -38,9 +38,9 @@ c64::c64(cmdi *pcmd)
 	// Valid range of RAM
 	c2_set_ram(0, 0x10000);
 	
-	c2_cmd.add_info("--out-prg", "-op", "<from> <to> [filename]: Outputs a Commodore PRG. Parameters are the same as for --out");
-	c2_cmd.add_info("--out-rle", "-rle", "<from> <to> <start> [filename] [-sei] [-1 <value>] Outputs a Commodore RLE compressed PRG. Can compress $0200-$ffff. Parameters are similar to --out with exception for the start address/label that can also take 'basic_startup' as argument");
-	c2_cmd.add_info("--vice-cmd", "-vc", "[filename]: Outputs a VICE comapatible monitor command file contianing labels and breakpoints. Use -moncommands <filename> as VICE arguments.");
+	c2_cmd.add_info("--out-prg", "-P", "<from> <to> [filename]: Outputs a Commodore PRG. Parameters are the same as for --out", 2, 3);
+	c2_cmd.add_info("--out-rle", "-R", "<from> <to> <start> [filename] [--sei] [--1 <value>] Outputs a Commodore RLE compressed PRG. Can compress $0200-$ffff. Parameters are similar to --out with exception for the start address/label that can also take 'basic_startup' as argument", 3, 4);
+	c2_cmd.add_info("--vice-cmd", "-M", "[filename]: Outputs a VICE comapatible monitor command file contianing labels and breakpoints. Use -moncommands <filename> as VICE arguments.", 0, 1);
 	
 	sc64internal *p = new sc64internal;
 	c64_internal = (void *)p;
@@ -248,7 +248,7 @@ void c64::c2_post()
 {
 	c2i::c2_post();
 	
-	c2_cmd.invoke("--out-prg", 2, 3, [&](int arga, const char *argc[])
+	c2_cmd.invoke("--out-prg", [&](int arga, const char *argc[])
 	{
 		int64_t from,to;
 		
@@ -278,19 +278,19 @@ void c64::c2_post()
 	});
 	
 	bool sei = false;
-	c2_cmd.invoke("-sei", 0, 0, [&](int arga, const char *argc[])
+	c2_cmd.invoke("--sei", [&](int arga, const char *argc[])
 	{
 		sei = true;
 	});
 	
 	int64_t z1 = 0x37;
-	c2_cmd.invoke("-1", 1, 1, [&](int arga, const char *argc[])
+	c2_cmd.invoke("--1", [&](int arga, const char *argc[])
 	{
 		if(!c2_resolve(argc[0], z1))
 			throw "-1 could not resolve 1 value";
-	});
+	}, 1);
 	
-	c2_cmd.invoke("--out-rle", 3, 4, [&](int arga, const char *argc[])
+	c2_cmd.invoke("--out-rle", [&](int arga, const char *argc[])
 	{
 		int64_t from,to,start;
 		
@@ -506,7 +506,7 @@ void c64::c2_post()
 			fclose(fp);
 	});
 	
-	c2_cmd.invoke("--vice-cmd", 0, 1, [&](int arga, const char *argc[])
+	c2_cmd.invoke("--vice-cmd", [&](int arga, const char *argc[])
 	{
 		FILE *fp = stdout;
 		if(arga == 1)

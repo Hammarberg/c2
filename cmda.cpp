@@ -65,9 +65,11 @@ void cmda::add_args(const char *argstr)
 	}
 }
 
-void cmda::add_info(const char *slong, const char *sshort, const char *sinfo)
+void cmda::add_info(const char *slong, const char *sshort, const char *sinfo, int min_args, int max_args)
 {
-	data.push_back({slong, sshort, sinfo});
+	
+	
+	data.push_back({slong, sshort, sinfo, min_args, max_args});
 }
 
 void cmda::cswitch::print()
@@ -122,10 +124,18 @@ bool cmda::verify(int iter, const char *sw, int min_args, int max_args, int *arg
 			info = d.sinfo;
 			s1 = d.slong;
 			s2 = d.sshort;
+			min_args = d.min_args;
+			max_args = d.max_args;
 			pd = &d;
 			break;
 		}
 	}
+	
+	if(min_args == -1)
+		min_args = 0;
+	
+	if(max_args == -1)
+		max_args = min_args;
 	
 	if(!s1.size())
 	{
@@ -135,13 +145,25 @@ bool cmda::verify(int iter, const char *sw, int min_args, int max_args, int *arg
 	int fc = 0;
 	for(size_t r = 0; r<sargs.size(); r++)
 	{
-		if(s1 == sargs[r] || s2 == sargs[r])
+		std::string &arg = sargs[r]
+		bool match = s1 == arg || s2 == arg;
+		
+		if(!match && arg.size() >= 3 && arg[1] != '-')
+		{
+			auto i = arg.find(s2[1]);
+			if(i != arg.npos)
+			{
+				match
+			}
+		}
+		
+		if(match)
 		{
 			if(fc == iter)
 			{
 				r++;
 				int start = int(r), count = 0;
-				for(; r<sargs.size() /*&& count < max_args*/; r++, count++)
+				for(; r<sargs.size(); r++, count++)
 				{
 					if(sargs[r].size() > 1 && sargs[r][0] == '-')
 					{

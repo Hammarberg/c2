@@ -349,12 +349,12 @@ c2i::c2i(cmdi *pcmd)
 	sinternal *p = new sinternal;
 	pinternal = (void *)p;
 	
-	c2_cmd.add_info("--out", "-o", "<from> <to> [filename]: Outputs a binary. If no filename is given stdout will be used. To and from can be either addresses, labels or '-' or '+' as lowest/highest+1 address assembled.");
-	c2_cmd.add_info("--out-c", "-oc", "<from> <to> [filename]: Outputs a C-style formated hex array. Parameters are the same as for --out");
-	c2_cmd.add_info("--dump-vars", "-dv", "[filename]: Output variables. If no filename is given, stdout will be used");
-	c2_cmd.add_info("--dump-enum", "-de", "[filename]: Output variables in C-style enum format. If no filename is given, stdout will be used");
-	c2_cmd.add_info("--address-range", "-ar", "<start> <end>: Override the valid address range available for the assembly to target. Addresses must be numerical");
-	c2_cmd.add_info("--assembly-hash", "-ash", "Verbosly outputs a hash for each assembly step.");
+	c2_cmd.add_info("--out", "-o", "<from> <to> [filename]: Outputs a binary. If no filename is given stdout will be used. To and from can be either addresses, labels or '-' or '+' as lowest/highest+1 address assembled.",2 ,3);
+	c2_cmd.add_info("--out-c", "-C", "<from> <to> [filename]: Outputs a C-style formated hex array. Parameters are the same as for --out", 2, 3);
+	c2_cmd.add_info("--dump-vars", "-V", "[filename]: Output variables. If no filename is given, stdout will be used", 0, 1);
+	c2_cmd.add_info("--dump-enum", "-E", "[filename]: Output variables in C-style enum format. If no filename is given, stdout will be used", 0, 1);
+	c2_cmd.add_info("--address-range", "-m", "<start> <end>: Set the valid memory address range available for the assembly to target. Addresses must be numerical", 2);
+	c2_cmd.add_info("--assembly-hash", "-H", "Verbosly outputs a hash for each assembly step.");
 
 	c2i::var a = "vice break";
 	c2i::var b = a;
@@ -524,7 +524,7 @@ bool c2i::c2_assemble()
 	{
 		c2_pre();
 		
-		c2_cmd.invoke("--address-range", 2, 2, [&](int arga, const char *argc[])
+		c2_cmd.invoke("--address-range", [&](int arga, const char *argc[])
 		{
 			int64_t from,to;
 			
@@ -797,7 +797,7 @@ bool c2i::c2_resolve(const char *addr, int64_t &out, bool allow_labels)
 
 void c2i::c2_pre()
 {
-	c2_cmd.invoke("--assembly-hash", 0, 0, [&](int arga, const char *argc[])
+	c2_cmd.invoke("--assembly-hash", [&](int arga, const char *argc[])
 	{
 		c2_assembly_hash = true;
 	});
@@ -807,7 +807,7 @@ void c2i::c2_post()
 {
 	sinternal *p = (sinternal *)pinternal;
 	
-	c2_cmd.invoke("--out", 2, 3, [&](int arga, const char *argc[])
+	c2_cmd.invoke("--out", [&](int arga, const char *argc[])
 	{
 		int64_t from,to;
 		
@@ -834,7 +834,7 @@ void c2i::c2_post()
 			fclose(fp);
 	});
 	
-	c2_cmd.invoke("--out-c", 2, 3, [&](int arga, const char *argc[])
+	c2_cmd.invoke("--out-c", [&](int arga, const char *argc[])
 	{
 		int64_t from,to;
 		
@@ -881,7 +881,7 @@ void c2i::c2_post()
 			fclose(fp);
 	});
 	
-	c2_cmd.invoke("--dump-vars", 0, 1, [p](int arga, const char *argc[])
+	c2_cmd.invoke("--dump-vars", [p](int arga, const char *argc[])
 	{
 		FILE *fp = stdout;
 		if(arga)
@@ -903,7 +903,7 @@ void c2i::c2_post()
 			fclose(fp);
 	});
 	
-	c2_cmd.invoke("--dump-enum", 0, 1, [p](int arga, const char *argc[])
+	c2_cmd.invoke("--dump-enum", [p](int arga, const char *argc[])
 	{
 		FILE *fp = stdout;
 		if(arga)

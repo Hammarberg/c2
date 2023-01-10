@@ -21,15 +21,12 @@ class cmda : public cmdi
 public:
 	void add_args(int arga, char *args[]) override;
 	void add_args(const char *argstr) override;
-	void add_info(const char *slong, const char *sshort, const char *sinfo) override;
+	void add_info(const char *slong, const char *sshort, const char *sinfo, int min_args = 0, int max_args = -1) override;
 	void printf_info() override;
 	bool verify(int iter, const char *sw, int min_args, int max_args, int *arga, const char ***argc) override;
 	void cmdfree(void *ptr) override;
 	
 	std::string main();
-	
-private:
-
 	std::vector<std::string> sargs;
 	
 	struct cswitch
@@ -37,7 +34,7 @@ private:
 		std::string slong;
 		std::string sshort;
 		std::string sinfo;
-		
+		int min_args, max_args;
 		void print();
 	};
 	

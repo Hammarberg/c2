@@ -18,11 +18,11 @@ class cmdi
 public:
 	virtual void add_args(int arga, char *args[]) = 0;
 	virtual void add_args(const char *argstr) = 0;
-	virtual void add_info(const char *slong, const char *sshort, const char *sinfo) = 0;
+	virtual void add_info(const char *slong, const char *sshort, const char *sinfo, int min_args = 0, int max_args = -1) = 0;
 	virtual void printf_info() = 0;
 
 	template<typename Function>
-	void invoke(const char *sw, int min_args, int max_args, Function && fn)
+	void invoke(const char *sw, Function && fn, int min_args = -1, int max_args = -1)
 	{
 		int arga;
 		const char **argc;
