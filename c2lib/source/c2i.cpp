@@ -349,12 +349,12 @@ c2i::c2i(cmdi *pcmd)
 	sinternal *p = new sinternal;
 	pinternal = (void *)p;
 	
-	c2_cmd.add_info("--out", "-o", "<from> <to> [filename]: Outputs a binary. If no filename is given stdout will be used. To and from can be either addresses, labels or '-' or '+' as lowest/highest+1 address assembled.",2 ,3);
-	c2_cmd.add_info("--out-c", "-C", "<from> <to> [filename]: Outputs a C-style formated hex array. Parameters are the same as for --out", 2, 3);
-	c2_cmd.add_info("--dump-vars", "-V", "[filename]: Output variables. If no filename is given, stdout will be used", 0, 1);
-	c2_cmd.add_info("--dump-enum", "-E", "[filename]: Output variables in C-style enum format. If no filename is given, stdout will be used", 0, 1);
-	c2_cmd.add_info("--address-range", "-m", "<start> <end>: Set the valid memory address range available for the assembly to target. Addresses must be numerical", 2);
-	c2_cmd.add_info("--assembly-hash", "-H", "Verbosly outputs a hash for each assembly step.");
+	c2_cmd.declare("--out", "-o", "<from> <to> [filename]: Outputs a binary. If no filename is given stdout will be used. To and from can be either addresses, labels or '-' or '+' as lowest/highest+1 address assembled.",2 ,3);
+	c2_cmd.declare("--out-c", "-C", "<from> <to> [filename]: Outputs a C-style formated hex array. Parameters are the same as for --out", 2, 3);
+	c2_cmd.declare("--dump-vars", "-V", "[filename]: Output variables. If no filename is given, stdout will be used", 0, 1);
+	c2_cmd.declare("--dump-enum", "-E", "[filename]: Output variables in C-style enum format. If no filename is given, stdout will be used", 0, 1);
+	c2_cmd.declare("--address-range", "-m", "<start> <end>: Set the valid memory address range available for the assembly to target. Addresses must be numerical", 2);
+	c2_cmd.declare("--assembly-hash", "-H", "Verbosly outputs a hash for each assembly step.");
 
 	c2i::var a = "vice break";
 	c2i::var b = a;

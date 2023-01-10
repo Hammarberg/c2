@@ -14,7 +14,6 @@
 #include "cmda.h"
 #include <cstdlib>
 #include <filesystem>
-
 #include <cstdio>
 
 void cmda::add_args(int arga, char *args[])
@@ -65,18 +64,49 @@ void cmda::add_args(const char *argstr)
 	}
 }
 
-void cmda::add_info(const char *slong, const char *sshort, const char *sinfo, int min_args, int max_args)
+void cmda::declare(const char *slong, const char *sshort, const char *sinfo, int min_args, int max_args)
 {
+	// Verify switches
+	std::string stmp = slong;
+	if(stmp.size() < 3 || (stmp.size() >= 3 && stmp.substr(0, 2) != "--"))
+	{
+		throw "Invalid long switch declared";
+	}
 	
+	if(sshort)
+	{
+		stmp = sshort;
+		if(stmp.size() != 2 || stmp[0] != '-' || stmp[1] == '-')
+		{
+			throw "Invalid short switch declared";
+		}
+	}
 	
-	data.push_back({slong, sshort, sinfo, min_args, max_args});
+	for(size_t r=0; r<data.size(); r++)
+	{
+		if(data[r].slong == slong || (sshort && data[r].sshort == sshort))
+		{
+			if(sshort)
+				fprintf(stderr, "Declaring switch %s, %s\n", sshort, slong);
+			else
+				fprintf(stderr, "Declaring switch %s\n", slong);
+			
+			data[r].print();
+			throw "Switch already declared";
+		}
+	}
+	
+	data.push_back({slong, sshort ? sshort : "", sinfo, min_args, max_args});
 }
 
 void cmda::cswitch::print()
 {
 	std::string tmp;
-	tmp = sshort;
-	while(tmp.size() < 5)
+	
+	if(sshort.size())
+		tmp = sshort + ",";
+		
+	while(tmp.size() < 4)
 		tmp += ' ';
 		
 	tmp += slong;
@@ -84,7 +114,7 @@ void cmda::cswitch::print()
 	size_t r = 0;
 	while (r < sinfo.size())
 	{
-		while(tmp.size() < 22)
+		while(tmp.size() < 25)
 			tmp += ' ';
 			
 		while (r < sinfo.size())
@@ -145,15 +175,25 @@ bool cmda::verify(int iter, const char *sw, int min_args, int max_args, int *arg
 	int fc = 0;
 	for(size_t r = 0; r<sargs.size(); r++)
 	{
-		std::string &arg = sargs[r]
-		bool match = s1 == arg || s2 == arg;
+		std::string &arg = sargs[r];
 		
-		if(!match && arg.size() >= 3 && arg[1] != '-')
+		if(arg[0] != '-')
+			continue;
+		
+		bool match = s1 == arg || s2 == arg;
+		bool checkargcount = true;
+		
+		if(s2.size() && !match && arg.size() >= 3 && arg[1] != '-')
 		{
 			auto i = arg.find(s2[1]);
 			if(i != arg.npos)
 			{
-				match
+				if(i != arg.size() - 1)
+				{
+					checkargcount = false;
+				}
+				
+				match = true;
 			}
 		}
 		
@@ -163,7 +203,7 @@ bool cmda::verify(int iter, const char *sw, int min_args, int max_args, int *arg
 			{
 				r++;
 				int start = int(r), count = 0;
-				for(; r<sargs.size(); r++, count++)
+				for(; checkargcount && r<sargs.size(); r++, count++)
 				{
 					if(sargs[r].size() > 1 && sargs[r][0] == '-')
 					{

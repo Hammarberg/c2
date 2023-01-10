@@ -975,17 +975,17 @@ int main(int arga, char *argc[])
 		sproject proj;
 		proj.command.add_args(arga, argc);
 		
-		proj.command.add_info("--help", "-h", "Show this help");
-		proj.command.add_info("--license", "-L", "Show GPL3");
-		proj.command.add_info("--rebuild", "-r", "Force a project rebuild");
-		proj.command.add_info("--no-execute", "-X", "Do not execute anything after build");
-		proj.command.add_info("--no-build", "-B", "Do not build");
-		proj.command.add_info("--project", "-p", "<filename>: Explicitly load project file", 1);
-		proj.command.add_info("--create-project", "-c", "<template> <name> [path]: Creates a new project based on the specified template. If a path is given it will be created and used, otherwise the current directory is used", 2, 3);
-		proj.command.add_info("--list-templates", "-l", "List available templates for project creation");
-		proj.command.add_info("--c2-library-dir", "-D", "<path>: Add a c2 library path", 1);
-		proj.command.add_info("--include", "-i", "<path>: Add an include search path for source and binaries", 1);
-		proj.command.add_info("--verbose", "-v", "Output more information");
+		proj.command.declare("--help", "-h", "Show this help");
+		proj.command.declare("--license", "-L", "Show GPL3");
+		proj.command.declare("--rebuild", "-r", "Force a project rebuild");
+		proj.command.declare("--no-execute", "-X", "Do not execute anything after build");
+		proj.command.declare("--no-build", "-B", "Do not build");
+		proj.command.declare("--project", "-p", "<filename>: Explicitly load project file", 1);
+		proj.command.declare("--create-project", "-c", "<template> <name> [path]: Creates a new project based on the specified template. If a path is given it will be created and used, otherwise the current directory is used", 2, 3);
+		proj.command.declare("--list-templates", "-l", "List available templates for project creation");
+		proj.command.declare("--c2-library-dir", "-D", "<path>: Add a c2 library path", 1);
+		proj.command.declare("--include", "-i", "<path>: Add an include search path for source and binaries", 1);
+		proj.command.declare("--verbose", "-v", "Output more information");
 		
 		bool doexecute = true;
 		bool dobuild = true;

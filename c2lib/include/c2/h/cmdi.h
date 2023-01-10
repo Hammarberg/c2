@@ -18,7 +18,7 @@ class cmdi
 public:
 	virtual void add_args(int arga, char *args[]) = 0;
 	virtual void add_args(const char *argstr) = 0;
-	virtual void add_info(const char *slong, const char *sshort, const char *sinfo, int min_args = 0, int max_args = -1) = 0;
+	virtual void declare(const char *slong, const char *sshort, const char *sinfo, int min_args = 0, int max_args = -1) = 0;
 	virtual void printf_info() = 0;
 
 	template<typename Function>
