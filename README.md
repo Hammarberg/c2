@@ -64,9 +64,13 @@ My Computer -> Properties -> Advanced System Settings -> Environment Variables -
 If you are using VICE emulator with c2, it's great to also set `x64sc.exe` to path and it will launch automatically.
 # Usage
 ## Command line
-`c2 --help`
+When executing c2 without any arguments in a project folder, it will build/assemble and depending on the settings in the project file, it can automatically launch an emulator if in path. However, there are many useful command line switches you can use directly or in conjunction with a project file. To get an overview:
 
-Note that the help listing will extend with project specific options when a project file is loaded or detected.
+`c2 --help` or simply `c2 -h`.
+
+Note that the help listing will extend with project specific options when a project file is loaded or detected in the same folder. For example, a Motorola 68000 project might have different switches listed compared to a MOS 6502 project.
+
+c2 command line switches comes in two variants, the descriptive long version prefixed with two dahses `--` and the short variant prefixed with a single dash `-`. Switches can take optional arguments. The description of each switch has `<mandatory>` and `[optional]` argument fields. Arguments are separated from the switch with a space like `--out file.bin`. Short switches with no or only optional arguments can be stacked and in that case only the last switch of the stack can have arguments: `-rvVo file.bin` where `-o` is the short version of `--out`.
 ## Templates overview
 ## Project files
 ## Your first simple project tutorial
