@@ -1415,9 +1415,13 @@ void c2a::s_parse2(toklink &link)
 						}
 						
 						int64_t bc = 0;
+						int backsteps = 0;
 						
 						while(prev)
 						{
+							if(backsteps >= 64)
+								break;
+								
 							if(bc == 0)
 							{
 								if(prev->type == etype::BLOCK || *prev->name == ';' || *prev->name == '}')
@@ -1437,6 +1441,7 @@ void c2a::s_parse2(toklink &link)
 							}
 							
 							prev = prev->get_prev_nonspace();
+							backsteps++;
 						};
 						
 						if(isclass == false)
