@@ -304,8 +304,9 @@ int64_t c2i::c2_file::read(void *ptr, int64_t size)
 c2i::c2_sscope::c2_sscope(uint32_t fileindex, uint32_t line, uint32_t uid)
 {
 	c2i *i = c2i::c2_get_single();
-	lix_backup = i->c2_lix;
-	i->c2_lix = i->c2_scope_push(fileindex, line, uid);
+	int64_t n = lix_backup = i->c2_lix;
+	int64_t t = i->c2_scope_push(fileindex, line, uid);
+	i->c2_lix = n > t ? n : t;
 }
 
 c2i::c2_sscope::~c2_sscope()
