@@ -1,4 +1,4 @@
-#include "c2/c2.s"
+﻿#include "c2/c2.s"
 
 			// Render a BMP image using c2
 			
@@ -20,7 +20,7 @@
 			@ = 0
 
 			const int WIDTH = 1024;
-			const int HEIGHT = 1024;
+			const int HEIGHT = 512;
 
 head:
 			byte 'B'
@@ -40,20 +40,18 @@ dib_head:
 			dword 2835	//Pixels/m Y
 			dword 0	// Num colors in palette
 			dword 0	// Important colors, 0 means all are
-
 bitmap:
-			const double MAX = dist(0,0,WIDTH,HEIGHT);
 			for(int y = HEIGHT - 1; y>=0; y--)
 			{
 				for(int x = 0; x<WIDTH; x++)
 				{
-					double fr = dist(x,y,WIDTH,0) / MAX;
-					double fg = dist(x,y,WIDTH,HEIGHT) / MAX;
-					double fb = dist(x,y,0,HEIGHT) / MAX;
+					double fr = sin(dist(x,y,WIDTH/2,0)/20);
+					double fg = sin(dist(x,y,WIDTH/2,HEIGHT/2)/20);
+					double fb = sin(dist(x,y,0,HEIGHT/2)/20);
 
-					byte int(255*(fb/1))	//B
-					byte int(255*(fg/1))	//G
-					byte int(255*(fr/1))	//R
+					byte int(128+128*fb)
+					byte int(128+128*fg)
+					byte int(128+128*fr)
 				}
 
 				// Padding
