@@ -1,9 +1,10 @@
 #include "c2/h/c2i.h"
+#include <cmath>
 
-class c2_project_void : public c2i
+class c2_project_bmp : public c2i
 {
 public:
-	c2_project_void(cmdi *pcmd):c2i(pcmd){}
+	c2_project_bmp(cmdi *pcmd):c2i(pcmd){}
 
 C2_SECTION_TOP
 
@@ -11,7 +12,7 @@ C2_SECTION_TOP
 	{
 		C2_SECTION_ASM
 		{
-			#include "void.s"
+			#include "bmp.s"
 		}
 	}
 
@@ -28,4 +29,4 @@ C2_SECTION_TOP
 	}
 };
 
-c2i *c2_create_object_instance(cmdi *pcmd) {return new c2_project_void(pcmd);}
+c2i *c2_create_object_instance(cmdi *pcmd) {return new c2_project_bmp(pcmd);}
