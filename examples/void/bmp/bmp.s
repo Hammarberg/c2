@@ -47,10 +47,10 @@ bitmap:
 				for(int x = 0; x<WIDTH; x++)
 				{
 					// Just to make something look ok
-					double v = sin(dist(x,y,WIDTH/2,0)/21) * sin(dist(x,y,WIDTH/2,HEIGHT/2)/20) * sin(dist(x,y,0,HEIGHT/2)/19) * sin(dist(x,y,WIDTH/4,HEIGHT/4)/15);
+					double v = sin(dist(x,y,WIDTH*0.5,0)/21) * sin(dist(x,y,WIDTH*0.5,HEIGHT*0.5)/20) * sin(dist(x,y,0,HEIGHT*0.5)/19) * sin(dist(x,y,WIDTH*0.75,HEIGHT*0.75)/15);
 					double fr = sin((v * 1) * TAU);
-					double fg = sin((v * 2) * TAU);
-					double fb = sin((v * 3) * TAU);
+					double fg = sin((v * 2.3) * TAU);
+					double fb = sin((v * 3.2) * TAU);
 
 					byte int(128+128*(fb))
 					byte int(128+128*(fg))
