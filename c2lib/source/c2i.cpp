@@ -1,6 +1,6 @@
 /*
 	c2 - cross assembler
-	Copyright (C) 2022  John Hammarberg (crt@nospam.binarybone.com)
+	Copyright (C) 2022-2023  John Hammarberg (crt@nospam.binarybone.com)
 
 	This file is part of c2.
 
@@ -304,9 +304,8 @@ int64_t c2i::c2_file::read(void *ptr, int64_t size)
 c2i::c2_sscope::c2_sscope(uint32_t fileindex, uint32_t line, uint32_t uid)
 {
 	c2i *i = c2i::c2_get_single();
-	int64_t n = lix_backup = i->c2_lix;
-	int64_t t = i->c2_scope_push(fileindex, line, uid);
-	i->c2_lix = n > t ? n : t;
+	lix_backup = i->c2_lix;
+	i->c2_lix = i->c2_scope_push(fileindex, line, uid);
 }
 
 c2i::c2_sscope::~c2_sscope()
@@ -1101,8 +1100,8 @@ int64_t c2i::c2_scope_push(uint32_t fileindex, uint32_t line, uint32_t uid)
 	auto i = p->scope_label_index_register.find(uid);
 	if(i == p->scope_label_index_register.end())
 	{
-		p->scope_label_index_register.insert({uid, 0});
-		return 0;
+		p->scope_label_index_register.insert({uid, c2_lix});
+		return c2_lix;
 	}
 	
 	i->second++;

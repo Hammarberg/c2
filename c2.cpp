@@ -1,6 +1,6 @@
 /*
 	c2 - cross assembler
-	Copyright (C) 2022  John Hammarberg (crt@nospam.binarybone.com)
+	Copyright (C) 2022-2023  John Hammarberg (crt@nospam.binarybone.com)
 
 	This file is part of c2.
 
@@ -44,7 +44,7 @@
 #define getcwd _getcwd
 #endif
 
-#define TITLE "c2 cross assembler 0.5  Copyright (C) 2022  John Hammarberg (CRT)\n"
+#define TITLE "c2 cross assembler 0.5  Copyright (C) 2022-2023  John Hammarberg (CRT)\n"
 
 const uint32_t MAGIC_VERSION = 1337*1337+4;
 
