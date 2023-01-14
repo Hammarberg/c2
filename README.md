@@ -87,6 +87,8 @@ Optionally you can create the destination path with c2 directly. For Windows, us
 `c2 --create-project c64vice myawesomeproject sources/hack`
 
 When executing c2 without arguments in a project folder, it will build/assemble and depending on the template, it can automatically launch an emulator if in path.
+# Compile and assembly errors, tips and tricks
+Internally c2 translates much of the assembly source file into intermediate C++ for the first steps. When this goes wrong, which it will do when a human inevitable makes a mistake like a typo or forgotten reference, the error can look very cryptic. The C++ compiler might mention pieces of code that does not look familiar to the assembly source. The important part here is to look at the line number and source file mentioned rather than the error itself. If it's still not obvious what is wrong in the assembly source, try the `--verbose` (`-v`) switch to view more of the compiler output.
 # Syntax
 ## Comments
 Only C/C++ style comments are supported. This might hurt for some people used to `;` as comment prefix.
