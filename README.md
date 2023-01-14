@@ -70,7 +70,7 @@ When executing c2 without any arguments in a project folder, it will build/assem
 
 Note that the help listing will extend with project specific options when a project file is loaded or detected in the same folder. For example, a Motorola 68000 project might have different switches listed compared to a MOS 6502 project.
 
-c2 command line switches comes in two variants, the descriptive long version prefixed with two dahses `--` and the short variant prefixed with a single dash `-`. Switches can take optional arguments. The description of each switch has `<mandatory>` and `[optional]` argument fields. Arguments are separated from the switch with a space like `--out file.bin`. Short switches with no or only optional arguments can be stacked and in that case only the last switch of the stack can have arguments: `-rvVo file.bin` where `-o` is the short version of `--out`.
+c2 command line switches comes in two variants, the descriptive long version prefixed with two dahses (`--`) and the short variant prefixed with a single dash (`-`). Switches can take optional arguments. The description of each switch has `<mandatory>` and `[optional]` argument fields. Arguments are separated from the switch with a space like `--out file.bin`. Short switches with no or only optional arguments can be stacked and in that case only the last switch of the stack can have arguments: `-rvVo file.bin` where `-o` is the short version of `--out`.
 ## Templates overview
 ## Project files
 ## Your first simple project tutorial
@@ -162,6 +162,19 @@ data:
         dword $01020304, $baadbeef
 .end:
 ```
+#### Local labels in repeated scopes (auto indexed)
+```
+for(int index=0; index<10; index++)
+{
+        lda data+index
+        beq .small
+        bmi .exit
+        sta store+index
+.small:
+}
+.exit:
+```
+There is nothing to consider as a programmer here except that this mode works automatically when a scope is repeated. The label `.small` is in this case duplicated 10 times and automatically indexed. Beware this can break or cause bugs when scopes and repeats are too complicated for c2 to resolve. For a more explicit control over the labels see see indexed labels below.
 ### Anonymous labels
 Anonymous labels are declared with a single colon at the beginning of a line and can only be referenced with relative addressing.
 
