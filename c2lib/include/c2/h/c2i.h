@@ -274,8 +274,11 @@ public:
 	int64_t c2_low_bound();
 	int64_t c2_high_bound();
 	
-	template<int BITS> bool c2t(int64_t n)
+	template<int BITS> bool c2bt(int64_t n, int taken)
 	{
+		if (BITS == 8 && n == 2 * taken)
+			return false;
+		
 		struct {uint64_t n:BITS;}s; s.n = n;
 		return s.n == n;
 	}

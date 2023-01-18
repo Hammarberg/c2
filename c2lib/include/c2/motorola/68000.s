@@ -1283,259 +1283,323 @@ macro asr.w,asr (@is).l
 }
 macro bra.b @bs
 {
-	push16be(0x6000|c2b<8>(@+2-bs));
+	push16be(0x6000|c2b<8>(bs-@-2));
 }
 macro bra.w @bs
 {
 	push16be(0x6000);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro bra @bs
 {
-	if(c2t<8>(bs))
+	static int taken=0;
+	if(c2bt<8>(bs-@-2,taken)){
+		taken=0;
 		bra.b bs
-	else
+	}else{
+		taken=1;
 		bra.w bs
+}
 }
 macro bsr.b @bs
 {
-	push16be(0x6100|c2b<8>(@+2-bs));
+	push16be(0x6100|c2b<8>(bs-@-2));
 }
 macro bsr.w @bs
 {
 	push16be(0x6100);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro bsr @bs
 {
-	if(c2t<8>(bs))
+	static int taken=0;
+	if(c2bt<8>(bs-@-2,taken)){
+		taken=0;
 		bsr.b bs
-	else
+	}else{
+		taken=1;
 		bsr.w bs
+}
 }
 macro bhi.b @bs
 {
-	push16be(0x6200|c2b<8>(@+2-bs));
+	push16be(0x6200|c2b<8>(bs-@-2));
 }
 macro bhi.w @bs
 {
 	push16be(0x6200);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro bhi @bs
 {
-	if(c2t<8>(bs))
+	static int taken=0;
+	if(c2bt<8>(bs-@-2,taken)){
+		taken=0;
 		bhi.b bs
-	else
+	}else{
+		taken=1;
 		bhi.w bs
+}
 }
 macro bls.b @bs
 {
-	push16be(0x6300|c2b<8>(@+2-bs));
+	push16be(0x6300|c2b<8>(bs-@-2));
 }
 macro bls.w @bs
 {
 	push16be(0x6300);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro bls @bs
 {
-	if(c2t<8>(bs))
+	static int taken=0;
+	if(c2bt<8>(bs-@-2,taken)){
+		taken=0;
 		bls.b bs
-	else
+	}else{
+		taken=1;
 		bls.w bs
+}
 }
 macro bcc.b @bs
 {
-	push16be(0x6400|c2b<8>(@+2-bs));
+	push16be(0x6400|c2b<8>(bs-@-2));
 }
 macro bcc.w @bs
 {
 	push16be(0x6400);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro bcc @bs
 {
-	if(c2t<8>(bs))
+	static int taken=0;
+	if(c2bt<8>(bs-@-2,taken)){
+		taken=0;
 		bcc.b bs
-	else
+	}else{
+		taken=1;
 		bcc.w bs
+}
 }
 macro bcs.b,blo.b @bs
 {
-	push16be(0x6500|c2b<8>(@+2-bs));
+	push16be(0x6500|c2b<8>(bs-@-2));
 }
 macro bcs.w,blo.w @bs
 {
 	push16be(0x6500);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro bcs,blo @bs
 {
-	if(c2t<8>(bs))
+	static int taken=0;
+	if(c2bt<8>(bs-@-2,taken)){
+		taken=0;
 		bcs.b bs
-	else
+	}else{
+		taken=1;
 		bcs.w bs
+}
 }
 macro bne.b @bs
 {
-	push16be(0x6600|c2b<8>(@+2-bs));
+	push16be(0x6600|c2b<8>(bs-@-2));
 }
 macro bne.w @bs
 {
 	push16be(0x6600);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro bne @bs
 {
-	if(c2t<8>(bs))
+	static int taken=0;
+	if(c2bt<8>(bs-@-2,taken)){
+		taken=0;
 		bne.b bs
-	else
+	}else{
+		taken=1;
 		bne.w bs
+}
 }
 macro beq.b @bs
 {
-	push16be(0x6700|c2b<8>(@+2-bs));
+	push16be(0x6700|c2b<8>(bs-@-2));
 }
 macro beq.w @bs
 {
 	push16be(0x6700);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro beq @bs
 {
-	if(c2t<8>(bs))
+	static int taken=0;
+	if(c2bt<8>(bs-@-2,taken)){
+		taken=0;
 		beq.b bs
-	else
+	}else{
+		taken=1;
 		beq.w bs
+}
 }
 macro bvc.b @bs
 {
-	push16be(0x6800|c2b<8>(@+2-bs));
+	push16be(0x6800|c2b<8>(bs-@-2));
 }
 macro bvc.w @bs
 {
 	push16be(0x6800);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro bvc @bs
 {
-	if(c2t<8>(bs))
+	static int taken=0;
+	if(c2bt<8>(bs-@-2,taken)){
+		taken=0;
 		bvc.b bs
-	else
+	}else{
+		taken=1;
 		bvc.w bs
+}
 }
 macro bvs.b @bs
 {
-	push16be(0x6900|c2b<8>(@+2-bs));
+	push16be(0x6900|c2b<8>(bs-@-2));
 }
 macro bvs.w @bs
 {
 	push16be(0x6900);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro bvs @bs
 {
-	if(c2t<8>(bs))
+	static int taken=0;
+	if(c2bt<8>(bs-@-2,taken)){
+		taken=0;
 		bvs.b bs
-	else
+	}else{
+		taken=1;
 		bvs.w bs
+}
 }
 macro bpl.b @bs
 {
-	push16be(0x6a00|c2b<8>(@+2-bs));
+	push16be(0x6a00|c2b<8>(bs-@-2));
 }
 macro bpl.w @bs
 {
 	push16be(0x6a00);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro bpl @bs
 {
-	if(c2t<8>(bs))
+	static int taken=0;
+	if(c2bt<8>(bs-@-2,taken)){
+		taken=0;
 		bpl.b bs
-	else
+	}else{
+		taken=1;
 		bpl.w bs
+}
 }
 macro bmi.b @bs
 {
-	push16be(0x6b00|c2b<8>(@+2-bs));
+	push16be(0x6b00|c2b<8>(bs-@-2));
 }
 macro bmi.w @bs
 {
 	push16be(0x6b00);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro bmi @bs
 {
-	if(c2t<8>(bs))
+	static int taken=0;
+	if(c2bt<8>(bs-@-2,taken)){
+		taken=0;
 		bmi.b bs
-	else
+	}else{
+		taken=1;
 		bmi.w bs
+}
 }
 macro bge.b @bs
 {
-	push16be(0x6c00|c2b<8>(@+2-bs));
+	push16be(0x6c00|c2b<8>(bs-@-2));
 }
 macro bge.w @bs
 {
 	push16be(0x6c00);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro bge @bs
 {
-	if(c2t<8>(bs))
+	static int taken=0;
+	if(c2bt<8>(bs-@-2,taken)){
+		taken=0;
 		bge.b bs
-	else
+	}else{
+		taken=1;
 		bge.w bs
+}
 }
 macro blt.b @bs
 {
-	push16be(0x6d00|c2b<8>(@+2-bs));
+	push16be(0x6d00|c2b<8>(bs-@-2));
 }
 macro blt.w @bs
 {
 	push16be(0x6d00);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro blt @bs
 {
-	if(c2t<8>(bs))
+	static int taken=0;
+	if(c2bt<8>(bs-@-2,taken)){
+		taken=0;
 		blt.b bs
-	else
+	}else{
+		taken=1;
 		blt.w bs
+}
 }
 macro bgt.b @bs
 {
-	push16be(0x6e00|c2b<8>(@+2-bs));
+	push16be(0x6e00|c2b<8>(bs-@-2));
 }
 macro bgt.w @bs
 {
 	push16be(0x6e00);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro bgt @bs
 {
-	if(c2t<8>(bs))
+	static int taken=0;
+	if(c2bt<8>(bs-@-2,taken)){
+		taken=0;
 		bgt.b bs
-	else
+	}else{
+		taken=1;
 		bgt.w bs
+}
 }
 macro ble.b @bs
 {
-	push16be(0x6f00|c2b<8>(@+2-bs));
+	push16be(0x6f00|c2b<8>(bs-@-2));
 }
 macro ble.w @bs
 {
 	push16be(0x6f00);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro ble @bs
 {
-	if(c2t<8>(bs))
+	static int taken=0;
+	if(c2bt<8>(bs-@-2,taken)){
+		taken=0;
 		ble.b bs
-	else
+	}else{
+		taken=1;
 		ble.w bs
+}
 }
 macro bchg.b @[C2Dn]r1s,(@[C2An]r1d)
 {
@@ -2482,82 +2546,82 @@ macro cmpm.l (@[C2An]r1s)+,(@[C2An]r1d)+
 macro dbt.w,dbt @[C2Dn]r1s,@bs
 {
 	push16be(0x50c8|r1s);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro dbf.w,dbf,dbra.w,dbra @[C2Dn]r1s,@bs
 {
 	push16be(0x51c8|r1s);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro dbhi.w,dbhi @[C2Dn]r1s,@bs
 {
 	push16be(0x52c8|r1s);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro dbls.w,dbls @[C2Dn]r1s,@bs
 {
 	push16be(0x53c8|r1s);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro dbcc.w,dbcc @[C2Dn]r1s,@bs
 {
 	push16be(0x54c8|r1s);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro dbcs.w,dbcs @[C2Dn]r1s,@bs
 {
 	push16be(0x55c8|r1s);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro dbne.w,dbne @[C2Dn]r1s,@bs
 {
 	push16be(0x56c8|r1s);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro dbeq.w,dbeq @[C2Dn]r1s,@bs
 {
 	push16be(0x57c8|r1s);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro dbvc.w,dbvc @[C2Dn]r1s,@bs
 {
 	push16be(0x58c8|r1s);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro dbvs.w,dbvs @[C2Dn]r1s,@bs
 {
 	push16be(0x59c8|r1s);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro dbpl.w,dbpl @[C2Dn]r1s,@bs
 {
 	push16be(0x5ac8|r1s);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro dbmi.w,dbmi @[C2Dn]r1s,@bs
 {
 	push16be(0x5bc8|r1s);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro dbge.w,dbge @[C2Dn]r1s,@bs
 {
 	push16be(0x5cc8|r1s);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro dblt.w,dblt @[C2Dn]r1s,@bs
 {
 	push16be(0x5dc8|r1s);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro dbgt.w,dbgt @[C2Dn]r1s,@bs
 {
 	push16be(0x5ec8|r1s);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro dble.w,dble @[C2Dn]r1s,@bs
 {
 	push16be(0x5fc8|r1s);
-	push16be(0|c2b<16>(@-bs));
+	push16be(0|c2b<16>(bs-@));
 }
 macro divs.w,divs @[C2Dn]r1s,@[C2Dn]r1d
 {
