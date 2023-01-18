@@ -295,7 +295,7 @@ public:
 		if (s.n != n)
 			c2_error("Unsigned value out of range");
 			
-		return n&((1<<BITS)-1);
+		return n&((int64_t(1)<<BITS)-1);
 	}
 	
 	template<int BITS> int64_t c2sr(int64_t n)
