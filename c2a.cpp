@@ -713,6 +713,9 @@ void c2a::parse_macro(toklink &link)
 	
 	bool array = false;
 	bool lastparam = false;
+	
+	// Offset signature count with enum parameters
+	int signature_offset = 0;
 		
 	for(;;)
 	{
@@ -755,10 +758,10 @@ void c2a::parse_macro(toklink &link)
 						o = get_next_nonspace(link);
 						break;
 					}
-
 				}
+				signature_offset++;
 			}
-				
+			
 			if(o->type != etype::ALPHA)
 				error(o, "Parameter name expected");
 				
@@ -810,7 +813,7 @@ void c2a::parse_macro(toklink &link)
 		
 		if(i == macros.end())
 		{
-			macros[name].insert({signature.count(), m});
+			macros[name].insert({signature.count()+signature_offset, m});
 		}
 		else
 		{
@@ -824,7 +827,7 @@ void c2a::parse_macro(toklink &link)
 				}
 			}
 			
-			i->second.insert({signature.count(), m});
+			i->second.insert({signature.count()+signature_offset, m});
 		}
 	}
 	
