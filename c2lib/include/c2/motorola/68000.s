@@ -9052,6 +9052,126 @@ macro sub.l @[C2Dn]r1s,@id
 	push16be(0x91b9|(r1s<<9));
 	push32be(0|c2sr<32>(id),true);
 }
+macro sub.w,sub @[C2Dn]r1s,@[C2An]r1d
+{
+	push16be(0x90c0|r1s|(r1d<<9));
+}
+macro sub.w,sub @[C2An]r1s,@[C2An]r1d
+{
+	push16be(0x90c8|r1s|(r1d<<9));
+}
+macro sub.w,sub (@[C2An]r1s),@[C2An]r1d
+{
+	push16be(0x90d0|r1s|(r1d<<9));
+}
+macro sub.w,sub (@[C2An]r1s)+,@[C2An]r1d
+{
+	push16be(0x90d8|r1s|(r1d<<9));
+}
+macro sub.w,sub -(@[C2An]r1s),@[C2An]r1d
+{
+	push16be(0x90e0|r1s|(r1d<<9));
+}
+macro sub.w,sub @is(@[C2An]r1s),@[C2An]r1d
+{
+	push16be(0x90e8|r1s|(r1d<<9));
+	push16be(0|c2sr<16>(is));
+}
+macro sub.w,sub @is(@[C2An]r1s,@[C2Dns]r2s),@[C2An]r1d
+{
+	push16be(0x90f0|r1s|(r1d<<9));
+	push16be(0|((r2s&7)<<12)|c2sr<8>(is)|(((r2s>>3)&0x1)<<11));
+}
+macro sub.w,sub (@is).w,@[C2An]r1d
+{
+	push16be(0x90f8|(r1d<<9));
+	push16be(0|c2sr<16>(is));
+}
+macro sub.w,sub (@is).l,@[C2An]r1d
+{
+	push16be(0x90f9|(r1d<<9));
+	push32be(0|c2ur<32>(is),true);
+}
+macro sub.w,sub @is,@[C2An]r1d
+{
+	push16be(0x90f9|(r1d<<9));
+	push32be(0|c2ur<32>(is),true);
+}
+macro sub.w,sub #@is,@[C2An]r1d
+{
+	push16be(0x90fc|(r1d<<9));
+	push16be(0|c2ur<16>(is));
+}
+macro sub.w,sub @is(pc),@[C2An]r1d
+{
+	push16be(0x90fa|(r1d<<9));
+	push16be(0|c2sr<16>(is));
+}
+macro sub.w,sub @is(pc,@[C2Dns]r2s),@[C2An]r1d
+{
+	push16be(0x90fb|(r1d<<9));
+	push16be(0|((r2s&7)<<12)|c2sr<8>(is)|(((r2s>>3)&0x1)<<11));
+}
+macro sub.l @[C2Dn]r1s,@[C2An]r1d
+{
+	push16be(0x91c0|r1s|(r1d<<9));
+}
+macro sub.l @[C2An]r1s,@[C2An]r1d
+{
+	push16be(0x91c8|r1s|(r1d<<9));
+}
+macro sub.l (@[C2An]r1s),@[C2An]r1d
+{
+	push16be(0x91d0|r1s|(r1d<<9));
+}
+macro sub.l (@[C2An]r1s)+,@[C2An]r1d
+{
+	push16be(0x91d8|r1s|(r1d<<9));
+}
+macro sub.l -(@[C2An]r1s),@[C2An]r1d
+{
+	push16be(0x91e0|r1s|(r1d<<9));
+}
+macro sub.l @is(@[C2An]r1s),@[C2An]r1d
+{
+	push16be(0x91e8|r1s|(r1d<<9));
+	push16be(0|c2sr<16>(is));
+}
+macro sub.l @is(@[C2An]r1s,@[C2Dns]r2s),@[C2An]r1d
+{
+	push16be(0x91f0|r1s|(r1d<<9));
+	push16be(0|((r2s&7)<<12)|c2sr<8>(is)|(((r2s>>3)&0x1)<<11));
+}
+macro sub.l (@is).w,@[C2An]r1d
+{
+	push16be(0x91f8|(r1d<<9));
+	push16be(0|c2sr<16>(is));
+}
+macro sub.l (@is).l,@[C2An]r1d
+{
+	push16be(0x91f9|(r1d<<9));
+	push32be(0|c2ur<32>(is),true);
+}
+macro sub.l @is,@[C2An]r1d
+{
+	push16be(0x91f9|(r1d<<9));
+	push32be(0|c2ur<32>(is),true);
+}
+macro sub.l #@is,@[C2An]r1d
+{
+	push16be(0x91fc|(r1d<<9));
+	push32be(0|c2ur<32>(is),true);
+}
+macro sub.l @is(pc),@[C2An]r1d
+{
+	push16be(0x91fa|(r1d<<9));
+	push16be(0|c2sr<16>(is));
+}
+macro sub.l @is(pc,@[C2Dns]r2s),@[C2An]r1d
+{
+	push16be(0x91fb|(r1d<<9));
+	push16be(0|((r2s&7)<<12)|c2sr<8>(is)|(((r2s>>3)&0x1)<<11));
+}
 macro suba.w,suba @[C2Dn]r1s,@[C2An]r1d
 {
 	push16be(0x90c0|r1s|(r1d<<9));
