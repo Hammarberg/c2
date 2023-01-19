@@ -17,7 +17,7 @@
 #define C2_68000
 
 #define C2Dn d0,d1,d2,d3,d4,d5,d6,d7
-#define C2Dns d0,d1,d2,d3,d4,d5,d6,d7,d0.w,d1.w,d2.w,d3.w,d4.w,d5.w,d6.w,d7.w,d0.l,d1.l,d2.l,d3.l,d4.l,d5.l,d6.l,d7.l
+#define C2Dns d0,d1,d2,d3,d4,d5,d6,d7,d0.l,d1.l,d2.l,d3.l,d4.l,d5.l,d6.l,d7.l,d0.w,d1.w,d2.w,d3.w,d4.w,d5.w,d6.w,d7.w
 #define C2An a0,a1,a2,a3,a4,a5,a6,a7
 #define C2DAn d0,d1,d2,d3,d4,d5,d6,d7,a0,a1,a2,a3,a4,a5,a6,a7
 
