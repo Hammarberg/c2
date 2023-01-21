@@ -346,11 +346,6 @@ macro add.w,add,adda,adda.w @is,@[C2An]r1d
 	push16be(0xd0f9|(r1d<<9));
 	push32be(0|c2ur<32>(is),true);
 }
-macro add.w,add,adda,adda.w #@is,@[C2An]r1d
-{
-	push16be(0xd0fc|(r1d<<9));
-	push16be(0|c2ur<16>(is));
-}
 macro add.w,add,adda,adda.w @is(pc),@[C2An]r1d
 {
 	push16be(0xd0fa|(r1d<<9));
@@ -406,11 +401,6 @@ macro add.l,adda.l @is,@[C2An]r1d
 	push16be(0xd1f9|(r1d<<9));
 	push32be(0|c2ur<32>(is),true);
 }
-macro add.l,adda.l #@is,@[C2An]r1d
-{
-	push16be(0xd1fc|(r1d<<9));
-	push32be(0|c2ur<32>(is),true);
-}
 macro add.l,adda.l @is(pc),@[C2An]r1d
 {
 	push16be(0xd1fa|(r1d<<9));
@@ -420,6 +410,16 @@ macro add.l,adda.l @is(pc,@[C2Dns]r2s),@[C2An]r1d
 {
 	push16be(0xd1fb|(r1d<<9));
 	push16be(0|((r2s&7)<<12)|c2sr<8>(is)|(((r2s>>3)&0x1)<<11));
+}
+macro add.w,add,adda,adda.w #@is,@[C2An]r1d
+{
+	push16be(0xd0fc|(r1d<<9));
+	push16be(0|c2ur<16>(is));
+}
+macro add.l,adda.l #@is,@[C2An]r1d
+{
+	push16be(0xd1fc|(r1d<<9));
+	push32be(0|c2ur<32>(is),true);
 }
 macro addi.b,add.b #@is,@[C2Dn]r1d
 {
@@ -8947,11 +8947,6 @@ macro sub.w,sub,suba,suba.w @is,@[C2An]r1d
 	push16be(0x90f9|(r1d<<9));
 	push32be(0|c2ur<32>(is),true);
 }
-macro sub.w,sub,suba,suba.w #@is,@[C2An]r1d
-{
-	push16be(0x90fc|(r1d<<9));
-	push16be(0|c2ur<16>(is));
-}
 macro sub.w,sub,suba,suba.w @is(pc),@[C2An]r1d
 {
 	push16be(0x90fa|(r1d<<9));
@@ -9007,11 +9002,6 @@ macro sub.l,suba.l @is,@[C2An]r1d
 	push16be(0x91f9|(r1d<<9));
 	push32be(0|c2ur<32>(is),true);
 }
-macro sub.l,suba.l #@is,@[C2An]r1d
-{
-	push16be(0x91fc|(r1d<<9));
-	push32be(0|c2ur<32>(is),true);
-}
 macro sub.l,suba.l @is(pc),@[C2An]r1d
 {
 	push16be(0x91fa|(r1d<<9));
@@ -9021,6 +9011,16 @@ macro sub.l,suba.l @is(pc,@[C2Dns]r2s),@[C2An]r1d
 {
 	push16be(0x91fb|(r1d<<9));
 	push16be(0|((r2s&7)<<12)|c2sr<8>(is)|(((r2s>>3)&0x1)<<11));
+}
+macro sub.w,sub,suba,suba.w #@is,@[C2An]r1d
+{
+	push16be(0x90fc|(r1d<<9));
+	push16be(0|c2ur<16>(is));
+}
+macro sub.l,suba.l #@is,@[C2An]r1d
+{
+	push16be(0x91fc|(r1d<<9));
+	push32be(0|c2ur<32>(is),true);
 }
 macro subi.b,sub.b #@is,@[C2Dn]r1d
 {
