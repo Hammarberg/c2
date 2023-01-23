@@ -93,11 +93,14 @@
 		},
 		"68000":{
 			"description" : "Plain 68000 with 16MB of RAM for embedded projects",
-			"super" : "c2i",
-			"include" : "c2/h/c2i.h",
-			"arguments" : "--address-range 0x0 0x1000000 --out - + {title}.bin",
+			"super" : "motorola68000",
+			"include" : "c2/motorola/68000.h",
+			"arguments" : "--out - + {title}.bin",
 			"source":[
 				"c2i.cpp":{
+					"flags" : "-O2"
+				},
+				"68000.cpp":{
 					"flags" : "-O2"
 				}
 			],
