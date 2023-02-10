@@ -1,7 +1,7 @@
 appname := c2
 
 CXX := clang++
-CXXFLAGS := -O2 -std=c++17 -march=native
+CXXFLAGS := -O2 -std=c++17 -march=native -Wno-unused-result
 LDFLAGS :=
 LDLIBS :=
 
