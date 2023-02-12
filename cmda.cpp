@@ -259,8 +259,15 @@ std::string cmda::main()
 {
 	if(sargs.size() >= 2)
 	{
-		if(sargs[1][0] != '-')
-			return sargs[1].c_str();
+		std::string &tmp = sargs[1];
+		if(tmp[0] != '-')
+		{
+			size_t s = tmp.size();
+			if(s >= 8 && tmp.substr(s-8,8) == ".c2.json")
+			{
+				return tmp.c_str();
+			}
+		}
 	}
 	
 	std::string project;
@@ -270,17 +277,14 @@ std::string cmda::main()
 		std::string tmp = entry.path().string();
 		
 		size_t s = tmp.size();
-		if(s >= 8)
+		if(s >= 8 && tmp.substr(s-8,8) == ".c2.json")
 		{
-			if(tmp.substr(s-8,8) == ".c2.json")
+			if(project != "")
 			{
-				if(project != "")
-				{
-					fprintf(stderr, "Multiple project files found in the current directory. Specify one as the first argument or via --project <filename>.\n");
-					return "";
-				}
-				project = tmp;
+				fprintf(stderr, "Multiple project files found in the current directory. Specify one as the first argument or via --project <filename>.\n");
+				return "";
 			}
+			project = tmp;
 		}
     }
 	
