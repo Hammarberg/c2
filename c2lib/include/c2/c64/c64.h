@@ -31,4 +31,6 @@ public:
 	void c64_vice(var v);
 	
 	void *c64_internal = nullptr;
+
+	int64_t incprgorg(const char *file, size_t offset = 0, size_t length = -1);
 };

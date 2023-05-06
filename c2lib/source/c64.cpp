@@ -627,3 +627,29 @@ void c64::loadsid(const char *path, var &init, var &play)
 	
 	c2_verbose("SID $%04x-$%04x, init $%04x, play $%04x", int(load_address), int(write), int(init), int(play));
 }
+
+int64_t c64::incprgorg(const char *file, size_t offset, size_t length)
+{
+	c2_file fp;
+
+	if(!fp.open(file))
+	{
+		return 0;
+	}
+
+	int64_t size = fp.size();
+
+	if(size < 2)
+	{
+		c2_error("A PRG file must at least be 2 bytes: %s", file);
+		return 0;
+	}
+
+	int64_t o = fp.pop16le();
+
+	c2_org = o;
+
+	loadbin(file, 2, length);
+
+	return o;
+}
