@@ -1430,7 +1430,7 @@ void c2a::s_parse2(toklink &link)
 								if(prev->type == etype::BLOCK || *prev->name == ';' || *prev->name == '}')
 									break;
 								
-								if(!strcmp("struct", prev->name) || !strcmp("class", prev->name) || !strcmp("enum", prev->name))
+								if(!strcmp("struct", prev->name) || !strcmp("class", prev->name) || !strcmp("enum", prev->name) || !strcmp("switch", prev->name))
 								{
 									isclass = true;
 									isclass_bc = bracketcount(isclass_bc, o);
