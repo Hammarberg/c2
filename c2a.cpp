@@ -1042,7 +1042,11 @@ void c2a::s_parse1(toklink &link)
 					break;
 					case '%':
 					{	
-						if(op[0]->type != etype::NUM && op[0]->type != etype::ALPHA && op[2]->type == etype::NUM)
+						if(op[0]->type != etype::NUM && 
+							op[0]->type != etype::ALPHA && 
+							*op[0]->name != ')' && 
+							*op[0]->name != ']' && 
+							op[2]->type == etype::NUM)
 						{
 							// Handle binary prefix
 							o->mute();
