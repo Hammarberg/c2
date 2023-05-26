@@ -1087,7 +1087,11 @@ void c2i::c2_add_arg(const char *format, ...)
 	va_end (args);
 	
 	sinternal *p = (sinternal *)pinternal;
-	p->added_arg = buffer;
+	
+	if(p->added_arg.size())
+		p->added_arg += " ";
+		
+	p->added_arg += buffer;
 	
 	delete [] buffer;
 }
