@@ -509,6 +509,7 @@ void c2i::c2_reset_pass()
 	p->log.clear();
 	p->hash_state.seed();
 	p->scope_label_index_register.clear();
+	p->added_arg.clear();
 	
 	memset(RAM, 0, RAM_size);
 	memset(RAM_use, 0, RAM_size);
