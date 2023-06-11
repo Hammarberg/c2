@@ -355,9 +355,6 @@ c2i::c2i(cmdi *pcmd)
 	c2_cmd.declare("--dump-enum", "-E", "[filename]: Output variables in C-style enum format. If no filename is given, stdout will be used", 0, 1);
 	c2_cmd.declare("--address-range", "-m", "<start> <end>: Set the valid memory address range available for the assembly to target. Addresses must be numerical", 2);
 	c2_cmd.declare("--assembly-hash", "-H", "Verbosly outputs a hash for each assembly step.");
-
-	c2i::var a = "vice break";
-	c2i::var b = a;
 }
 
 c2i::~c2i()
