@@ -40,7 +40,7 @@ c64::c64(cmdi *pcmd)
 	
 	c2_cmd.declare("--out-prg", "-P", "<from> <to> [filename]: Outputs a Commodore PRG. Parameters are the same as for --out", 2, 3);
 	c2_cmd.declare("--out-rle", "-R", "<from> <to> <start> [filename] [--sei] [--1 <value>] Outputs a Commodore RLE compressed PRG. Can compress $0200-$ffff. Parameters are similar to --out with exception for the start address/label that can also take 'basic_startup' as argument", 3, 4);
-	c2_cmd.declare("--vice-cmd", "-M", "[filename]: Outputs a VICE comapatible monitor command file contianing labels and breakpoints. Use -moncommands <filename> as VICE arguments.", 0, 1);
+	c2_cmd.declare("--vice-cmd", "-M", "[filename]: Outputs a VICE comapatible monitor command file containing labels and breakpoints. Use -moncommands <filename> as VICE arguments.", 0, 1);
 	
 	sc64internal *p = new sc64internal;
 	c64_internal = (void *)p;
