@@ -1,3 +1,9 @@
+//
+//	NOTE 
+//	this is bare minimum NES example. 
+//	check out www.nesdev.org for more tutorials. 
+//	
+
 #include "c2/nes/nes.s"
 
 	NES_HEADER MAPPER_HORIZONTAL,NES,NTSC,2,1
@@ -34,13 +40,25 @@ onReset:
 	sta $700,x
 	inx
 	bne .clrmem
-
+	
 	//	setup PPU state 
 	//	and upload tiles and colors 
 	PPU_setaddr #$2000
 
 	//	set the top VRAM address to tile 1
 	lda #$1 
+	sta PPU.Data
+
+	//	setup PPU state to colors 
+	PPU_setaddr #$3f00
+
+	lda #$F 	//	black
+	sta PPU.Data
+	lda #$0 	//	dark grey
+	sta PPU.Data
+	lda #$10 	//	mid grey 
+	sta PPU.Data
+	lda #$30 	//	white 
 	sta PPU.Data
 
 
@@ -80,24 +98,23 @@ onNMI:
 }
 
 onIRQ:
-    rti
+	rti
 
 //	NO CODE or DATA after this, besides IRQ vectors and CHRROM 
 //  IRQ vectors
-    @ = $FFFA           
-    WORD onNMI      //     NMI
-    WORD onReset    //     RESET
-    WORD onIRQ      //     IRQ
+	@ = $FFFA           
+	WORD onNMI      //     NMI
+	WORD onReset    //     RESET
+	WORD onIRQ      //     IRQ
 
 //  CHRROM Data
 //	example tile data is limited purposefully
 
-    @ = $10000
-    BYTE $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-    BYTE $01, $7C, $42, $42, $42, $42, $3E, $80, $FE, $FE, $FC, $FC, $FC, $FC, $C0, $00
-    BYTE $00, $62, $52, $52, $4A, $4A, $44, $00, $00, $72, $52, $5A, $5A, $4A, $4E, $00
-    BYTE $00, $3E, $40, $78, $40, $40, $3E, $00, $00, $7E, $40, $78, $40, $40, $7E, $00
-    BYTE $00, $3E, $40, $3C, $02, $02, $7C, $00, $00, $7E, $40, $7E, $02, $02, $7E, $00
-    BYTE $3C, $4E, $B7, $A7, $CF, $F9, $72, $3C, $00, $30, $78, $78, $30, $00, $00, $00
+	@ = $10000
+	//	blank
+	BYTE $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	//	metalic brick type
+	BYTE $01, $7C, $42, $42, $42, $42, $3E, $80, $FE, $FE, $FC, $FC, $FC, $FC, $C0, $00
+
 
 
