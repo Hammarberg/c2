@@ -1129,16 +1129,27 @@ void c2a::s_parse1(toklink &link)
 								// label detected
 								bool local = false;
 								std::string mapname;
-								if(stmp[0] == '.')
+								
+								// Handle ..label
+								int numdots = 0;
+								while(stmp[numdots] == '.')
+									numdots++;
+								
+								if(numdots)
 								{
 									local = true;
-									mapname = parent_label + stmp;
-									stmp = stmp.substr(1);
+									
+									stmp = stmp.substr(numdots);
+									
+									mapname = root_labels[root_labelindex - (numdots - 1)].first ;
+									mapname += "." + stmp;
 								}
 								else
 								{
 									mapname = stmp;
 								}
+								
+								//printf("final label %s\n", mapname.c_str());
 								
 								auto i = labelmap.find(mapname);
 								if(i == labelmap.end())
@@ -1150,7 +1161,7 @@ void c2a::s_parse1(toklink &link)
 									if(local)
 									{
 										// Local label setup
-										clabel &cr = *root_labels[root_labelindex].second;
+										clabel &cr = *root_labels[root_labelindex - (numdots - 1)].second;
 										
 										s2 = "c2i::var " + stmp + "={\"" + mapname + "\",0};\n";
 										cr.sub = link.link(maketok(psub, s2.c_str()), cr.sub);
@@ -1167,7 +1178,7 @@ void c2a::s_parse1(toklink &link)
 											link.link(maketok(plabel, "[c2_lix]=c2_org;"), o->prev);
 										}
 										
-										labelmap[mapname] = clabel(c, root_labelindex);
+										labelmap[mapname] = clabel(c, root_labelindex - (numdots - 1));
 									}
 									else
 									{
