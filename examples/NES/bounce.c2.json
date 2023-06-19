@@ -8,7 +8,7 @@
 			"c2" : true,
 			"flags" : "-O0"
 		},
-		"source\c2i.cpp":{
+		"source/c2i.cpp":{
 			"external" : true,
 			"flags" : "-O2"
 		}

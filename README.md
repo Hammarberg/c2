@@ -35,7 +35,7 @@ c2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
 
 You should have received a copy of the GNU General Public License along with c2. If not, see <https://www.gnu.org/licenses/>.
 ### Contributors
-John Hammarberg, Jocelyn Houle, Johan Samuelsson
+John Hammarberg, Jocelyn Houle, Johan Samuelsson, Jed Adams
 ## Build & Installation
 c2 requires llvm/clang++ or g++ for both building c2 itself and for running c2. At this point c2 has only been tested on 64 bit hosts with little endian.
 
