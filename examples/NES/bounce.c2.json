@@ -1,0 +1,16 @@
+{
+	"title" : "bounce",
+	"basedir":".",
+	"arguments" : "--address-range 0x0000 0x12000 --out 0x7ff0 0x12000 bounce.nes",
+	"execute" : "",
+	"files":[
+		"bounce.cpp":{
+			"c2" : true,
+			"flags" : "-O0"
+		},
+		"source\c2i.cpp":{
+			"external" : true,
+			"flags" : "-O2"
+		}
+	]
+}
