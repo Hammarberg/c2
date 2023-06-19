@@ -91,6 +91,27 @@
 				}
 			]
 		},
+		"NESnrom":{
+			"description" : "NES NROM 256",
+			"super" : "c2i",
+			"include" : "c2/h/c2i.h",
+			"arguments" : "--address-range 0x0000 0x12000 --out 0x7ff0 0x12000 {title}.nes",
+			"source":[
+				"c2i.cpp":{
+					"flags" : "-O2"
+				}
+			],
+			"template":[
+				"asm.cpp":{
+					"target" : "{title}.cpp"
+					"c2" : true
+					"flags" : "-O0"
+				},
+				"nes.s":{
+					"target" : "{title}.s"
+				}
+			]
+		},
 		"68000":{
 			"description" : "Plain 68000 with 16MB of RAM for embedded projects",
 			"super" : "motorola68000",
