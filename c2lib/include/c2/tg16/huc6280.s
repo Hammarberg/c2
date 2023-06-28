@@ -111,6 +111,96 @@ macro tam #@n
 	push8(n);
 }
 
+macro tma #@n 
+{
+	push8($43);
+	push8(n);
+}
+
+macro tam0 
+{
+	push8($53);
+	push8($1);
+}
+macro tam1
+{
+	push8($53);
+	push8($2);
+}
+macro tam2
+{
+	push8($53);
+	push8($4);
+}
+macro tam3
+{
+	push8($53);
+	push8($8);
+}
+macro tam4
+{
+	push8($53);
+	push8($10);
+}
+macro tam5
+{
+	push8($53);
+	push8($20);
+}
+macro tam6
+{
+	push8($53);
+	push8($40);
+}
+macro tam7
+{
+	push8($53);
+	push8($80);
+}
+
+macro tma0 
+{
+	push8($43);
+	push8($1);
+}
+macro tma1
+{
+	push8($43);
+	push8($2);
+}
+macro tma2
+{
+	push8($43);
+	push8($4);
+}
+macro tma3
+{
+	push8($43);
+	push8($8);
+}
+macro tma4
+{
+	push8($43);
+	push8($10);
+}
+macro tma5
+{
+	push8($43);
+	push8($20);
+}
+macro tma6
+{
+	push8($43);
+	push8($40);
+}
+macro tma7
+{
+	push8($43);
+	push8($80);
+}
+
+
+
 macro tst #@a,@n
 {
 	if(n.bits() <= 8)
