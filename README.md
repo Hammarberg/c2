@@ -4,7 +4,7 @@
 * Amiga hunk format and utility classes.
 * Optimize C++ lambda to generation to greatly improve compile times.
 * Option to bypass project file and only use switches.
-* Support 65816, 65C02, 65802.
+* Support 65816, 65802.
 * Zilog 80 support.
 * 8080 support.
 * CP/M support.
