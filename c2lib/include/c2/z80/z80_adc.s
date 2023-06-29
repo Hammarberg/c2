@@ -19,16 +19,19 @@ macro adc a,(hl)
 	push8($8e);
 }
 
+#define Z80n b,c,d,e,h,l,hl,a 
+
+macro adc a,@[Z80n]r
+{
+	push8($88+r);
+}
+
 macro adc a,@n
 {
 	push8($ce);
 	push8(n);
 }
 
-macro adc a,@[Z80n]r
-{
-	push8($88+r);
-}
 
 macro adc a,hx
 {
