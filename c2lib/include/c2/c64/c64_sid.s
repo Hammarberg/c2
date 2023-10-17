@@ -25,7 +25,7 @@
 #define SID_FREQL	SID_FREQ
 #define SID_FREQH	1
 #define SID_PW		2
-#define SID_PWL		2
+#define SID_PWL		SID_PW
 #define SID_PWH		3
 #define SID_CTRL	4
 #define SID_AD		5
