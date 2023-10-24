@@ -171,13 +171,18 @@ const char *tokenize(const char *p, std::string &s, etype &t)
 		
 		while(*p)
 		{
-			if(esc == false && *p == '\"')
+			if(!esc)
 			{
-				p++;
-				break;
+				if(*p == '\"')
+				{
+					p++;
+					break;
+				}
+				esc = *p == '\\';
 			}
+			else esc = false;
+				
 			s += *p;
-			esc = *p == '\\';
 			p++;
 		}
 		
@@ -190,13 +195,18 @@ const char *tokenize(const char *p, std::string &s, etype &t)
 		
 		while(*p)
 		{
-			if(esc == false && *p == '\'')
+			if(!esc)
 			{
-				p++;
-				break;
+				if(*p == '\'')
+				{
+					p++;
+					break;
+				}
+				esc = *p == '\\';
 			}
+			else esc = false;
+				
 			s += *p;
-			esc = *p == '\\';
 			p++;
 		}
 		
