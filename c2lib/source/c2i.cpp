@@ -187,9 +187,10 @@ bool c2i::c2_file::open(const char *file)
 		fseek(p->fp, 0, SEEK_END);
 		p->size = (int64_t)ftell(p->fp);
 		fseek(p->fp, 0, SEEK_SET);
+
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -288,6 +289,22 @@ int64_t c2i::c2_file::pop64be()
 	int64_t d;
 	fread(&d, 1, sizeof(d), p->fp);
 	return swap_endian(d);
+}
+
+float c2i::c2_file::pop32float()
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	float d;
+	fread(&d, 1, sizeof(d), p->fp);
+	return d;
+}
+
+double c2i::c2_file::pop64float()
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	double d;
+	fread(&d, 1, sizeof(d), p->fp);
+	return d;
 }
 
 int64_t c2i::c2_file::read(void *ptr, int64_t size)
@@ -503,7 +520,16 @@ void c2i::c2_reset_pass()
 	error_count = 0;
 	warning_count = 0;
 	sinternal *p = (sinternal *)pinternal;
-	p->log.clear();
+
+	if(!c2_pass_count)
+	{
+		p->pre_log_count = p->log.size();
+	}
+	else
+	{
+		p->log.resize(p->pre_log_count);
+	}
+
 	p->hash_state.seed();
 	p->scope_label_index_register.clear();
 	p->added_arg.clear();
@@ -520,8 +546,6 @@ bool c2i::c2_assemble()
 
 	try
 	{
-		c2_pre();
-		
 		c2_cmd.invoke("--address-range", [&](int arga, const char *argc[])
 		{
 			int64_t from,to;
@@ -539,64 +563,71 @@ bool c2i::c2_assemble()
 			c2_set_ram(from, to-from);
 				
 		});
-		
-		std::vector<cmur3::shash> history;
-		
-		int64_t org_backup_a, org_backup_w;
-		c2_org.backup(org_backup_a, org_backup_w);
-			
-		for(int pass=1;;pass++)
-		{
-			c2_pass_count = pass;
-			if(pass == 50)
-			{
-				throw "Giving up resolving forward dependencies";
-			}
-			
-			c2_org.restore(org_backup_a, org_backup_w);
-			c2_reset_pass();
-			
-			if(!c2_assembly_hash)
-			{
-				fprintf(stderr, "Pass %d", pass);
-			}
-			c2_pass();
-			p->hash_state.finalize();
-			cmur3::shash hash = p->hash_state.hash;
-			
-			if(!c2_assembly_hash)
-			{
-				if(c2_verbose)
-				{
-#ifndef _MSC_VER
-					fprintf(stderr, ": %016lx%016lx\n", hash.h1, hash.h2);
-#else
-					fprintf(stderr, ": %016llx%016llx\n", hash.h1, hash.h2);
-#endif
-				}
-				else
-				{
-					fprintf(stderr, "\n");
-				}
-			}
 
-			if(history.size())
+		c2_pre();
+
+		c2_reset_pass();
+
+		if(!error_count)
+		{
+			std::vector<cmur3::shash> history;
+
+			int64_t org_backup_a, org_backup_w;
+			c2_org.backup(org_backup_a, org_backup_w);
+
+			for(int pass=1;;pass++)
 			{
-				auto i = history.rbegin();
-				if(!memcmp(&hash, &(*i), sizeof(hash)))
-					break;
-				
-				i++;
-				while(i != history.rend())
+				c2_pass_count = pass;
+				if(pass == 50)
 				{
-					if(!memcmp(&hash, &(*i), sizeof(hash)))
-					{
-						throw "Cyclic pass detected, cannot resolve forward dependencies";
-					}
-					i++;
+					throw "Giving up resolving forward references";
 				}
+
+				c2_org.restore(org_backup_a, org_backup_w);
+				c2_reset_pass();
+
+				if(!c2_assembly_hash)
+				{
+					fprintf(stderr, "Pass %d", pass);
+				}
+				c2_pass();
+				p->hash_state.finalize();
+				cmur3::shash hash = p->hash_state.hash;
+
+				if(!c2_assembly_hash)
+				{
+					if(c2_verbose)
+					{
+	#ifndef _MSC_VER
+						fprintf(stderr, ": %016lx%016lx\n", hash.h1, hash.h2);
+	#else
+						fprintf(stderr, ": %016llx%016llx\n", hash.h1, hash.h2);
+	#endif
+					}
+					else
+					{
+						fprintf(stderr, "\n");
+					}
+				}
+
+				if(history.size())
+				{
+					auto i = history.rbegin();
+					if(!memcmp(&hash, &(*i), sizeof(hash)))
+						break;
+
+					i++;
+					while(i != history.rend())
+					{
+						if(!memcmp(&hash, &(*i), sizeof(hash)))
+						{
+							throw "Cyclic pass detected, cannot resolve forward references";
+						}
+						i++;
+					}
+				}
+				history.push_back(hash);
 			}
-			history.push_back(hash);
 		}
 	}
 	catch(const char *str)
@@ -613,7 +644,7 @@ bool c2i::c2_assemble()
 	}
 
 	std::vector<std::pair<c2_eloglevel, std::string>> &log = p->log;
-	
+
 	for(size_t r=0; r<log.size();r++)
 	{
 		c2_eloglevel level = log[r].first;
@@ -1214,6 +1245,7 @@ void c2i::c2_log(c2_eloglevel level, const char *file, int line, const char *for
 		break;
 		case c2_eloglevel::warning:
 			out += "warning: ";
+			warning_count++;
 		break;
 		case c2_eloglevel::error:
 			out += "error: ";
@@ -1222,6 +1254,7 @@ void c2i::c2_log(c2_eloglevel level, const char *file, int line, const char *for
 		default:
 		break;
 	};
+
 	out += pstr;
 	
 	if(alloc)
@@ -1230,14 +1263,8 @@ void c2i::c2_log(c2_eloglevel level, const char *file, int line, const char *for
 	}
 	
 	p->log.push_back(std::pair<c2i::c2_eloglevel, std::string>(level, out));
+
 	//std::cerr << out.c_str();
-	
-	/*
-	if(error_count >= 20)
-	{
-		throw "error count exceeds threshold";
-	}
-	 */
 }
 
 void c2i::register_var(const char *name, c2i::c2_vardata *pv)

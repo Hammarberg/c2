@@ -359,6 +359,8 @@ public:
 		int64_t pop32be();
 		int64_t pop64le();
 		int64_t pop64be();
+		float pop32float();
+		double pop64float();
 		int64_t read(void *ptr, int64_t size);
 	private:
 		void *pinternal;
@@ -415,7 +417,7 @@ protected:
 	
 	void push(int64_t b);
 	int32_t error_count, warning_count;
-	int c2_pass_count = 1;
+	int c2_pass_count = 0;
 	
 	void register_var(const char *name, c2i::c2_vardata *p);
 	
