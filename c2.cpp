@@ -88,6 +88,7 @@ public:
 	cmda command;
 	
 	std::string compiler;
+	std::string stdc;
 
 	std::filesystem::path basedir;
 	std::filesystem::path intermediatedir = ".im";
@@ -340,7 +341,7 @@ public:
 
 		char buf[1024];
 		std::string command = compiler + " ";
-		command += lib_generate_includes(c2) + " -std=c++17 -MM -MG " + quote_path(file);
+		command += lib_generate_includes(c2) + stdc + " -MM -MG " + quote_path(file);
 		std::string output;
 		
 		if (verbose)
@@ -592,6 +593,15 @@ public:
 					tmp += " --version 2>&1";
 					sh_execute(tmp.c_str(), true);
 					found = true;
+
+					if(strcmp("g++", list[r]) == 0 || strcmp("gcc", list[r]) == 0)
+					{
+						stdc = " -std=gnu++17";
+					}
+					else
+					{
+						stdc = " -std=c++17";
+					}
 				}
 				catch(const char *)
 				{
@@ -776,7 +786,7 @@ public:
 #ifndef _WIN32
 				cmd += " -fpic";
 #endif
-				cmd += " -std=c++17 -g -c -o " + quote_path(f->obj);
+				cmd += stdc + " -g -c -o " + quote_path(f->obj);
 					
 				if(f->c2)
 				{
@@ -791,7 +801,7 @@ public:
 						precmd += " " + f->flags;
 					}
 
-					precmd += " -std=c++17 -E " + quote_path(f->file->file) + " > " + quote_path(i);
+					precmd += stdc + " -E " + quote_path(f->file->file) + " > " + quote_path(i);
  
 					sh_execute(precmd.c_str());
 					parser.process(i.c_str(), ii.c_str());
@@ -833,8 +843,7 @@ public:
 			{
 				fprintf(stderr, "%s is dirty\n", link_target.c_str());
 			}
-			
-			cmd = compiler + " -std=c++17 -g -shared -o " + quote_path(link_target);
+			cmd = compiler + stdc + " -g -shared -o " + quote_path(link_target);
 			for(size_t r=0; r<files.size(); r++)
 			{
 				cmd += " " + quote_path(files[r]->obj);
