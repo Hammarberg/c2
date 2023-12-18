@@ -582,6 +582,7 @@ public:
 #endif
 				"g++","gcc",
 				nullptr};
+
 			std::string tmp;
 			for(int r=0; list[r]; r++)
 			{
@@ -593,15 +594,6 @@ public:
 					tmp += " --version 2>&1";
 					sh_execute(tmp.c_str(), true);
 					found = true;
-
-					if(strcmp("g++", list[r]) == 0 || strcmp("gcc", list[r]) == 0)
-					{
-						stdc = " -std=gnu++17";
-					}
-					else
-					{
-						stdc = " -std=c++17";
-					}
 				}
 				catch(const char *)
 				{
@@ -610,6 +602,7 @@ public:
 				if(found)
 				{
 					compiler = quote_path(list[r]);
+
 					break;
 				}
 			}
@@ -618,6 +611,15 @@ public:
 		if(!compiler.size())
 		{
 			throw "No compiler found in path. Either add clang/gcc to system path or specify the full path in config";
+		}
+
+		if(compiler.find("clang") != std::string::npos)
+		{
+			stdc = " -std=c++17";
+		}
+		else
+		{
+			stdc = " -std=gnu++17";
 		}
 	}
 	
