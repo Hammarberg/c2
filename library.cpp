@@ -57,7 +57,7 @@ void clibrary::lib_initialize(const std::vector<std::filesystem::path> &expaths)
 	{
 #if defined(_WIN32) || defined(_WIN64)
 		const char* home = getenv("LOCALAPPDATA");
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) || defined(__CYGWIN__)
 		const char *home = getenv("HOME");
 #else
 		const char *home = secure_getenv("HOME");
@@ -85,7 +85,7 @@ void clibrary::lib_initialize(const std::vector<std::filesystem::path> &expaths)
 	
 	// From environment path
 	{
-#if defined(_WIN32) || defined(_WIN64) || defined(__APPLE__)
+#if defined(_WIN32) || defined(_WIN64) || defined(__APPLE__) || defined(__CYGWIN__)
 		const char* envpath = getenv(ENV_C2LIB_HOME);
 #else
 		const char *envpath = secure_getenv(ENV_C2LIB_HOME);

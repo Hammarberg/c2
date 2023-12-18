@@ -1,7 +1,13 @@
 appname := c2
 
+ifeq ($(shell uname -o),Cygwin)
+CXX := g++
+CXXFLAGS := -O2 -std=gnu++17 -march=native -Wno-unused-result
+else
 CXX := clang++
 CXXFLAGS := -O2 -std=c++17 -march=native -Wno-unused-result
+endif
+
 LDFLAGS :=
 LDLIBS :=
 
@@ -53,6 +59,7 @@ dist-clean: clean
 
 debug:
 	@echo C2_PLATFORM=$(C2_PLATFORM)
+	@echo OSTYPE=$(OSTYPE)
 	@echo appname=$(appname)
 	@echo CXX=$(CXX)
 	@echo CXXFLAGS=$(CXXFLAGS)
