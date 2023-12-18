@@ -58,6 +58,9 @@ Run `WindowsLLVMBuild.bat` and a c2 executable should be created in the same fol
 If you prefer or already have [Visual Studio 2022 Community](https://visualstudio.microsoft.com/vs/community/) or better installed you can use that. However, you also need to select during install, or modify an existing installation to include clang tools as they are provided as an option in the VS installer. If clang is not in path, c2 will look for clang at `C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\Llvm\x64\bin\clang++`.
 
 Run `WindowsVSBuild.bat` and a c2 executable should be created under `x64\Release\c2.exe`. You may of course also open the solution in VS2022 and build there.
+#### Option 3: Cygwin
+Experimental. Clang seems outdated in Cygwin. Install gcc/g++ and GNU make. Then follow the GNU/Linux instructions and set up any path needed.
+
 #### PATH
 My Computer -> Properties -> Advanced System Settings -> Environment Variables -> Edit path for either User or System. Set the path to the directory where `c2.exe` was built to.
 
