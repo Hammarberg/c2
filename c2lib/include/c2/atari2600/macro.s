@@ -100,10 +100,10 @@ macro sleep @incycles
 #else
                     bit VSYNC
 #endif
+                    cycles -= 3;
                 }
-                cycles -= 3;
 
-                while(cycles)
+                while(cycles > 0)
                 {
                     nop
                     cycles -= 2;
