@@ -31,7 +31,7 @@
 				Backwards depacking
 				0 eof
 				1-127 litteral bytes
-				-1 = -127 rle
+				-1 = -128 rle
 			*/
 copystart:
 			@ = @, $0100 - zpsize

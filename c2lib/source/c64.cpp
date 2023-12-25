@@ -247,7 +247,7 @@ void c64::basic(const char *format, ...)
 void c64::c2_post()
 {
 	c2i::c2_post();
-	
+
 	c2_cmd.invoke("--out-prg", [&](int arga, const char *argc[])
 	{
 		int64_t from,to;
@@ -342,6 +342,7 @@ void c64::c2_post()
 		// To be decompressed backwards, start with a zero terminate
 		stream.push(0, 1);
 		
+		// Main loop
 		for(int r = 0; r<size;)
 		{
 			int l;
@@ -426,13 +427,17 @@ void c64::c2_post()
 			if(move_bytes > int(stream.stream.size()))
 			{
 				move_bytes = int(stream.stream.size());
+				depack_from = safe_depack_base + move_bytes;
+			}
+			else
+			{
+				depack_from = save_to;
 			}
 			
 			memcpy(staging+save_to, &stream.stream[move_bytes], stream.stream.size() - move_bytes);
 			save_to += int(stream.stream.size()) - move_bytes;
 			
 			move_from = save_to;
-			depack_from = save_to;
 			
 			memcpy(staging+save_to, &stream.stream[0], move_bytes);
 			save_to += move_bytes;
@@ -445,7 +450,6 @@ void c64::c2_post()
 		
 		// Configure depacker
 		int offset = 256 - (move_bytes & 255);
-		
 		/*
 		printf(
 		"move_bytes       %x\n"
@@ -461,7 +465,6 @@ void c64::c2_post()
 		depack_to,
 		depack_from);
 		*/
-		
 		staging[copystart + depack_csl - depack + 1] = uint8_t(offset);
 		staging[copystart + depack_csh - depack + 1] = uint8_t(move_bytes  >> 8);
 		

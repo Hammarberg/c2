@@ -1,6 +1,6 @@
 enum e_rle{
-	depack_tmp = 0x96,
 	depack = 0x96,
+	depack_tmp = 0x96,
 	depack_copydown = 0x97,
 	depack_csh = 0x97,
 	depack_csl = 0x99,
