@@ -431,7 +431,7 @@ void c64::c2_post()
 			}
 			else
 			{
-				depack_from = save_to;
+				depack_from = save_to + stream.stream.size() - move_bytes;
 			}
 			
 			memcpy(staging+save_to, &stream.stream[move_bytes], stream.stream.size() - move_bytes);
@@ -450,7 +450,7 @@ void c64::c2_post()
 		
 		// Configure depacker
 		int offset = 256 - (move_bytes & 255);
-		/*
+/*
 		printf(
 		"move_bytes       %x\n"
 		"offset           %x\n"
@@ -464,7 +464,7 @@ void c64::c2_post()
 		safe_depack_base,
 		depack_to,
 		depack_from);
-		*/
+*/
 		staging[copystart + depack_csl - depack + 1] = uint8_t(offset);
 		staging[copystart + depack_csh - depack + 1] = uint8_t(move_bytes  >> 8);
 		
