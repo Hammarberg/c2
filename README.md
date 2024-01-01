@@ -331,23 +331,6 @@ A referenced macro is matched against declared macros with the most parameter/op
 ```
 ### String input
 As input is handled in c2 variables, strings are valid expressions.
-### Enum input
-A macro input can be an enum much like a zero based C enum by declaring the input with a comma separated list with literals within square brackets. An input have to match one of the enum strings specified and the variable will hold the ordinal value.
-
-Syntax:
-```
-@[<comma separated list>]<name>
-```
-Example:
-```
-macro set_color @[black,white,red,cyan,purple,green,blue,yellow]col
-{
-        lda #col
-        sta $d021
-}
-
-        set_color green
-```
 ### Variadic input
 A variadic input must to be the last input of a macro declaration and it expects one or more comma separated expressions. The result is an array/string input.
 
@@ -368,6 +351,24 @@ macro store_data @address, @data...
 }
         store_data $1000, 23, 24*2, -100, $bd
 ```
+### Enum input
+A macro input can be an enum much like a zero based C enum by declaring the input with a comma separated list with literals within square brackets. An input have to match one of the enum strings specified and the variable will hold the ordinal value.
+
+Syntax:
+```
+@[<comma separated list>]<name>
+```
+Example:
+```
+macro set_color @[black,white,red,cyan,purple,green,blue,yellow]col
+{
+        lda #col
+        sta $d021
+}
+
+        set_color green
+```
+It is also possible to combine enum with variadic input.
 ## yourproject.cpp
 Your project comes with a .cpp-file. In most cases you can completely ignore this file as long as you keep it around and treat is as part of your project. To c2, this is your main source file as it itself includes your assembly file.
 ```

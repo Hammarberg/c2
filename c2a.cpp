@@ -371,55 +371,60 @@ bool c2a::match_macro_parameters(const std::vector<stok *> &def, const std::vect
 				int end = l<NUM_RDEF-1 ? ridx[l+1] : NUM_PAR;
 				int count = end - start;
 
-				// Match indexed variables
+				// Indexed variables
 				const std::vector<const char *> &iv = inputs[v].second;
-				if(iv.size())
+
+				int64_t bc = 0;
+				for(;start<end;start++)
 				{
-					if(count != 1)
-					{
-						results = false;
-						break;
-					}
 					stok *d = par[start];
-					
-					for(size_t r=0; r<iv.size(); r++)
+					bc = bracketcount(bc, d);
+
+					if(!isarray)
 					{
-						if(d->cmpi(iv[r]))
-						{
-							args.push_back(maketok(d, std::to_string(r).c_str(), etype::NUM));
-							goto match;
-						}
-					}
-					
-					results = false;
-					break;
-					
-					match:;
-				}
-				else
-				{
-					int64_t bc = 0;
-					for(;start<end;start++)
-					{
-						stok *d = par[start];
-						bc = bracketcount(bc, d);
-						
-						if(isarray == false && bc == 0 && *d->name == ',')
+						if(bc == 0 && *d->name == ',')
 						{
 							// Comma separation in non variable argument outside brackets
 							results = false;
 							break;
 						}
-						
-						args.push_back(d);
 					}
-					
-					if(bc)
+					else
 					{
-						// Uneven number of brackets
-						results = false;
-						break;
+						if(iv.size())
+						{
+							if(bc)
+							{
+								results = false;
+								break;
+							}
+
+							if(*d->name != ',')
+							{
+								for(size_t r=0; r<iv.size(); r++)
+								{
+									if(d->cmpi(iv[r]))
+									{
+										d = maketok(d, std::to_string(r).c_str(), etype::NUM);
+										goto match;
+									}
+								}
+								results = false;
+								break;
+
+								match:;
+							}
+						}
 					}
+
+					args.push_back(d);
+				}
+
+				if(bc)
+				{
+					// Uneven number of brackets
+					results = false;
+					break;
 				}
 				
 				outisarray.push_back(isarray);
