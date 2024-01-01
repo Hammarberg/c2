@@ -380,7 +380,7 @@ bool c2a::match_macro_parameters(const std::vector<stok *> &def, const std::vect
 					stok *d = par[start];
 					bc = bracketcount(bc, d);
 
-					if(!isarray)
+					if(!isarray && !iv.size())
 					{
 						if(bc == 0 && *d->name == ',')
 						{
@@ -416,7 +416,6 @@ bool c2a::match_macro_parameters(const std::vector<stok *> &def, const std::vect
 							}
 						}
 					}
-
 					args.push_back(d);
 				}
 
