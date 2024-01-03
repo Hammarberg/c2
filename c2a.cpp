@@ -1,6 +1,6 @@
 /*
 	c2 - cross assembler
-	Copyright (C) 2022-2023  John Hammarberg (crt@nospam.binarybone.com)
+	Copyright (C) 2022-2024  John Hammarberg (crt@nospam.binarybone.com)
 
 	This file is part of c2.
 
@@ -335,7 +335,7 @@ bool c2a::match_macro_parameters(const std::vector<stok *> &def, const std::vect
 			if(cur >= 0)
 			{
 				// First static parameter
-				if(!l && cur != 0)
+				if((!l && cur) || (l && !cur))
 				{
 					results = false;
 					break;
@@ -687,26 +687,38 @@ void c2a::parse_macro(toklink &link)
 {
 	std::vector<std::string> names;
 	
-	stok *o, *title;
+	stok *o, *title = nullptr;
+
+	o = get_next_nonspace(link);
 
 	for(;;)
 	{
-		o = get_next_nonspace(link);
-		
-		if(o->type != etype::ALPHA)
-			error(o, "Macro name expected");
-			
-		title = o;
-		names.push_back(o->name);
+		if(!o)
+			error(o, "Unexpected end of file");
+
+		if(*o->name != ',')
+		{
+			if(o->type == etype::SPACE)
+			{
+				if(!names.size())
+					error(o, "Invalid macro name");
+
+				o->mute();
+				break;
+			}
+
+			if(o->type != etype::ALPHA)
+				error(o, "Macro name expected");
+
+			if(!title)
+				title = o;
+
+			names.push_back(o->name);
+			o->mute();
+		}
+
 		o->mute();
-		
-		stok *t = o->get_next_nonspace();
-
-		if(*t->name != ',')
-			break;
-
-		t->mute();
-		o = t;
+		o = o->get_next();
 	}
 	
 	toklink signature;

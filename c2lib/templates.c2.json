@@ -133,6 +133,27 @@
 				}
 			]
 		},
+		"6809":{
+			"description" : "Plain 6809",
+			"super" : "motorola6809",
+			"include" : "c2/motorola/6809.h",
+			"arguments" : "--address-range 0x0 0x10000 --out - + {title}.bin",
+			"source":[
+				"c2i.cpp":{
+					"flags" : "-O2"
+				}
+			],
+			"template":[
+				"asm.cpp":{
+					"target" : "{title}.cpp"
+					"c2" : true
+					"flags" : "-O0"
+				},
+				"6809.s":{
+					"target" : "{title}.s"
+				}
+			]
+		},
 		"68000":{
 			"description" : "Plain 68000 with 16MB of RAM for embedded projects",
 			"super" : "motorola68000",
