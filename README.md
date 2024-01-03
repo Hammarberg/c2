@@ -1,21 +1,18 @@
 ﻿# c2 cross assembler
-### TODO and wish list
-* Finish 68000 support.
-* Amiga hunk format and utility classes.
-* Optimize C++ lambda to generation to greatly improve compile times.
-* Option to bypass project file and only use switches.
-* Support 65816, 65802.
-* Zilog 80 support.
-* 8080 support.
-* CP/M support.
-* Templates for vic20, c264.
+### Disclaimer
+c2 is unstable and still under heavy development. Fundamental changes can still happen and unless we are already in contact, pull requests are not likely to be accepted.
+#### TODO and wish list
+* Branch a stable version.
+* Optimize C++ lambda to generation to greatly improve C++ compile times.
+* Option to bypass c2 project files entirely.
+* More Makefile friendly.
+* More system templates for already supported CPU's.
 * Set pre-processor switch.
 * Set variable switch.
-* Flag and hash+store switches to intermediate data that would affect compile outcome.
-* Cache labels between builds.
+* More architecture support.
 * More, deeper and prettier README.
 ## Overview
-c2 is an assembler wrapper top of a C++ compiler. It's architecture independent in the sense that all assembly pseudo opcodes are built with macros. Macro files can be included with the standard C pre-processor.
+c2 is an assembler wrapper top of a C++ compiler. It's highly configurable and architecture independent in the sense that all assembly pseudo opcodes are built with text macros. Macro files are included with the standard C pre-processor.
 
 Much of the syntax should be familiar to anyone with Assembly, C/C++, Java, JS, C# experience.
 
@@ -25,7 +22,7 @@ Some of the highlights:
 * Inline C++ for additional meta-programming
 * Multiple pass assembly for conditional code generation and forward references
 ### License
-Copyright (C) 2022-2023  John Hammarberg (crt@nospam.binarybone.com)
+Copyright (C) 2022-2024  John Hammarberg (crt@nospam.binarybone.com)
 
 This file is part of c2.
 
