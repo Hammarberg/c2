@@ -34,18 +34,6 @@ macro adca #@imm
 	push8(imm);
 }
 
-macro adca @n
-{
-	if(n.bits() <= 8){
-		push8($99);
-		push8(n);
-	}
-	else{
-		push8($b9);
-		push16be(n);
-	}
-}
-
 macro adca <@n
 {
 	push8($99);
@@ -53,6 +41,12 @@ macro adca <@n
 }
 
 macro adca >@n
+{
+	push8($b9);
+	push16be(n);
+}
+
+macro adca @n
 {
 	push8($b9);
 	push16be(n);
@@ -145,13 +139,15 @@ macro adca [@off,pc]
 macro adca @off,pcr
 {
 	push8($a9);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro adca [@off,pcr]
 {
 	push8($a9);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro adca [@addr]
@@ -167,18 +163,6 @@ macro adcb #@imm
 	push8(imm);
 }
 
-macro adcb @n
-{
-	if(n.bits() <= 8){
-		push8($d9);
-		push8(n);
-	}
-	else{
-		push8($f9);
-		push16be(n);
-	}
-}
-
 macro adcb <@n
 {
 	push8($d9);
@@ -186,6 +170,12 @@ macro adcb <@n
 }
 
 macro adcb >@n
+{
+	push8($f9);
+	push16be(n);
+}
+
+macro adcb @n
 {
 	push8($f9);
 	push16be(n);
@@ -278,13 +268,15 @@ macro adcb [@off,pc]
 macro adcb @off,pcr
 {
 	push8($e9);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro adcb [@off,pcr]
 {
 	push8($e9);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro adcb [@addr]
@@ -300,18 +292,6 @@ macro adda #@imm
 	push8(imm);
 }
 
-macro adda @n
-{
-	if(n.bits() <= 8){
-		push8($9b);
-		push8(n);
-	}
-	else{
-		push8($bb);
-		push16be(n);
-	}
-}
-
 macro adda <@n
 {
 	push8($9b);
@@ -319,6 +299,12 @@ macro adda <@n
 }
 
 macro adda >@n
+{
+	push8($bb);
+	push16be(n);
+}
+
+macro adda @n
 {
 	push8($bb);
 	push16be(n);
@@ -411,13 +397,15 @@ macro adda [@off,pc]
 macro adda @off,pcr
 {
 	push8($ab);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro adda [@off,pcr]
 {
 	push8($ab);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro adda [@addr]
@@ -433,18 +421,6 @@ macro addb #@imm
 	push8(imm);
 }
 
-macro addb @n
-{
-	if(n.bits() <= 8){
-		push8($db);
-		push8(n);
-	}
-	else{
-		push8($fb);
-		push16be(n);
-	}
-}
-
 macro addb <@n
 {
 	push8($db);
@@ -452,6 +428,12 @@ macro addb <@n
 }
 
 macro addb >@n
+{
+	push8($fb);
+	push16be(n);
+}
+
+macro addb @n
 {
 	push8($fb);
 	push16be(n);
@@ -544,13 +526,15 @@ macro addb [@off,pc]
 macro addb @off,pcr
 {
 	push8($eb);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro addb [@off,pcr]
 {
 	push8($eb);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro addb [@addr]
@@ -566,18 +550,6 @@ macro addd #@imm
 	push16be(imm);
 }
 
-macro addd @n
-{
-	if(n.bits() <= 8){
-		push8($d3);
-		push8(n);
-	}
-	else{
-		push8($f3);
-		push16be(n);
-	}
-}
-
 macro addd <@n
 {
 	push8($d3);
@@ -585,6 +557,12 @@ macro addd <@n
 }
 
 macro addd >@n
+{
+	push8($f3);
+	push16be(n);
+}
+
+macro addd @n
 {
 	push8($f3);
 	push16be(n);
@@ -677,13 +655,15 @@ macro addd [@off,pc]
 macro addd @off,pcr
 {
 	push8($e3);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro addd [@off,pcr]
 {
 	push8($e3);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro addd [@addr]
@@ -699,18 +679,6 @@ macro anda #@imm
 	push8(imm);
 }
 
-macro anda @n
-{
-	if(n.bits() <= 8){
-		push8($94);
-		push8(n);
-	}
-	else{
-		push8($b4);
-		push16be(n);
-	}
-}
-
 macro anda <@n
 {
 	push8($94);
@@ -718,6 +686,12 @@ macro anda <@n
 }
 
 macro anda >@n
+{
+	push8($b4);
+	push16be(n);
+}
+
+macro anda @n
 {
 	push8($b4);
 	push16be(n);
@@ -810,13 +784,15 @@ macro anda [@off,pc]
 macro anda @off,pcr
 {
 	push8($a4);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro anda [@off,pcr]
 {
 	push8($a4);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro anda [@addr]
@@ -832,18 +808,6 @@ macro andb #@imm
 	push8(imm);
 }
 
-macro andb @n
-{
-	if(n.bits() <= 8){
-		push8($d4);
-		push8(n);
-	}
-	else{
-		push8($f4);
-		push16be(n);
-	}
-}
-
 macro andb <@n
 {
 	push8($d4);
@@ -851,6 +815,12 @@ macro andb <@n
 }
 
 macro andb >@n
+{
+	push8($f4);
+	push16be(n);
+}
+
+macro andb @n
 {
 	push8($f4);
 	push16be(n);
@@ -943,13 +913,15 @@ macro andb [@off,pc]
 macro andb @off,pcr
 {
 	push8($e4);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro andb [@off,pcr]
 {
 	push8($e4);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro andb [@addr]
@@ -965,18 +937,6 @@ macro andcc #@imm
 	push8(imm);
 }
 
-macro asr @n
-{
-	if(n.bits() <= 8){
-		push8($07);
-		push8(n);
-	}
-	else{
-		push8($77);
-		push16be(n);
-	}
-}
-
 macro asr <@n
 {
 	push8($07);
@@ -984,6 +944,12 @@ macro asr <@n
 }
 
 macro asr >@n
+{
+	push8($77);
+	push16be(n);
+}
+
+macro asr @n
 {
 	push8($77);
 	push16be(n);
@@ -1076,13 +1042,15 @@ macro asr [@off,pc]
 macro asr @off,pcr
 {
 	push8($67);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro asr [@off,pcr]
 {
 	push8($67);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro asr [@addr]
@@ -1104,50 +1072,108 @@ macro asrb
 
 macro beq @addr
 {
-	push8($27);
-	push8(c2sr<8>(addr-@-1));
+	static bool lb=false;
+	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
+		lb=false;
+		push8($27);
+		push8(c2sr<8>(addr-@-1));
+	}else{
+		lb=true;
+		push16be($1027);
+		push16be(c2sr<16>(addr-@-2));
+	}
+}
+
+macro lbeq @addr
+{
+	push16be($1027);
+	push16be(c2sr<16>(addr-@-2));
 }
 
 macro bge @addr
 {
-	push8($2c);
-	push8(c2sr<8>(addr-@-1));
+	static bool lb=false;
+	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
+		lb=false;
+		push8($2c);
+		push8(c2sr<8>(addr-@-1));
+	}else{
+		lb=true;
+		push16be($102c);
+		push16be(c2sr<16>(addr-@-2));
+	}
+}
+
+macro lbge @addr
+{
+	push16be($102c);
+	push16be(c2sr<16>(addr-@-2));
 }
 
 macro bgt @addr
 {
-	push8($2e);
-	push8(c2sr<8>(addr-@-1));
+	static bool lb=false;
+	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
+		lb=false;
+		push8($2e);
+		push8(c2sr<8>(addr-@-1));
+	}else{
+		lb=true;
+		push16be($102e);
+		push16be(c2sr<16>(addr-@-2));
+	}
+}
+
+macro lbgt @addr
+{
+	push16be($102e);
+	push16be(c2sr<16>(addr-@-2));
 }
 
 macro bhi @addr
 {
-	push8($22);
-	push8(c2sr<8>(addr-@-1));
+	static bool lb=false;
+	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
+		lb=false;
+		push8($22);
+		push8(c2sr<8>(addr-@-1));
+	}else{
+		lb=true;
+		push16be($1022);
+		push16be(c2sr<16>(addr-@-2));
+	}
+}
+
+macro lbhi @addr
+{
+	push16be($1022);
+	push16be(c2sr<16>(addr-@-2));
 }
 
 macro bhs,bcc @addr
 {
-	push8($24);
-	push8(c2sr<8>(addr-@-1));
+	static bool lb=false;
+	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
+		lb=false;
+		push8($24);
+		push8(c2sr<8>(addr-@-1));
+	}else{
+		lb=true;
+		push16be($1024);
+		push16be(c2sr<16>(addr-@-2));
+	}
+}
+
+macro lbhs,lbcc @addr
+{
+	push16be($1024);
+	push16be(c2sr<16>(addr-@-2));
 }
 
 macro bita #@imm
 {
 	push8($85);
 	push8(imm);
-}
-
-macro bita @n
-{
-	if(n.bits() <= 8){
-		push8($95);
-		push8(n);
-	}
-	else{
-		push8($b5);
-		push16be(n);
-	}
 }
 
 macro bita <@n
@@ -1157,6 +1183,12 @@ macro bita <@n
 }
 
 macro bita >@n
+{
+	push8($b5);
+	push16be(n);
+}
+
+macro bita @n
 {
 	push8($b5);
 	push16be(n);
@@ -1249,13 +1281,15 @@ macro bita [@off,pc]
 macro bita @off,pcr
 {
 	push8($a5);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro bita [@off,pcr]
 {
 	push8($a5);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro bita [@addr]
@@ -1271,18 +1305,6 @@ macro bitb #@imm
 	push8(imm);
 }
 
-macro bitb @n
-{
-	if(n.bits() <= 8){
-		push8($d5);
-		push8(n);
-	}
-	else{
-		push8($f5);
-		push16be(n);
-	}
-}
-
 macro bitb <@n
 {
 	push8($d5);
@@ -1290,6 +1312,12 @@ macro bitb <@n
 }
 
 macro bitb >@n
+{
+	push8($f5);
+	push16be(n);
+}
+
+macro bitb @n
 {
 	push8($f5);
 	push16be(n);
@@ -1382,13 +1410,15 @@ macro bitb [@off,pc]
 macro bitb @off,pcr
 {
 	push8($e5);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro bitb [@off,pcr]
 {
 	push8($e5);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro bitb [@addr]
@@ -1400,86 +1430,262 @@ macro bitb [@addr]
 
 macro ble @addr
 {
-	push8($2f);
-	push8(c2sr<8>(addr-@-1));
+	static bool lb=false;
+	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
+		lb=false;
+		push8($2f);
+		push8(c2sr<8>(addr-@-1));
+	}else{
+		lb=true;
+		push16be($102f);
+		push16be(c2sr<16>(addr-@-2));
+	}
+}
+
+macro lble @addr
+{
+	push16be($102f);
+	push16be(c2sr<16>(addr-@-2));
 }
 
 macro blo,bcs @addr
 {
-	push8($25);
-	push8(c2sr<8>(addr-@-1));
+	static bool lb=false;
+	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
+		lb=false;
+		push8($25);
+		push8(c2sr<8>(addr-@-1));
+	}else{
+		lb=true;
+		push16be($1025);
+		push16be(c2sr<16>(addr-@-2));
+	}
+}
+
+macro lblo,lbcs @addr
+{
+	push16be($1025);
+	push16be(c2sr<16>(addr-@-2));
 }
 
 macro bls @addr
 {
-	push8($23);
-	push8(c2sr<8>(addr-@-1));
+	static bool lb=false;
+	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
+		lb=false;
+		push8($23);
+		push8(c2sr<8>(addr-@-1));
+	}else{
+		lb=true;
+		push16be($1023);
+		push16be(c2sr<16>(addr-@-2));
+	}
+}
+
+macro lbls @addr
+{
+	push16be($1023);
+	push16be(c2sr<16>(addr-@-2));
 }
 
 macro blt @addr
 {
-	push8($2d);
-	push8(c2sr<8>(addr-@-1));
+	static bool lb=false;
+	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
+		lb=false;
+		push8($2d);
+		push8(c2sr<8>(addr-@-1));
+	}else{
+		lb=true;
+		push16be($102d);
+		push16be(c2sr<16>(addr-@-2));
+	}
+}
+
+macro lblt @addr
+{
+	push16be($102d);
+	push16be(c2sr<16>(addr-@-2));
 }
 
 macro bmi @addr
 {
-	push8($2b);
-	push8(c2sr<8>(addr-@-1));
+	static bool lb=false;
+	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
+		lb=false;
+		push8($2b);
+		push8(c2sr<8>(addr-@-1));
+	}else{
+		lb=true;
+		push16be($102b);
+		push16be(c2sr<16>(addr-@-2));
+	}
+}
+
+macro lbmi @addr
+{
+	push16be($102b);
+	push16be(c2sr<16>(addr-@-2));
 }
 
 macro bne @addr
 {
-	push8($26);
-	push8(c2sr<8>(addr-@-1));
+	static bool lb=false;
+	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
+		lb=false;
+		push8($26);
+		push8(c2sr<8>(addr-@-1));
+	}else{
+		lb=true;
+		push16be($1026);
+		push16be(c2sr<16>(addr-@-2));
+	}
+}
+
+macro lbne @addr
+{
+	push16be($1026);
+	push16be(c2sr<16>(addr-@-2));
 }
 
 macro bpl @addr
 {
-	push8($2a);
-	push8(c2sr<8>(addr-@-1));
+	static bool lb=false;
+	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
+		lb=false;
+		push8($2a);
+		push8(c2sr<8>(addr-@-1));
+	}else{
+		lb=true;
+		push16be($102a);
+		push16be(c2sr<16>(addr-@-2));
+	}
+}
+
+macro lbpl @addr
+{
+	push16be($102a);
+	push16be(c2sr<16>(addr-@-2));
 }
 
 macro bra @addr
 {
-	push8($20);
-	push8(c2sr<8>(addr-@-1));
+	static bool lb=false;
+	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*1))){
+		lb=false;
+		push8($20);
+		push8(c2sr<8>(addr-@-1));
+	}else{
+		lb=true;
+		if(!c2_6809_absolute){
+			push8($16);
+			push16be(c2sr<16>(addr-@-2));
+		}else{
+			push8($7e);
+			push16be(addr);
+		}
+	}
+}
+
+macro lbra @addr
+{
+	if(!c2_6809_absolute){
+		push8($16);
+		push16be(c2sr<16>(addr-@-2));
+	}else{
+		push8($7e);
+		push16be(addr);
+	}
 }
 
 macro brn @addr
 {
-	push8($21);
-	push8(c2sr<8>(addr-@-1));
+	static bool lb=false;
+	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
+		lb=false;
+		push8($21);
+		push8(c2sr<8>(addr-@-1));
+	}else{
+		lb=true;
+		push16be($1021);
+		push16be(c2sr<16>(addr-@-2));
+	}
+}
+
+macro lbrn @addr
+{
+	push16be($1021);
+	push16be(c2sr<16>(addr-@-2));
 }
 
 macro bsr @addr
 {
-	push8($8d);
-	push8(c2sr<8>(addr-@-1));
+	static bool lb=false;
+	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*1))){
+		lb=false;
+		push8($8d);
+		push8(c2sr<8>(addr-@-1));
+	}else{
+		lb=true;
+		if(!c2_6809_absolute){
+			push8($17);
+			push16be(c2sr<16>(addr-@-2));
+		}else{
+			push8($bd);
+			push16be(addr);
+		}
+	}
+}
+
+macro lbsr @addr
+{
+	if(!c2_6809_absolute){
+		push8($17);
+		push16be(c2sr<16>(addr-@-2));
+	}else{
+		push8($bd);
+		push16be(addr);
+	}
 }
 
 macro bvc @addr
 {
-	push8($28);
-	push8(c2sr<8>(addr-@-1));
+	static bool lb=false;
+	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
+		lb=false;
+		push8($28);
+		push8(c2sr<8>(addr-@-1));
+	}else{
+		lb=true;
+		push16be($1028);
+		push16be(c2sr<16>(addr-@-2));
+	}
+}
+
+macro lbvc @addr
+{
+	push16be($1028);
+	push16be(c2sr<16>(addr-@-2));
 }
 
 macro bvs @addr
 {
-	push8($29);
-	push8(c2sr<8>(addr-@-1));
+	static bool lb=false;
+	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
+		lb=false;
+		push8($29);
+		push8(c2sr<8>(addr-@-1));
+	}else{
+		lb=true;
+		push16be($1029);
+		push16be(c2sr<16>(addr-@-2));
+	}
 }
 
-macro clr @n
+macro lbvs @addr
 {
-	if(n.bits() <= 8){
-		push8($0f);
-		push8(n);
-	}
-	else{
-		push8($7f);
-		push16be(n);
-	}
+	push16be($1029);
+	push16be(c2sr<16>(addr-@-2));
 }
 
 macro clr <@n
@@ -1489,6 +1695,12 @@ macro clr <@n
 }
 
 macro clr >@n
+{
+	push8($7f);
+	push16be(n);
+}
+
+macro clr @n
 {
 	push8($7f);
 	push16be(n);
@@ -1581,13 +1793,15 @@ macro clr [@off,pc]
 macro clr @off,pcr
 {
 	push8($6f);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro clr [@off,pcr]
 {
 	push8($6f);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro clr [@addr]
@@ -1613,18 +1827,6 @@ macro cmpa #@imm
 	push8(imm);
 }
 
-macro cmpa @n
-{
-	if(n.bits() <= 8){
-		push8($91);
-		push8(n);
-	}
-	else{
-		push8($b1);
-		push16be(n);
-	}
-}
-
 macro cmpa <@n
 {
 	push8($91);
@@ -1632,6 +1834,12 @@ macro cmpa <@n
 }
 
 macro cmpa >@n
+{
+	push8($b1);
+	push16be(n);
+}
+
+macro cmpa @n
 {
 	push8($b1);
 	push16be(n);
@@ -1724,13 +1932,15 @@ macro cmpa [@off,pc]
 macro cmpa @off,pcr
 {
 	push8($a1);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro cmpa [@off,pcr]
 {
 	push8($a1);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro cmpa [@addr]
@@ -1746,18 +1956,6 @@ macro cmpb #@imm
 	push8(imm);
 }
 
-macro cmpb @n
-{
-	if(n.bits() <= 8){
-		push8($d1);
-		push8(n);
-	}
-	else{
-		push8($f1);
-		push16be(n);
-	}
-}
-
 macro cmpb <@n
 {
 	push8($d1);
@@ -1765,6 +1963,12 @@ macro cmpb <@n
 }
 
 macro cmpb >@n
+{
+	push8($f1);
+	push16be(n);
+}
+
+macro cmpb @n
 {
 	push8($f1);
 	push16be(n);
@@ -1857,13 +2061,15 @@ macro cmpb [@off,pc]
 macro cmpb @off,pcr
 {
 	push8($e1);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro cmpb [@off,pcr]
 {
 	push8($e1);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro cmpb [@addr]
@@ -1879,18 +2085,6 @@ macro cmpd #@imm
 	push16be(imm);
 }
 
-macro cmpd @n
-{
-	if(n.bits() <= 8){
-		push16be($1093);
-		push8(n);
-	}
-	else{
-		push16be($10b3);
-		push16be(n);
-	}
-}
-
 macro cmpd <@n
 {
 	push16be($1093);
@@ -1898,6 +2092,12 @@ macro cmpd <@n
 }
 
 macro cmpd >@n
+{
+	push16be($10b3);
+	push16be(n);
+}
+
+macro cmpd @n
 {
 	push16be($10b3);
 	push16be(n);
@@ -1990,13 +2190,15 @@ macro cmpd [@off,pc]
 macro cmpd @off,pcr
 {
 	push16be($10a3);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro cmpd [@off,pcr]
 {
 	push16be($10a3);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro cmpd [@addr]
@@ -2012,18 +2214,6 @@ macro cmps #@imm
 	push16be(imm);
 }
 
-macro cmps @n
-{
-	if(n.bits() <= 8){
-		push16be($119c);
-		push8(n);
-	}
-	else{
-		push16be($11bc);
-		push16be(n);
-	}
-}
-
 macro cmps <@n
 {
 	push16be($119c);
@@ -2031,6 +2221,12 @@ macro cmps <@n
 }
 
 macro cmps >@n
+{
+	push16be($11bc);
+	push16be(n);
+}
+
+macro cmps @n
 {
 	push16be($11bc);
 	push16be(n);
@@ -2123,13 +2319,15 @@ macro cmps [@off,pc]
 macro cmps @off,pcr
 {
 	push16be($11ac);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro cmps [@off,pcr]
 {
 	push16be($11ac);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro cmps [@addr]
@@ -2145,18 +2343,6 @@ macro cmpu #@imm
 	push16be(imm);
 }
 
-macro cmpu @n
-{
-	if(n.bits() <= 8){
-		push16be($1193);
-		push8(n);
-	}
-	else{
-		push16be($11b3);
-		push16be(n);
-	}
-}
-
 macro cmpu <@n
 {
 	push16be($1193);
@@ -2164,6 +2350,12 @@ macro cmpu <@n
 }
 
 macro cmpu >@n
+{
+	push16be($11b3);
+	push16be(n);
+}
+
+macro cmpu @n
 {
 	push16be($11b3);
 	push16be(n);
@@ -2256,13 +2448,15 @@ macro cmpu [@off,pc]
 macro cmpu @off,pcr
 {
 	push16be($11a3);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro cmpu [@off,pcr]
 {
 	push16be($11a3);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro cmpu [@addr]
@@ -2278,18 +2472,6 @@ macro cmpx #@imm
 	push16be(imm);
 }
 
-macro cmpx @n
-{
-	if(n.bits() <= 8){
-		push8($9c);
-		push8(n);
-	}
-	else{
-		push8($bc);
-		push16be(n);
-	}
-}
-
 macro cmpx <@n
 {
 	push8($9c);
@@ -2297,6 +2479,12 @@ macro cmpx <@n
 }
 
 macro cmpx >@n
+{
+	push8($bc);
+	push16be(n);
+}
+
+macro cmpx @n
 {
 	push8($bc);
 	push16be(n);
@@ -2389,13 +2577,15 @@ macro cmpx [@off,pc]
 macro cmpx @off,pcr
 {
 	push8($ac);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro cmpx [@off,pcr]
 {
 	push8($ac);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro cmpx [@addr]
@@ -2411,18 +2601,6 @@ macro cmpy #@imm
 	push16be(imm);
 }
 
-macro cmpy @n
-{
-	if(n.bits() <= 8){
-		push16be($109c);
-		push8(n);
-	}
-	else{
-		push16be($10bc);
-		push16be(n);
-	}
-}
-
 macro cmpy <@n
 {
 	push16be($109c);
@@ -2430,6 +2608,12 @@ macro cmpy <@n
 }
 
 macro cmpy >@n
+{
+	push16be($10bc);
+	push16be(n);
+}
+
+macro cmpy @n
 {
 	push16be($10bc);
 	push16be(n);
@@ -2522,13 +2706,15 @@ macro cmpy [@off,pc]
 macro cmpy @off,pcr
 {
 	push16be($10ac);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro cmpy [@off,pcr]
 {
 	push16be($10ac);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro cmpy [@addr]
@@ -2538,18 +2724,6 @@ macro cmpy [@addr]
 	push16be(addr);
 }
 
-macro com @n
-{
-	if(n.bits() <= 8){
-		push8($03);
-		push8(n);
-	}
-	else{
-		push8($73);
-		push16be(n);
-	}
-}
-
 macro com <@n
 {
 	push8($03);
@@ -2557,6 +2731,12 @@ macro com <@n
 }
 
 macro com >@n
+{
+	push8($73);
+	push16be(n);
+}
+
+macro com @n
 {
 	push8($73);
 	push16be(n);
@@ -2649,13 +2829,15 @@ macro com [@off,pc]
 macro com @off,pcr
 {
 	push8($63);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro com [@off,pcr]
 {
 	push8($63);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro com [@addr]
@@ -2695,18 +2877,6 @@ macro daa
 	push8($19);
 }
 
-macro dec @n
-{
-	if(n.bits() <= 8){
-		push8($0a);
-		push8(n);
-	}
-	else{
-		push8($7a);
-		push16be(n);
-	}
-}
-
 macro dec <@n
 {
 	push8($0a);
@@ -2714,6 +2884,12 @@ macro dec <@n
 }
 
 macro dec >@n
+{
+	push8($7a);
+	push16be(n);
+}
+
+macro dec @n
 {
 	push8($7a);
 	push16be(n);
@@ -2806,13 +2982,15 @@ macro dec [@off,pc]
 macro dec @off,pcr
 {
 	push8($6a);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro dec [@off,pcr]
 {
 	push8($6a);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro dec [@addr]
@@ -2838,18 +3016,6 @@ macro eora #@imm
 	push8(imm);
 }
 
-macro eora @n
-{
-	if(n.bits() <= 8){
-		push8($98);
-		push8(n);
-	}
-	else{
-		push8($b8);
-		push16be(n);
-	}
-}
-
 macro eora <@n
 {
 	push8($98);
@@ -2857,6 +3023,12 @@ macro eora <@n
 }
 
 macro eora >@n
+{
+	push8($b8);
+	push16be(n);
+}
+
+macro eora @n
 {
 	push8($b8);
 	push16be(n);
@@ -2949,13 +3121,15 @@ macro eora [@off,pc]
 macro eora @off,pcr
 {
 	push8($a8);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro eora [@off,pcr]
 {
 	push8($a8);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro eora [@addr]
@@ -2971,18 +3145,6 @@ macro eorb #@imm
 	push8(imm);
 }
 
-macro eorb @n
-{
-	if(n.bits() <= 8){
-		push8($d8);
-		push8(n);
-	}
-	else{
-		push8($f8);
-		push16be(n);
-	}
-}
-
 macro eorb <@n
 {
 	push8($d8);
@@ -2990,6 +3152,12 @@ macro eorb <@n
 }
 
 macro eorb >@n
+{
+	push8($f8);
+	push16be(n);
+}
+
+macro eorb @n
 {
 	push8($f8);
 	push16be(n);
@@ -3082,13 +3250,15 @@ macro eorb [@off,pc]
 macro eorb @off,pcr
 {
 	push8($e8);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro eorb [@off,pcr]
 {
 	push8($e8);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro eorb [@addr]
@@ -3104,18 +3274,6 @@ macro exg @[C2_6809_EXG]r1,@[C2_6809_EXG]r2
 	push8(r1<<4|r2);
 }
 
-macro inc @n
-{
-	if(n.bits() <= 8){
-		push8($0c);
-		push8(n);
-	}
-	else{
-		push8($7c);
-		push16be(n);
-	}
-}
-
 macro inc <@n
 {
 	push8($0c);
@@ -3123,6 +3281,12 @@ macro inc <@n
 }
 
 macro inc >@n
+{
+	push8($7c);
+	push16be(n);
+}
+
+macro inc @n
 {
 	push8($7c);
 	push16be(n);
@@ -3215,13 +3379,15 @@ macro inc [@off,pc]
 macro inc @off,pcr
 {
 	push8($6c);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro inc [@off,pcr]
 {
 	push8($6c);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro inc [@addr]
@@ -3241,18 +3407,6 @@ macro incb
 	push8($5c);
 }
 
-macro jmp @n
-{
-	if(n.bits() <= 8){
-		push8($0e);
-		push8(n);
-	}
-	else{
-		push8($7e);
-		push16be(n);
-	}
-}
-
 macro jmp <@n
 {
 	push8($0e);
@@ -3260,6 +3414,12 @@ macro jmp <@n
 }
 
 macro jmp >@n
+{
+	push8($7e);
+	push16be(n);
+}
+
+macro jmp @n
 {
 	push8($7e);
 	push16be(n);
@@ -3352,13 +3512,15 @@ macro jmp [@off,pc]
 macro jmp @off,pcr
 {
 	push8($6e);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro jmp [@off,pcr]
 {
 	push8($6e);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro jmp [@addr]
@@ -3368,18 +3530,6 @@ macro jmp [@addr]
 	push16be(addr);
 }
 
-macro jsr @n
-{
-	if(n.bits() <= 8){
-		push8($9d);
-		push8(n);
-	}
-	else{
-		push8($bd);
-		push16be(n);
-	}
-}
-
 macro jsr <@n
 {
 	push8($9d);
@@ -3387,6 +3537,12 @@ macro jsr <@n
 }
 
 macro jsr >@n
+{
+	push8($bd);
+	push16be(n);
+}
+
+macro jsr @n
 {
 	push8($bd);
 	push16be(n);
@@ -3479,13 +3635,15 @@ macro jsr [@off,pc]
 macro jsr @off,pcr
 {
 	push8($ad);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro jsr [@off,pcr]
 {
 	push8($ad);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro jsr [@addr]
@@ -3495,124 +3653,10 @@ macro jsr [@addr]
 	push16be(addr);
 }
 
-macro lbeq @addr
-{
-	push16be($1027);
-	push16be(c2sr<16>(addr-@-2));
-}
-
-macro lbge @addr
-{
-	push16be($102c);
-	push16be(c2sr<16>(addr-@-2));
-}
-
-macro lbgt @addr
-{
-	push16be($102e);
-	push16be(c2sr<16>(addr-@-2));
-}
-
-macro lbhi @addr
-{
-	push16be($1022);
-	push16be(c2sr<16>(addr-@-2));
-}
-
-macro lbhs,lbcc @addr
-{
-	push16be($1024);
-	push16be(c2sr<16>(addr-@-2));
-}
-
-macro lble @addr
-{
-	push16be($102f);
-	push16be(c2sr<16>(addr-@-2));
-}
-
-macro lblo,lbcs @addr
-{
-	push16be($1025);
-	push16be(c2sr<16>(addr-@-2));
-}
-
-macro lbls @addr
-{
-	push16be($1023);
-	push16be(c2sr<16>(addr-@-2));
-}
-
-macro lblt @addr
-{
-	push16be($102d);
-	push16be(c2sr<16>(addr-@-2));
-}
-
-macro lbmi @addr
-{
-	push16be($102b);
-	push16be(c2sr<16>(addr-@-2));
-}
-
-macro lbne @addr
-{
-	push16be($1026);
-	push16be(c2sr<16>(addr-@-2));
-}
-
-macro lbpl @addr
-{
-	push16be($102a);
-	push16be(c2sr<16>(addr-@-2));
-}
-
-macro lbra @addr
-{
-	push8($16);
-	push16be(c2sr<16>(addr-@-2));
-}
-
-macro lbrn @addr
-{
-	push16be($1021);
-	push16be(c2sr<16>(addr-@-2));
-}
-
-macro lbsr @addr
-{
-	push8($17);
-	push16be(c2sr<16>(addr-@-2));
-}
-
-macro lbvc @addr
-{
-	push16be($1028);
-	push16be(c2sr<16>(addr-@-2));
-}
-
-macro lbvs @addr
-{
-	push16be($1029);
-	push16be(c2sr<16>(addr-@-2));
-}
-
 macro lda #@imm
 {
 	push8($86);
 	push8(imm);
-}
-
-macro lda @n
-{
-	if(n.bits() <= 8){
-		push8($96);
-		push8(n);
-	}
-	else{
-		push8($b6);
-		push16be(n);
-	}
 }
 
 macro lda <@n
@@ -3622,6 +3666,12 @@ macro lda <@n
 }
 
 macro lda >@n
+{
+	push8($b6);
+	push16be(n);
+}
+
+macro lda @n
 {
 	push8($b6);
 	push16be(n);
@@ -3714,13 +3764,15 @@ macro lda [@off,pc]
 macro lda @off,pcr
 {
 	push8($a6);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro lda [@off,pcr]
 {
 	push8($a6);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro lda [@addr]
@@ -3736,18 +3788,6 @@ macro ldb #@imm
 	push8(imm);
 }
 
-macro ldb @n
-{
-	if(n.bits() <= 8){
-		push8($d6);
-		push8(n);
-	}
-	else{
-		push8($f6);
-		push16be(n);
-	}
-}
-
 macro ldb <@n
 {
 	push8($d6);
@@ -3755,6 +3795,12 @@ macro ldb <@n
 }
 
 macro ldb >@n
+{
+	push8($f6);
+	push16be(n);
+}
+
+macro ldb @n
 {
 	push8($f6);
 	push16be(n);
@@ -3847,13 +3893,15 @@ macro ldb [@off,pc]
 macro ldb @off,pcr
 {
 	push8($e6);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro ldb [@off,pcr]
 {
 	push8($e6);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro ldb [@addr]
@@ -3869,18 +3917,6 @@ macro ldd #@imm
 	push16be(imm);
 }
 
-macro ldd @n
-{
-	if(n.bits() <= 8){
-		push8($dc);
-		push8(n);
-	}
-	else{
-		push8($fc);
-		push16be(n);
-	}
-}
-
 macro ldd <@n
 {
 	push8($dc);
@@ -3888,6 +3924,12 @@ macro ldd <@n
 }
 
 macro ldd >@n
+{
+	push8($fc);
+	push16be(n);
+}
+
+macro ldd @n
 {
 	push8($fc);
 	push16be(n);
@@ -3980,13 +4022,15 @@ macro ldd [@off,pc]
 macro ldd @off,pcr
 {
 	push8($ec);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro ldd [@off,pcr]
 {
 	push8($ec);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro ldd [@addr]
@@ -4002,18 +4046,6 @@ macro lds #@imm
 	push16be(imm);
 }
 
-macro lds @n
-{
-	if(n.bits() <= 8){
-		push16be($10de);
-		push8(n);
-	}
-	else{
-		push16be($10fe);
-		push16be(n);
-	}
-}
-
 macro lds <@n
 {
 	push16be($10de);
@@ -4021,6 +4053,12 @@ macro lds <@n
 }
 
 macro lds >@n
+{
+	push16be($10fe);
+	push16be(n);
+}
+
+macro lds @n
 {
 	push16be($10fe);
 	push16be(n);
@@ -4113,13 +4151,15 @@ macro lds [@off,pc]
 macro lds @off,pcr
 {
 	push16be($10ee);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro lds [@off,pcr]
 {
 	push16be($10ee);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro lds [@addr]
@@ -4135,18 +4175,6 @@ macro ldu #@imm
 	push16be(imm);
 }
 
-macro ldu @n
-{
-	if(n.bits() <= 8){
-		push8($de);
-		push8(n);
-	}
-	else{
-		push8($fe);
-		push16be(n);
-	}
-}
-
 macro ldu <@n
 {
 	push8($de);
@@ -4154,6 +4182,12 @@ macro ldu <@n
 }
 
 macro ldu >@n
+{
+	push8($fe);
+	push16be(n);
+}
+
+macro ldu @n
 {
 	push8($fe);
 	push16be(n);
@@ -4246,13 +4280,15 @@ macro ldu [@off,pc]
 macro ldu @off,pcr
 {
 	push8($ee);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro ldu [@off,pcr]
 {
 	push8($ee);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro ldu [@addr]
@@ -4268,18 +4304,6 @@ macro ldx #@imm
 	push16be(imm);
 }
 
-macro ldx @n
-{
-	if(n.bits() <= 8){
-		push8($9e);
-		push8(n);
-	}
-	else{
-		push8($be);
-		push16be(n);
-	}
-}
-
 macro ldx <@n
 {
 	push8($9e);
@@ -4287,6 +4311,12 @@ macro ldx <@n
 }
 
 macro ldx >@n
+{
+	push8($be);
+	push16be(n);
+}
+
+macro ldx @n
 {
 	push8($be);
 	push16be(n);
@@ -4379,13 +4409,15 @@ macro ldx [@off,pc]
 macro ldx @off,pcr
 {
 	push8($ae);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro ldx [@off,pcr]
 {
 	push8($ae);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro ldx [@addr]
@@ -4401,18 +4433,6 @@ macro ldy #@imm
 	push16be(imm);
 }
 
-macro ldy @n
-{
-	if(n.bits() <= 8){
-		push16be($109e);
-		push8(n);
-	}
-	else{
-		push16be($10be);
-		push16be(n);
-	}
-}
-
 macro ldy <@n
 {
 	push16be($109e);
@@ -4420,6 +4440,12 @@ macro ldy <@n
 }
 
 macro ldy >@n
+{
+	push16be($10be);
+	push16be(n);
+}
+
+macro ldy @n
 {
 	push16be($10be);
 	push16be(n);
@@ -4512,13 +4538,15 @@ macro ldy [@off,pc]
 macro ldy @off,pcr
 {
 	push16be($10ae);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro ldy [@off,pcr]
 {
 	push16be($10ae);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro ldy [@addr]
@@ -4615,13 +4643,15 @@ macro leas [@off,pc]
 macro leas @off,pcr
 {
 	push8($32);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro leas [@off,pcr]
 {
 	push8($32);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro leas [@addr]
@@ -4718,13 +4748,15 @@ macro leau [@off,pc]
 macro leau @off,pcr
 {
 	push8($33);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro leau [@off,pcr]
 {
 	push8($33);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro leau [@addr]
@@ -4821,13 +4853,15 @@ macro leax [@off,pc]
 macro leax @off,pcr
 {
 	push8($30);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro leax [@off,pcr]
 {
 	push8($30);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro leax [@addr]
@@ -4924,13 +4958,15 @@ macro leay [@off,pc]
 macro leay @off,pcr
 {
 	push8($31);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro leay [@off,pcr]
 {
 	push8($31);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro leay [@addr]
@@ -4940,18 +4976,6 @@ macro leay [@addr]
 	push16be(addr);
 }
 
-macro lsl,asl @n
-{
-	if(n.bits() <= 8){
-		push8($08);
-		push8(n);
-	}
-	else{
-		push8($78);
-		push16be(n);
-	}
-}
-
 macro lsl,asl <@n
 {
 	push8($08);
@@ -4959,6 +4983,12 @@ macro lsl,asl <@n
 }
 
 macro lsl,asl >@n
+{
+	push8($78);
+	push16be(n);
+}
+
+macro lsl,asl @n
 {
 	push8($78);
 	push16be(n);
@@ -5051,13 +5081,15 @@ macro lsl,asl [@off,pc]
 macro lsl,asl @off,pcr
 {
 	push8($68);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro lsl,asl [@off,pcr]
 {
 	push8($68);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro lsl,asl [@addr]
@@ -5077,18 +5109,6 @@ macro lslb,aslb
 	push8($58);
 }
 
-macro lsr @n
-{
-	if(n.bits() <= 8){
-		push8($04);
-		push8(n);
-	}
-	else{
-		push8($74);
-		push16be(n);
-	}
-}
-
 macro lsr <@n
 {
 	push8($04);
@@ -5096,6 +5116,12 @@ macro lsr <@n
 }
 
 macro lsr >@n
+{
+	push8($74);
+	push16be(n);
+}
+
+macro lsr @n
 {
 	push8($74);
 	push16be(n);
@@ -5188,13 +5214,15 @@ macro lsr [@off,pc]
 macro lsr @off,pcr
 {
 	push8($64);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro lsr [@off,pcr]
 {
 	push8($64);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro lsr [@addr]
@@ -5219,18 +5247,6 @@ macro mul
 	push8($3d);
 }
 
-macro neg @n
-{
-	if(n.bits() <= 8){
-		push8($00);
-		push8(n);
-	}
-	else{
-		push8($70);
-		push16be(n);
-	}
-}
-
 macro neg <@n
 {
 	push8($00);
@@ -5238,6 +5254,12 @@ macro neg <@n
 }
 
 macro neg >@n
+{
+	push8($70);
+	push16be(n);
+}
+
+macro neg @n
 {
 	push8($70);
 	push16be(n);
@@ -5330,13 +5352,15 @@ macro neg [@off,pc]
 macro neg @off,pcr
 {
 	push8($60);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro neg [@off,pcr]
 {
 	push8($60);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro neg [@addr]
@@ -5367,18 +5391,6 @@ macro ora #@imm
 	push8(imm);
 }
 
-macro ora @n
-{
-	if(n.bits() <= 8){
-		push8($9a);
-		push8(n);
-	}
-	else{
-		push8($ba);
-		push16be(n);
-	}
-}
-
 macro ora <@n
 {
 	push8($9a);
@@ -5386,6 +5398,12 @@ macro ora <@n
 }
 
 macro ora >@n
+{
+	push8($ba);
+	push16be(n);
+}
+
+macro ora @n
 {
 	push8($ba);
 	push16be(n);
@@ -5478,13 +5496,15 @@ macro ora [@off,pc]
 macro ora @off,pcr
 {
 	push8($aa);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro ora [@off,pcr]
 {
 	push8($aa);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro ora [@addr]
@@ -5500,18 +5520,6 @@ macro orb #@imm
 	push8(imm);
 }
 
-macro orb @n
-{
-	if(n.bits() <= 8){
-		push8($da);
-		push8(n);
-	}
-	else{
-		push8($fa);
-		push16be(n);
-	}
-}
-
 macro orb <@n
 {
 	push8($da);
@@ -5519,6 +5527,12 @@ macro orb <@n
 }
 
 macro orb >@n
+{
+	push8($fa);
+	push16be(n);
+}
+
+macro orb @n
 {
 	push8($fa);
 	push16be(n);
@@ -5611,13 +5625,15 @@ macro orb [@off,pc]
 macro orb @off,pcr
 {
 	push8($ea);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro orb [@off,pcr]
 {
 	push8($ea);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro orb [@addr]
@@ -5698,18 +5714,6 @@ macro reset
 	push8($3e);
 }
 
-macro rol @n
-{
-	if(n.bits() <= 8){
-		push8($09);
-		push8(n);
-	}
-	else{
-		push8($79);
-		push16be(n);
-	}
-}
-
 macro rol <@n
 {
 	push8($09);
@@ -5717,6 +5721,12 @@ macro rol <@n
 }
 
 macro rol >@n
+{
+	push8($79);
+	push16be(n);
+}
+
+macro rol @n
 {
 	push8($79);
 	push16be(n);
@@ -5809,13 +5819,15 @@ macro rol [@off,pc]
 macro rol @off,pcr
 {
 	push8($69);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro rol [@off,pcr]
 {
 	push8($69);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro rol [@addr]
@@ -5835,18 +5847,6 @@ macro rolb
 	push8($59);
 }
 
-macro ror @n
-{
-	if(n.bits() <= 8){
-		push8($06);
-		push8(n);
-	}
-	else{
-		push8($76);
-		push16be(n);
-	}
-}
-
 macro ror <@n
 {
 	push8($06);
@@ -5854,6 +5854,12 @@ macro ror <@n
 }
 
 macro ror >@n
+{
+	push8($76);
+	push16be(n);
+}
+
+macro ror @n
 {
 	push8($76);
 	push16be(n);
@@ -5946,13 +5952,15 @@ macro ror [@off,pc]
 macro ror @off,pcr
 {
 	push8($66);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro ror [@off,pcr]
 {
 	push8($66);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro ror [@addr]
@@ -5988,18 +5996,6 @@ macro sbca #@imm
 	push8(imm);
 }
 
-macro sbca @n
-{
-	if(n.bits() <= 8){
-		push8($92);
-		push8(n);
-	}
-	else{
-		push8($b2);
-		push16be(n);
-	}
-}
-
 macro sbca <@n
 {
 	push8($92);
@@ -6007,6 +6003,12 @@ macro sbca <@n
 }
 
 macro sbca >@n
+{
+	push8($b2);
+	push16be(n);
+}
+
+macro sbca @n
 {
 	push8($b2);
 	push16be(n);
@@ -6099,13 +6101,15 @@ macro sbca [@off,pc]
 macro sbca @off,pcr
 {
 	push8($a2);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro sbca [@off,pcr]
 {
 	push8($a2);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro sbca [@addr]
@@ -6121,18 +6125,6 @@ macro sbcb #@imm
 	push8(imm);
 }
 
-macro sbcb @n
-{
-	if(n.bits() <= 8){
-		push8($d2);
-		push8(n);
-	}
-	else{
-		push8($f2);
-		push16be(n);
-	}
-}
-
 macro sbcb <@n
 {
 	push8($d2);
@@ -6140,6 +6132,12 @@ macro sbcb <@n
 }
 
 macro sbcb >@n
+{
+	push8($f2);
+	push16be(n);
+}
+
+macro sbcb @n
 {
 	push8($f2);
 	push16be(n);
@@ -6232,13 +6230,15 @@ macro sbcb [@off,pc]
 macro sbcb @off,pcr
 {
 	push8($e2);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro sbcb [@off,pcr]
 {
 	push8($e2);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro sbcb [@addr]
@@ -6253,18 +6253,6 @@ macro sex
 	push8($1d);
 }
 
-macro sta @n
-{
-	if(n.bits() <= 8){
-		push8($97);
-		push8(n);
-	}
-	else{
-		push8($b7);
-		push16be(n);
-	}
-}
-
 macro sta <@n
 {
 	push8($97);
@@ -6272,6 +6260,12 @@ macro sta <@n
 }
 
 macro sta >@n
+{
+	push8($b7);
+	push16be(n);
+}
+
+macro sta @n
 {
 	push8($b7);
 	push16be(n);
@@ -6364,13 +6358,15 @@ macro sta [@off,pc]
 macro sta @off,pcr
 {
 	push8($a7);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro sta [@off,pcr]
 {
 	push8($a7);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro sta [@addr]
@@ -6380,18 +6376,6 @@ macro sta [@addr]
 	push16be(addr);
 }
 
-macro stb @n
-{
-	if(n.bits() <= 8){
-		push8($d7);
-		push8(n);
-	}
-	else{
-		push8($f7);
-		push16be(n);
-	}
-}
-
 macro stb <@n
 {
 	push8($d7);
@@ -6399,6 +6383,12 @@ macro stb <@n
 }
 
 macro stb >@n
+{
+	push8($f7);
+	push16be(n);
+}
+
+macro stb @n
 {
 	push8($f7);
 	push16be(n);
@@ -6491,13 +6481,15 @@ macro stb [@off,pc]
 macro stb @off,pcr
 {
 	push8($e7);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro stb [@off,pcr]
 {
 	push8($e7);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro stb [@addr]
@@ -6507,18 +6499,6 @@ macro stb [@addr]
 	push16be(addr);
 }
 
-macro std @n
-{
-	if(n.bits() <= 8){
-		push8($dd);
-		push8(n);
-	}
-	else{
-		push8($fd);
-		push16be(n);
-	}
-}
-
 macro std <@n
 {
 	push8($dd);
@@ -6526,6 +6506,12 @@ macro std <@n
 }
 
 macro std >@n
+{
+	push8($fd);
+	push16be(n);
+}
+
+macro std @n
 {
 	push8($fd);
 	push16be(n);
@@ -6618,13 +6604,15 @@ macro std [@off,pc]
 macro std @off,pcr
 {
 	push8($ed);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro std [@off,pcr]
 {
 	push8($ed);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro std [@addr]
@@ -6634,18 +6622,6 @@ macro std [@addr]
 	push16be(addr);
 }
 
-macro sts @n
-{
-	if(n.bits() <= 8){
-		push16be($10df);
-		push8(n);
-	}
-	else{
-		push16be($10ff);
-		push16be(n);
-	}
-}
-
 macro sts <@n
 {
 	push16be($10df);
@@ -6653,6 +6629,12 @@ macro sts <@n
 }
 
 macro sts >@n
+{
+	push16be($10ff);
+	push16be(n);
+}
+
+macro sts @n
 {
 	push16be($10ff);
 	push16be(n);
@@ -6745,13 +6727,15 @@ macro sts [@off,pc]
 macro sts @off,pcr
 {
 	push16be($10ef);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro sts [@off,pcr]
 {
 	push16be($10ef);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro sts [@addr]
@@ -6761,18 +6745,6 @@ macro sts [@addr]
 	push16be(addr);
 }
 
-macro stu @n
-{
-	if(n.bits() <= 8){
-		push8($df);
-		push8(n);
-	}
-	else{
-		push8($ff);
-		push16be(n);
-	}
-}
-
 macro stu <@n
 {
 	push8($df);
@@ -6780,6 +6752,12 @@ macro stu <@n
 }
 
 macro stu >@n
+{
+	push8($ff);
+	push16be(n);
+}
+
+macro stu @n
 {
 	push8($ff);
 	push16be(n);
@@ -6872,13 +6850,15 @@ macro stu [@off,pc]
 macro stu @off,pcr
 {
 	push8($ef);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro stu [@off,pcr]
 {
 	push8($ef);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro stu [@addr]
@@ -6888,18 +6868,6 @@ macro stu [@addr]
 	push16be(addr);
 }
 
-macro stx @n
-{
-	if(n.bits() <= 8){
-		push8($9f);
-		push8(n);
-	}
-	else{
-		push8($bf);
-		push16be(n);
-	}
-}
-
 macro stx <@n
 {
 	push8($9f);
@@ -6907,6 +6875,12 @@ macro stx <@n
 }
 
 macro stx >@n
+{
+	push8($bf);
+	push16be(n);
+}
+
+macro stx @n
 {
 	push8($bf);
 	push16be(n);
@@ -6999,13 +6973,15 @@ macro stx [@off,pc]
 macro stx @off,pcr
 {
 	push8($af);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro stx [@off,pcr]
 {
 	push8($af);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro stx [@addr]
@@ -7015,18 +6991,6 @@ macro stx [@addr]
 	push16be(addr);
 }
 
-macro sty @n
-{
-	if(n.bits() <= 8){
-		push16be($109f);
-		push8(n);
-	}
-	else{
-		push16be($10bf);
-		push16be(n);
-	}
-}
-
 macro sty <@n
 {
 	push16be($109f);
@@ -7034,6 +6998,12 @@ macro sty <@n
 }
 
 macro sty >@n
+{
+	push16be($10bf);
+	push16be(n);
+}
+
+macro sty @n
 {
 	push16be($10bf);
 	push16be(n);
@@ -7126,13 +7096,15 @@ macro sty [@off,pc]
 macro sty @off,pcr
 {
 	push16be($10af);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro sty [@off,pcr]
 {
 	push16be($10af);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro sty [@addr]
@@ -7148,18 +7120,6 @@ macro suba #@imm
 	push8(imm);
 }
 
-macro suba @n
-{
-	if(n.bits() <= 8){
-		push8($90);
-		push8(n);
-	}
-	else{
-		push8($b0);
-		push16be(n);
-	}
-}
-
 macro suba <@n
 {
 	push8($90);
@@ -7167,6 +7127,12 @@ macro suba <@n
 }
 
 macro suba >@n
+{
+	push8($b0);
+	push16be(n);
+}
+
+macro suba @n
 {
 	push8($b0);
 	push16be(n);
@@ -7259,13 +7225,15 @@ macro suba [@off,pc]
 macro suba @off,pcr
 {
 	push8($a0);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro suba [@off,pcr]
 {
 	push8($a0);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro suba [@addr]
@@ -7281,18 +7249,6 @@ macro subb #@imm
 	push8(imm);
 }
 
-macro subb @n
-{
-	if(n.bits() <= 8){
-		push8($d0);
-		push8(n);
-	}
-	else{
-		push8($f0);
-		push16be(n);
-	}
-}
-
 macro subb <@n
 {
 	push8($d0);
@@ -7300,6 +7256,12 @@ macro subb <@n
 }
 
 macro subb >@n
+{
+	push8($f0);
+	push16be(n);
+}
+
+macro subb @n
 {
 	push8($f0);
 	push16be(n);
@@ -7392,13 +7354,15 @@ macro subb [@off,pc]
 macro subb @off,pcr
 {
 	push8($e0);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro subb [@off,pcr]
 {
 	push8($e0);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro subb [@addr]
@@ -7414,18 +7378,6 @@ macro subd #@imm
 	push16be(imm);
 }
 
-macro subd @n
-{
-	if(n.bits() <= 8){
-		push8($93);
-		push8(n);
-	}
-	else{
-		push8($b3);
-		push16be(n);
-	}
-}
-
 macro subd <@n
 {
 	push8($93);
@@ -7433,6 +7385,12 @@ macro subd <@n
 }
 
 macro subd >@n
+{
+	push8($b3);
+	push16be(n);
+}
+
+macro subd @n
 {
 	push8($b3);
 	push16be(n);
@@ -7525,13 +7483,15 @@ macro subd [@off,pc]
 macro subd @off,pcr
 {
 	push8($a3);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro subd [@off,pcr]
 {
 	push8($a3);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro subd [@addr]
@@ -7567,18 +7527,6 @@ macro tfr @[C2_6809_EXG]r1,@[C2_6809_EXG]r2
 	push8(r1<<4|r2);
 }
 
-macro tst @n
-{
-	if(n.bits() <= 8){
-		push8($0d);
-		push8(n);
-	}
-	else{
-		push8($7d);
-		push16be(n);
-	}
-}
-
 macro tst <@n
 {
 	push8($0d);
@@ -7586,6 +7534,12 @@ macro tst <@n
 }
 
 macro tst >@n
+{
+	push8($7d);
+	push16be(n);
+}
+
+macro tst @n
 {
 	push8($7d);
 	push16be(n);
@@ -7678,13 +7632,15 @@ macro tst [@off,pc]
 macro tst @off,pcr
 {
 	push8($6d);
-	c2_6809_idx_direct_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro tst [@off,pcr]
 {
 	push8($6d);
-	c2_6809_idx_indirect_pc(off-@-2);
+	static bool ol=false;
+	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
 macro tst [@addr]
