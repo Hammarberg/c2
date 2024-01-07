@@ -453,6 +453,10 @@ Commodore 64 with provided utilities.
 Commodore 64 with provided utilities configured to auto-lauch in VICE (x64sc) with symbols and optional breakpoints.
 ### atari2600
 Atari2600 with 4KB of ROM at $f000
+## 6809
+A plain 6809 template with 64KB of RAM.
+## Vectrex
+GCE Vectrex with 32KB of ROM between $0000-$8000
 ## 68000
 Highly experimental for c2 development, 68k CPU support is b0rken/buggy at best
 ## void

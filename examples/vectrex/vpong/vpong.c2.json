@@ -1,0 +1,20 @@
+{
+	"title" : "vpong",
+	"basedir":".",
+	"arguments" : "--address-range 0x0 0x8000 --longbranch --absolute --out - + vpong.bin",
+	"execute" : "",
+	"files":[
+		"vpong.cpp":{
+			"c2" : true,
+			"flags" : "-O0"
+		},
+		"source/c2i.cpp":{
+			"external" : true,
+			"flags" : "-O2"
+		},
+		"source/6809.cpp":{
+			"external" : true,
+			"flags" : "-O2"
+		}
+	]
+}

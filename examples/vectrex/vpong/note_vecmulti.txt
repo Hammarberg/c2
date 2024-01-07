@@ -1,0 +1,1 @@
+vpong might require ROM_patcher to work well with VecMulti.

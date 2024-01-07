@@ -141,6 +141,9 @@
 			"source":[
 				"c2i.cpp":{
 					"flags" : "-O2"
+				},
+				"6809.cpp":{
+					"flags" : "-O2"
 				}
 			],
 			"template":[
@@ -154,8 +157,32 @@
 				}
 			]
 		},
+		"vectrex":{
+			"description" : "GCE Vectrex",
+			"super" : "motorola6809",
+			"include" : "c2/motorola/6809.h",
+			"arguments" : "--address-range 0x0 0x8000 --longbranch --absolute --out - + {title}.bin",
+			"source":[
+				"c2i.cpp":{
+					"flags" : "-O2"
+				},
+				"6809.cpp":{
+					"flags" : "-O2"
+				}
+			],
+			"template":[
+				"asm.cpp":{
+					"target" : "{title}.cpp"
+					"c2" : true
+					"flags" : "-O0"
+				},
+				"vectrex.s":{
+					"target" : "{title}.s"
+				}
+			]
+		},
 		"68000":{
-			"description" : "Plain 68000 with 16MB of RAM for embedded projects",
+			"description" : "Not functioning yet!",
 			"super" : "motorola68000",
 			"include" : "c2/motorola/68000.h",
 			"arguments" : "--out - + {title}.bin",
