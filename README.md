@@ -44,7 +44,7 @@ git clone https://github.com/Hammarberg/c2.git or download and extract the zip a
 ### GNU/Linux/BSD/OSX
 From the c2 root type `make` and a c2 executable will be created.
 
-Installation is optional as you can run c2 direclty from the source root. If you want a global installation, type `sudo make install`. To uninstall, `sudo make uninstall`.
+Installation is optional as you can run c2 directly from the source root. If you want a global installation, type `sudo make install`. To uninstall, `sudo make uninstall`.
 
 If necessary, modify Makefile to your needs. Currently it will select `clang++` if available and fall back to `g++`.
 #### Debian suggested packages
@@ -77,7 +77,7 @@ c2 command line switches comes in two variants, the descriptive long version pre
 ## Templates overview
 ## Project files
 ## Your first simple project tutorial
-c2 comes with a set of predefined templates for creating new projects.
+c2 comes with a set of pre-defined templates for creating new projects.
 
 `c2 --list-templates`
 
@@ -222,7 +222,7 @@ Currently, variables doesn't support label namespaces (design decisions yet to b
         //Other code here
 }
 ```
-Variables can hold and remenber explicit bit counts:
+Variables can hold and remember explicit bit counts:
 ```
         var src = $0002
         lda src //Absolute rather than zero page addressing mode
@@ -379,7 +379,7 @@ Includes a binary from the file system at current org. Optionally, byte offset a
 Includes the stdout of the command at the current org. Optionally, byte offset and byte length can be given.
 
 `postarg "<switch>"`
-Adds c2 command line switches for the post assembly pass from the convienience of your source.
+Adds c2 command line switches for the post assembly pass from the convenience of your source.
 
 `repeat(X)` and `rrepeat(X)`
 Repeats the following line or C code block X times. The variable `c2repn` can be read. `rrepeat` counts in reverse from X-1.
