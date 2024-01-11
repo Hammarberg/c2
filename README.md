@@ -34,7 +34,7 @@ You should have received a copy of the GNU General Public License along with c2.
 ### Contributors
 John Hammarberg, Jocelyn Houle, Johan Samuelsson, Monstersgoboom
 ## Build & Installation
-c2 requires wither clang++ or g++ for building c2 itself and for running c2. Clang is a bit faster on compile times.
+c2 requires either clang++ or g++ for building c2 itself and for running c2. Clang is a bit faster on compile times.
 
 At this point c2 has only been tested on 64 bit hosts with little endian.
 
