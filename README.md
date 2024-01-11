@@ -34,34 +34,37 @@ You should have received a copy of the GNU General Public License along with c2.
 ### Contributors
 John Hammarberg, Jocelyn Houle, Johan Samuelsson, Monstersgoboom
 ## Build & Installation
-c2 requires llvm/clang++ or g++ for both building c2 itself and for running c2. At this point c2 has only been tested on 64 bit hosts with little endian.
+c2 requires wither clang++ or g++ for building c2 itself and for running c2. Clang is a bit faster on compile times.
+
+At this point c2 has only been tested on 64 bit hosts with little endian.
 
 Put the c2 executable in your path. Make sure the c2lib/ directory is next to c2 or two levels above (see c2lib section) and that a 64 bit compatible clang++ or g++ is in path.
+### Get the source
+git clone https://github.com/Hammarberg/c2.git or download and extract the zip archive of the source.
 ### GNU/Linux/BSD/OSX
-`make` and `sudo make install`
+From the c2 root type `make` and a c2 executable will be created.
 
-To uninstall, `sudo make uninstall`
+Installation is optional as you can run c2 direclty from the source root. If you want a global installation, type `sudo make install`. To uninstall, `sudo make uninstall`.
 
-If necessary, modify Makefile to your needs. Currently it's set to use `clang++` but `g++` works just as well. `-march=native` is set. While this can give extra optimizations for your particular CPU, it makes the executable less portable and have to be removed if you want to compile on an ARM CPU.
+If necessary, modify Makefile to your needs. Currently it will select `clang++` if available and fall back to `g++`.
+#### Debian suggested packages
+`build-essential` or `clang' and 'make`.
 ### Windows
-c2 can be built with either VS2022 or clang/LLVM. If you don't already have clang installed, you will have to install it anyways since it's a dependency that is used by c2 during assembly.
+There are currently no precompiled binaries or installer available.
 
-Clone or unzip c2 to an empty folder.
-#### Option 1: clang/LLVM
-The easiest and recommended method is to install [clang/LLVM](https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.6/LLVM-15.0.6-win64.exe). Use the default installation path and/or select to set environment variables and path so c2 can find clang. If clang is not in path, c2 will look for clang at `C:\Program Files\LLVM\bin\clang++`.
+c2 can be built with VS2022 but requires clang to be installed on the system.
+#### Option 1: VS2022 and clang
+You need [Visual Studio 2022 Community](https://visualstudio.microsoft.com/vs/community/) or better installed. You also need to select the optional clang tools during VS install. It's possible to modify an existing VS installation to include it.
 
-Run `WindowsLLVMBuild.bat` and a c2 executable should be created in the same folder.
-#### Option 2: VS2022
-If you prefer or already have [Visual Studio 2022 Community](https://visualstudio.microsoft.com/vs/community/) or better installed you can use that. However, you also need to select during install, or modify an existing installation to include clang tools as they are provided as an option in the VS installer. If clang is not in path, c2 will look for clang at `C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\Llvm\x64\bin\clang++`.
+If you already have VS without clang or if you just want a more up to date clang, you can install it separately from [clang/LLVM](https://github.com/llvm/llvm-project/releases/download/llvmorg-17.0.6/LLVM-17.0.6-win64.exe).
 
-Run `WindowsVSBuild.bat` and a c2 executable should be created under `x64\Release\c2.exe`. You may of course also open the solution in VS2022 and build there.
-#### Option 3: Cygwin
-Experimental. Clang seems outdated in Cygwin. Install gcc/g++ and GNU make. Then follow the GNU/Linux instructions and set up any path needed.
-
-#### PATH
+Run `WindowsVSBuild.bat` and a c2 executable will be created. You may of course also open the solution in VS2022 and build there.
+#### Option 2: Cygwin
+Clang seems outdated in Cygwin. Install gcc/g++ and GNU make. Then follow the GNU/Linux instructions and set up any path needed.
+#### Option 3: GNU tools
+If you take this route, you probably know what to do.
+#### Windows PATH
 My Computer -> Properties -> Advanced System Settings -> Environment Variables -> Edit path for either User or System. Set the path to the directory where `c2.exe` was built to.
-
-If you are using VICE emulator with c2, it's great to also set `x64sc.exe` to path and it will launch automatically.
 # Usage
 ## Command line
 When executing c2 without any arguments in a project folder, it will build/assemble and depending on the settings in the project file, it can automatically launch an emulator if in path. However, there are many useful command line switches you can use directly or in conjunction with a project file. To get an overview:

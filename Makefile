@@ -1,79 +1,84 @@
-appname := c2
+TARGET_EXEC ?= c2
 
-ifeq ($(shell uname -o),Cygwin)
-CXX := g++
-CXXFLAGS := -O2 -std=gnu++17 -march=native -Wno-unused-result
-else
-CXX := clang++
-CXXFLAGS := -O2 -std=c++17 -march=native -Wno-unused-result
-endif
+BUILD_DIR := build
+SRC_DIR := source
 
-LDFLAGS :=
-LDLIBS :=
+SRCS := $(shell find $(SRC_DIR) -name *.cpp)
+OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
+DEPS := $(OBJS:.o=.d)
 
-srcfiles := c2.cpp c2a.cpp json.cpp macro.cpp token.cpp tokfeed.cpp cmda.cpp template.cpp library.cpp
-objects  := $(patsubst %.cpp, %.o, $(srcfiles))
+INC_DIRS := $(SRC_DIR) ./
+INC_FLAGS := $(addprefix -I,$(INC_DIRS))
+
+CPPFLAGS ?= $(INC_FLAGS) -MMD -MP
+CXXFLAGS ?= -O2 -Wno-unused-result -g
+
+OS := $(shell uname -o)
 
 ifndef C2_PLATFORM
 	ifneq ($(ProgramFiles),)
 		C2_PLATFORM := Windows
-	else ifneq ($(WSLENV),)
-		C2_PLATFORM := Windows
+	else ifeq ($(OS),Cygwin)
+		C2_PLATFORM := Cygwin
 	else
-		C2_PLATFORM := $(shell uname)
+		C2_PLATFORM := Unix
 	endif
 endif
 
 # Fix some special cases.
-ifneq ($(filter Linux UNIX, $(C2_PLATFORM)),)
+ifeq ($(C2_PLATFORM),Unix)
 	LDLIBS := $(LDLIBS) -ldl
 else ifeq ($(C2_PLATFORM),Windows)
-	appname := $(appname).exe
+	TARGET_EXEC := $(TARGET_EXEC).exe
 endif
 
-.PHONY: always clean depend dist-clean
-
-all: $(appname) always
-
-$(appname): $(objects)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $(appname) $(objects) $(LDLIBS)
-
-always:
-	@echo -n
-
-depend: .depend always
-
-.depend: $(srcfiles)
-# Use clang++ to generate dependency list.
-	$(CXX) $(CXXFLAGS) -MM $^ > .depend
-ifeq ($(C2_PLATFORM),Windows)
-	@echo "Converting non-continuation backslashes to slashes..."
-	sed -i.bak -E 's:\\([[:alnum:]]):/\1:g' .depend
+# Prefer clang++ if available, but not on Cygwin
+ifeq ($(C2_PLATFORM),Cygwin)
+else
+	ifneq ($(shell which clang++),)
+		CXX := clang++
+	endif
 endif
+
+# Set flags depending on compiler
+ifeq ($(strip $(CXX)),g++)
+CXXFLAGS := $(CXXFLAGS) -std=gnu++17
+else
+CXXFLAGS := $(CXXFLAGS) -std=c++17
+endif
+
+$(TARGET_EXEC): $(OBJS)
+	$(CXX) $(CXXFLAGS) $(OBJS) $(LDFLAGS) $(LDLIBS) -o $@
+
+$(BUILD_DIR)/%.cpp.o: %.cpp
+	$(MKDIR_P) $(dir $@)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+
+.PHONY: clean
 
 clean:
-	rm -f $(objects)
-
-dist-clean: clean
-	rm -f *~ .depend
+	$(RM) -r $(BUILD_DIR)
 
 debug:
+	@echo OS=$(OS)
+	@echo TARGET_EXEC=$(TARGET_EXEC)
 	@echo C2_PLATFORM=$(C2_PLATFORM)
-	@echo OSTYPE=$(OSTYPE)
-	@echo appname=$(appname)
 	@echo CXX=$(CXX)
 	@echo CXXFLAGS=$(CXXFLAGS)
+	@echo CPPFLAGS=$(CPPFLAGS)
 	@echo LDFLAGS=$(LDFLAGS)
 	@echo LDLIBS=$(LDLIBS)
 
-install: all
+install: $(TARGET_EXEC)
 	install -d /usr/local/bin
-	install $(appname) /usr/local/bin
+	install $(TARGET_EXEC) /usr/local/bin
 	install -d /usr/local/lib
 	cp -r c2lib /usr/local/lib/
 
-uninstall: all
-	rm /usr/local/bin/$(appname)
+uninstall:
+	rm /usr/local/bin/$(TARGET_EXEC)
 	rm -rf /usr/local/lib/c2lib
 
-include .depend
+-include $(DEPS)
+
+MKDIR_P ?= mkdir -p

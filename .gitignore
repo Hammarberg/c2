@@ -1,6 +1,7 @@
 *.o
 *.vcxproj.user
 *~
+/build/
 /.depend
 /.depend.bak
 /.vs/
