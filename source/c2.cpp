@@ -623,7 +623,7 @@ public:
 		}
 	}
 	
-	bool load_project(const char* projectfile)
+	bool load_project(const char* projectfile, bool readonly)
 	{
 		std::string bdata, tmp;
 		if(!lib_load_file_direct(projectfile, bdata))
@@ -656,7 +656,11 @@ public:
 			intermediatedir = tmp;
 		}
 
-		std::filesystem::create_directories(intermediatedir);
+		if(!readonly)
+		{
+			std::filesystem::create_directories(intermediatedir);
+		}
+
 		load_imm(intermediatedir / "c2cache");
 
 		bool should_rebuild = false;
@@ -1048,7 +1052,7 @@ int main(int arga, char *argc[])
 		
 		if(projpath.size())
 		{
-			if(!proj.load_project(projpath.c_str()))
+			if(!proj.load_project(projpath.c_str(), !dobuild))
 			{
 				throw "Error loading project file";
 			}
