@@ -128,7 +128,7 @@ void cmda::cswitch::print()
 			tmp += sinfo[r];
 			r++;
 		}
-		fprintf(stderr, "%s\n", tmp.c_str());
+		fprintf(stdout, "%s\n", tmp.c_str());
 		tmp = "";
 	}
 }

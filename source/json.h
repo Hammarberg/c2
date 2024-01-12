@@ -15,7 +15,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
-#ifndef _WIN32
+#if !defined(_WIN32) || defined(__MINGW32__)
 #include <strings.h>
 #else
 #define strcasecmp _stricmp

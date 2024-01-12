@@ -84,6 +84,12 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PreBuildEvent>
+      <Command>$(SolutionDir)\utils\vsc2ver.bat</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Generate version.h</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -95,6 +101,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>./</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -106,6 +113,12 @@
       <Command>copy /y "$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName).exe" "$(SolutionDir)"</Command>
       <Message>Copy to project root</Message>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>$(SolutionDir)\utils\vsc2ver.bat</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Generate version.h</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -42,13 +42,13 @@ Put the c2 executable in your path. Make sure the c2lib/ directory is next to c2
 ### Get the source
 git clone https://github.com/Hammarberg/c2.git or download and extract the zip archive of the source.
 ### GNU/Linux/BSD/OSX
-From the c2 root type `make` and a c2 executable will be created.
+From the c2 root type `make` (or `make CXX=clang++ -j`) and a c2 executable will be created in the same folder.
 
 Installation is optional as you can run c2 directly from the source root. If you want a global installation, type `sudo make install`. To uninstall, `sudo make uninstall`.
 
-If necessary, modify Makefile to your needs. Currently it will select `clang++` if available and fall back to `g++`.
+If necessary, modify Makefile to your needs.
 #### Debian suggested packages
-`build-essential` or `clang' and 'make`.
+`build-essential` or `clang` and `make`.
 ### Windows
 There are currently no precompiled binaries or installer available.
 
@@ -60,9 +60,9 @@ If you already have VS without clang or if you just want a more up to date clang
 
 Run `WindowsVSBuild.bat` and a c2 executable will be created. You may of course also open the solution in VS2022 and build there.
 #### Option 2: Cygwin
-Clang seems outdated in Cygwin. Install gcc/g++ and GNU make. Then follow the GNU/Linux instructions and set up any path needed.
-#### Option 3: GNU tools
-If you take this route, you probably know what to do.
+Clang seems outdated in Cygwin. Install gcc/g++ and GNU make and then follow the GNU/Linux instructions and set up any path needed.
+#### Option 3: MinGW / GNU tools
+The Makefile will detect MinGW and apply appropriate switches: `make CXX=x86_64-w64-mingw32-g++`
 #### Windows PATH
 My Computer -> Properties -> Advanced System Settings -> Environment Variables -> Edit path for either User or System. Set the path to the directory where `c2.exe` was built to.
 # Usage

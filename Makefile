@@ -15,54 +15,50 @@ CXXFLAGS ?= -O2 -Wno-unused-result -g
 
 OS := $(shell uname -o)
 
-ifndef C2_PLATFORM
-	ifneq ($(ProgramFiles),)
-		C2_PLATFORM := Windows
-	else ifeq ($(OS),Cygwin)
-		C2_PLATFORM := Cygwin
-	else
-		C2_PLATFORM := Unix
-	endif
-endif
-
-# Fix some special cases.
-ifeq ($(C2_PLATFORM),Unix)
-	LDLIBS := $(LDLIBS) -ldl
-else ifeq ($(C2_PLATFORM),Windows)
+ifneq ($(ProgramFiles),)
 	TARGET_EXEC := $(TARGET_EXEC).exe
 endif
 
-# Prefer clang++ if available, but not on Cygwin
-ifeq ($(C2_PLATFORM),Cygwin)
-else
-	ifneq ($(shell which clang++),)
-		CXX := clang++
-	endif
-endif
-
 # Set flags depending on compiler
-ifeq ($(strip $(CXX)),g++)
-CXXFLAGS := $(CXXFLAGS) -std=gnu++17
+ifeq ($(findstring mingw,$(CXX)),mingw)
+	LDFLAGS := $(LDFLAGS) -static-libgcc -static-libstdc++
+else ifeq ($(findstring clang,$(OS)),clang)
+
 else
-CXXFLAGS := $(CXXFLAGS) -std=c++17
+	LDLIBS := $(LDLIBS) -ldl
 endif
 
-$(TARGET_EXEC): $(OBJS)
+ifeq ($(findstring clang,$(CXX)),clang)
+	CXXFLAGS := $(CXXFLAGS) -std=c++17
+else
+	CXXFLAGS := $(CXXFLAGS) -std=gnu++17
+endif
+
+C2_GITVERSION := $(shell git describe --always)
+
+ifeq ($(C2_GITVERSION),)
+	C2_GITVERSION := not set
+endif
+
+$(TARGET_EXEC): c2gitversion.h $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) $(LDFLAGS) $(LDLIBS) -o $@
 
 $(BUILD_DIR)/%.cpp.o: %.cpp
 	$(MKDIR_P) $(dir $@)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
+c2gitversion.h:
+	@echo "#define C2_GITVERSION \"$(value C2_GITVERSION)\"" > c2gitversion.h
+
 .PHONY: clean
 
 clean:
-	$(RM) -r $(BUILD_DIR)
+	$(RM) -r $(BUILD_DIR) c2gitversion.h
 
 debug:
+	@echo C2_GITVERSION=$(C2_GITVERSION)
 	@echo OS=$(OS)
 	@echo TARGET_EXEC=$(TARGET_EXEC)
-	@echo C2_PLATFORM=$(C2_PLATFORM)
 	@echo CXX=$(CXX)
 	@echo CXXFLAGS=$(CXXFLAGS)
 	@echo CPPFLAGS=$(CPPFLAGS)

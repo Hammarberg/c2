@@ -1,10 +1,9 @@
-*.vcxproj.user
 *~
 /build/
 /x64/
-/.depend
-/.depend.bak
+/*.vcxproj.user
 /.vs/
 /c2
 /c2.exe
 /**/.im/
+/c2gitversion.h
