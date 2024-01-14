@@ -47,12 +47,10 @@ From the c2 root type `make` (or `make CXX=clang++ -j`) and a c2 executable will
 Installation is optional as you can run c2 directly from the source root. If you want a global installation, type `sudo make install`. To uninstall, `sudo make uninstall`.
 
 If necessary, modify Makefile to your needs.
-#### Debian suggested packages
+#### Suggested Debian packages
 `build-essential` or `clang` and `make`.
 ### Windows
-There are currently no precompiled binaries or installer available.
-
-c2 can be built with VS2022 but requires clang to be installed on the system.
+Precompiled packages can be found at [binarybone.com/c2](https://binarybone.com/c2/). Tagged versions includes [WinLibs MinGW64](https://www.winlibs.com/) and are a standalone without additional dependencies: Unzip to any location and then double click `c2 cmd` to start a preconfigured command prompt.
 #### Option 1: VS2022 and clang
 You need [Visual Studio 2022 Community](https://visualstudio.microsoft.com/vs/community/) or better installed. You also need to select the optional clang tools during VS install. It's possible to modify an existing VS installation to include it.
 
