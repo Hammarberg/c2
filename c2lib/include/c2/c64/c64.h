@@ -22,9 +22,15 @@ public:
 	static char ascii2screen(char i);
 	static char ascii2petscii(char i);
 	void basic(const char *format, ...);
+
+	struct sid
+	{
+		var address, size, init, play, data;
+	};
 	
-	void loadsid(const char *path, var &init, var &play);
-	
+	sid load_sid(const char *path);
+	void place_sid(sid &obj);
+
 	void c2_reset_pass() override;
 	void c2_post() override;
 	

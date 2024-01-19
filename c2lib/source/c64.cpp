@@ -586,8 +586,10 @@ T swap_endian(T u)
     return dest.u;
 }
 
-void c64::loadsid(const char *path, var &init, var &play)
+c64::sid c64::load_sid(const char *path)
 {
+	sid obj;
+
 	struct shead
 	{
 		uint32_t magic;
@@ -605,30 +607,45 @@ void c64::loadsid(const char *path, var &init, var &play)
 	if(!fp.open(path))
 	{
 		c2_error("SID file not found");
-		return;
+		return obj;
 	}
 
 	fp.read(&head, sizeof(head));
 	
 	long offset = swap_endian(head.offset);
 	uint16_t load_address = swap_endian(head.load_address);
-	init = swap_endian(head.init_address);
-	play = swap_endian(head.play_address);
+	obj.init = swap_endian(head.init_address);
+	obj.play = swap_endian(head.play_address);
 
 	fp.seek(offset);
 	if(!load_address)
 	{
 		fp.read(&load_address, sizeof(load_address));
 	}
-	
-	int64_t write = load_address;
+
+	obj.address = load_address;
+
+	int size = 0;
+
 	while(!fp.eof())
 	{
-		c2_poke(write, fp.pop8());
-		write++;
+		obj.data[size] = fp.pop8();
+		size++;
 	}
+
+	obj.size = size;
 	
-	c2_verbose("SID $%04x-$%04x, init $%04x, play $%04x", int(load_address), int(write), int(init), int(play));
+	c2_verbose("SID $%04x-$%04x, init $%04x, play $%04x", int(load_address), int(load_address+size), int(obj.init), int(obj.play));
+
+	return obj;
+}
+
+void c64::place_sid(sid &obj)
+{
+	for(size_t r=0; r<obj.data.size(); r++)
+	{
+		push8(obj.data[r]);
+	}
 }
 
 int64_t c64::incprgorg(const char *file, size_t offset, size_t length)
