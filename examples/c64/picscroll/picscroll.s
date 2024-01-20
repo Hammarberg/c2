@@ -127,10 +127,7 @@ macro set_raster_irq #@line, @start
 
 #define KOALA "dark_faces.kla"
 
-			var sid_init
-			var sid_play
-
-			loadsid("Think_Twice_III.sid", sid_init, sid_play);
+			sid song=load_sid("Think_Twice_III.sid");
 
 			@ = $0002
 zp_start:
@@ -213,14 +210,14 @@ start:
 			cli
 
 			lda #0
-			jsr sid_init
+			jsr song.init
 
 			jmp @
 
 			rts
 irq1:
 			//inc $d020
-			jsr sid_play
+			jsr song.play
 			jsr scroll
 			jsr spritey
 			//dec $d020
@@ -346,6 +343,9 @@ siny:
 sprites:
 			for(int r=0;r<7*64;r++)
 				byte $00
+
+			@ = song.address;
+			place_sid(song);
 
 
 			@ = $2000
