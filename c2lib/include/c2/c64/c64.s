@@ -50,11 +50,6 @@ macro incprg @file, @param...
 	loadbin(file.str(), offset + 2, length);
 }
 
-macro vice break
-{
-	c64_vice("break @");
-}
-
 macro vice @in
 {
 	c64_vice(in);
