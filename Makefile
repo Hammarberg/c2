@@ -22,7 +22,7 @@ endif
 # Set flags depending on compiler
 ifeq ($(findstring mingw,$(CXX)),mingw)
 	LDFLAGS := $(LDFLAGS) -static-libgcc -static-libstdc++
-else ifeq ($(findstring clang,$(OS)),clang)
+else ifeq ($(findstring clang,$(CXX)),clang)
 
 else
 	LDLIBS := $(LDLIBS) -ldl
