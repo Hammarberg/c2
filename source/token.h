@@ -1,6 +1,6 @@
 /*
 	c2 - cross assembler
-	Copyright (C) 2022-2023  John Hammarberg (crt@nospam.binarybone.com)
+	Copyright (C) 2022-2024  John Hammarberg (crt@nospam.binarybone.com)
 
 	This file is part of c2.
 
@@ -12,10 +12,6 @@
 */
 
 #pragma once
-
-#ifdef _WIN32
-#define _CRT_SECURE_NO_WARNINGS
-#endif
 
 #include "linear.h"
 #include "lines.h"
