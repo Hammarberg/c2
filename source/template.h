@@ -13,9 +13,11 @@
 
 #pragma once
 #include "library.h"
+#include "json.h"
 #include <string>
 #include <vector>
 #include <filesystem>
+#include <memory>
 
 #define TEMPLATESFILE "templates.c2.json"
 
@@ -25,10 +27,12 @@ friend class clibrary;
 public:
 	ctemplate(clibrary &inlib);
 	~ctemplate();
+
+	typedef std::shared_ptr<json::base> tjson;
 	
 	void list();
 	std::string create(int arga, const char *argc[]);
-	
+	tjson create(const char *intemplate, const char *intitle, const char *indestpath);
 
 private:
 	clibrary &lib;

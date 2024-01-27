@@ -151,8 +151,9 @@ namespace json
 			return PAIR;
 		}
 
-		pair(std::string in)
+		pair(const std::string &in, base *insecond = nullptr)
 			: first(in)
+			, second(insecond)
 		{
 		}
 
@@ -234,7 +235,7 @@ namespace json
 
 		type GetType() const override
 		{
-			return ARRAY;
+			return STRING;
 		}
 
 		string(std::string in)
@@ -267,7 +268,7 @@ namespace json
 
 		type GetType() const override
 		{
-			return ARRAY;
+			return INTEGER;
 		}
 
 		bool IsNum() const override

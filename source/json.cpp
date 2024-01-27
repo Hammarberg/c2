@@ -23,110 +23,98 @@ namespace json
 
 		next:
 		p = _forward(p);
-		//do
-		//{
 
-			switch (*p)
+		switch (*p)
+		{
+		case '{':
+			b = (base *) new container;
+			p = b->Decode(nullptr, p + 1);
+			break;
+		case '[':
+			b = (base *) new array;
+			p = b->Decode(nullptr, p + 1);
+			break;
+		case '\"':
+		{
+			std::string s;
+			p = _string(s, p+1);
+			p = _forward(p);
+			if (*p == ':')
 			{
-			case '{':
-				b = (base *) new container;
+				b = (base *) new pair(s);
 				p = b->Decode(nullptr, p + 1);
-				break;
-			case '[':
-				b = (base *) new array;
-				p = b->Decode(nullptr, p + 1);
-				break;
-			case '\"':
-			{
-				std::string s;
-				p = _string(s, p+1);
-				p = _forward(p);
-				if (*p == ':')
-				{
-					b = (base *) new pair(s);
-					p = b->Decode(nullptr, p + 1);
-				}
-				else
-				{
-					b = (base *) new string(s);
-				}
-
 			}
+			else
+			{
+				b = (base *) new string(s);
+			}
+		}
 			break;
 
-			case '0':
-			case '1':
-			case '2':
-			case '3':
-			case '4':
-			case '5':
-			case '6':
-			case '7':
-			case '8':
-			case '9':
-			case '+':
-			case '-':
-			case '.':
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+		case '+':
+		case '-':
+		case '.':
+		{
+			std::string s;
+			bool fl = false;
+
+			while (*p && (isdigit(*p) || *p == '.' || *p == '+' || *p == '-'|| *p == 'e' || *p == 'E'))
 			{
-				std::string s;
-				bool fl = false;
-
-				while (*p && (isdigit(*p) || *p == '.' || *p == '+' || *p == '-'|| *p == 'e' || *p == 'E'))
-				{
-					if (*p == '.')
-						fl = true;
-					s += *p;
-					p++;
-				}
-
-				if (fl)
-				{
-					b = (base *) new floating(atof(s.c_str()));
-				}
-				else
-				{
-					b = (base *) new integer(atoll(s.c_str()));
-				}
-
-				//p = b->Decode(nullptr, p + 1);
-
-			}
-				break;
-			case 't':
-			case 'T':
-			{
-				if (strncasecmp(p, "true", 4) == 0)
-				{
-					b = (base *) new boolean(true);
-					p += 4;
-				}
-				break;
-			}
-			case 'f':
-			case 'F':
-			{
-				if (strncasecmp(p, "false", 5) == 0)
-				{
-					b = (base *) new boolean(false);
-					p += 5;
-				}
-				break;
-			}
-			case ',':
+				if (*p == '.')
+					fl = true;
+				s += *p;
 				p++;
-				goto next;
-			case 0:
-				break;
-			default:
-				assert(false);
-				break;
 			}
 
-			//p = _forward(p);
-
-		//} 
-		//while (*p && *p == ',');
-
+			if (fl)
+			{
+				b = (base *) new floating(atof(s.c_str()));
+			}
+			else
+			{
+				b = (base *) new integer(atoll(s.c_str()));
+			}
+		}
+			break;
+		case 't':
+		case 'T':
+		{
+			if (strncasecmp(p, "true", 4) == 0)
+			{
+				b = (base *) new boolean(true);
+				p += 4;
+			}
+			break;
+		}
+		case 'f':
+		case 'F':
+		{
+			if (strncasecmp(p, "false", 5) == 0)
+			{
+				b = (base *) new boolean(false);
+				p += 5;
+			}
+			break;
+		}
+		case ',':
+			p++;
+			goto next;
+		case 0:
+			break;
+		default:
+			assert(false);
+			break;
+		}
 
 		*out = b;
 
@@ -232,50 +220,44 @@ namespace json
 
 	std::string pair::Encode(bool compact, int level, bool com)
 	{
-		return _level(compact, level) + "\"" + first + "\":" + second->Encode(compact, 1, com);
+		return _level(compact, level) + "\"" + first + (compact ? "\":" : "\": ")  +  second->Encode(compact, level, com) + "\n";
 	}
 
 	std::string container::Encode(bool compact, int level, bool com)
 	{
-		std::string s = _level(compact, level) + (compact ? "{" : "{\n");
+		std::string s = (compact ? "{" : "{\n");
 
 		for (size_t r = 0; r < data.size(); r++)
 		{
 			auto i = data[r];
 			s += i->Encode(compact, level + 1, r + 1 < data.size());
-			if(!compact)
-				s += "\n";
 		}
 
 		s += _level(compact, level);
 		s += com ? "}," : "}";
-		if (!compact)s += "\n";
 
 		return s;
 	}
 
 	std::string array::Encode(bool compact, int level, bool com)
 	{
-		std::string s = _level(compact, level) + (compact ? "[" : "[\n");
+		std::string s = (compact ? "[" : "[\n");
 
 		for (size_t r = 0; r < data.size(); r++)
 		{
 			auto i = data[r];
 			s += i->Encode(compact, level + 1, r + 1 < data.size());
-			if(!compact)
-				s += "\n";
 		}
 
 		s += _level(compact, level);
 		s += com ? "]," : "]";
-		if (!compact)s += "\n";
 
 		return s;
 	}
 
 	std::string string::Encode(bool compact, int level, bool com)
 	{
-		return _level(compact, level) + "\"" + data + (com ? "\"," : "\"");
+		return "\"" + data + (com ? "\"," : "\"");
 	}
 
 	std::string integer::Encode(bool compact, int level, bool com)
@@ -286,18 +268,18 @@ namespace json
 #else
 		snprintf(buf, sizeof(buf), "%lld", data);
 #endif
-		return _level(compact, level) + std::string(buf) + (com ? "," : "");
+		return std::string(buf) + (com ? "," : "");
 	}
 
 	std::string boolean::Encode(bool compact, int level, bool com)
 	{
-		return _level(compact, level) + std::string(data?"true":"false") + (com ? "," : "");
+		return std::string(data?"true":"false") + (com ? "," : "");
 	}
 
 	std::string floating::Encode(bool compact, int level, bool com)
 	{
 		char buf[64];
 		snprintf(buf, sizeof(buf), "%g", data);
-		return _level(compact, level) + std::string(buf) + (com ? "," : "");
+		return std::string(buf) + (com ? "," : "");
 	}
 };

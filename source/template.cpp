@@ -28,7 +28,6 @@ ctemplate::~ctemplate()
 {
 }
 
-
 bool ctemplate::loadfile(const char *file, std::string &out)
 {
 	FILE *fp = lib.lib_fopen(file, "r");
@@ -88,16 +87,16 @@ void ctemplate::list()
 	}
 }
 
-std::string ctemplate::create(int arga, const char *argc[])
+ctemplate::tjson ctemplate::create(const char *intemplate, const char *intitle, const char *indestpath)
 {
+	std::filesystem::path destpath = indestpath;
 	std::vector<std::filesystem::path> out;
 	lib.lib_get_file_path(TEMPLATESFILE, out);
 
 	json::container *t = nullptr;
-	json::array* p;
-	
+
 	std::unique_ptr<json::base> cfg;
-		
+
 	for(size_t r=0; r<out.size() && t == nullptr; r++)
 	{
 		std::string buf;
@@ -105,9 +104,9 @@ std::string ctemplate::create(int arga, const char *argc[])
 			throw "Error loading " TEMPLATESFILE;
 
 		cfg.reset(json::base::Decode(buf.c_str()));
-		
+
 		// Templates
-		p = (json::array*)cfg->Find("templates");
+		json::array *p = (json::array*)cfg->Find("templates");
 		if (p)
 		{
 			if (p->GetType() != json::type::ARRAY)
@@ -123,8 +122,8 @@ std::string ctemplate::create(int arga, const char *argc[])
 					throw "Config type not pair";
 				}
 				std::string desc = ppair->second->Get("description").GetString();
-				
-				if(ppair->first == argc[0])
+
+				if(ppair->first == intemplate)
 				{
 					t = (json::container *)ppair->second;
 					if (t->GetType() != json::type::CONTAINER)
@@ -140,59 +139,69 @@ std::string ctemplate::create(int arga, const char *argc[])
 			throw "No templates array found in" TEMPLATESFILE;
 		}
 	}
-	
+
 	if(!t)
 	{
 		throw "Could not find specified template";
 	}
-	
-	std::filesystem::path destpath;
-	if(arga == 3)
-	{
-		destpath = argc[2];
-		std::filesystem::create_directories(destpath);
-	}
-	
+
 	std::string super = t->Get("super").GetString();
 	std::string include = t->Get("include").GetString();
-	std::string title = argc[1];
-	
+	std::string title = intitle;
+
 	std::vector<std::pair<std::string, std::string>> translate;
 	translate.push_back({"{super}",super});
 	translate.push_back({"{title}",title});
 	translate.push_back({"{include}",include});
-	
-	std::filesystem::path projfile = destpath / (title + ".c2.json");
-	
-	if(std::filesystem::exists(projfile))
-		throw "A project already exist";
-	
-	FILE *fp = fopen(projfile.string().c_str(), "w");
-	
-	struct sdestroy
-	{
-		sdestroy(FILE *ifp):fp(ifp){}
-		~sdestroy(){fclose(fp);}
-		FILE *fp;
-	}scoped(fp);
-	
-	fprintf(fp,
-		"{\n"
-		"\t\"title\" : \"%s\",\n"
-		"\t\"basedir\":\".\",\n"
-		"\t\"arguments\" : \"%s\",\n"
-		"\t\"execute\" : \"%s\",\n"
-		"\t\"files\":[\n",
-		title.c_str(),
-		str_translate(t->Get("arguments").GetString(), translate).c_str(),
-		str_translate(t->Get("execute").GetString(), translate).c_str());
-	
-	p = (json::array*)t->Find("template");
+
+	json::container *c = new json::container();
+	tjson proj = tjson(c);
+
+	c->data.push_back(
+		new json::pair(
+			"title",
+			new json::string(title)
+		)
+	);
+
+	c->data.push_back(
+		new json::pair(
+			"basedir",
+			new json::string(".")
+		)
+	);
+
+	c->data.push_back(
+		new json::pair(
+			"arguments",
+			new json::string(str_translate(t->Get("arguments").GetString(), translate).c_str())
+		)
+	);
+
+	c->data.push_back(
+		new json::pair(
+			"execute",
+			new json::string(str_translate(t->Get("execute").GetString(), translate).c_str())
+		)
+	);
+
+	json::array *f = new json::array;
+
+	c->data.push_back(
+		new json::pair(
+			"files",
+			f
+		)
+	);
+
+	// Template
+
+	json::array* p = (json::array*)t->Find("template");
 	if (p->GetType() != json::type::ARRAY)
 	{
 		throw "template type not array";
 	}
-	
+
 	for (size_t r = 0; r < p->data.size(); r++)
 	{
 		json::pair *ppair = (json::pair *)p->data[r];
@@ -200,37 +209,54 @@ std::string ctemplate::create(int arga, const char *argc[])
 		{
 			throw "Config type not pair";
 		}
-		
+
 		std::filesystem::path src = "template";
 		src /= ppair->first;
-		
+
 		json::container *t = (json::container *)ppair->second;
 		if (t->GetType() != json::type::CONTAINER)
 		{
 			throw "Expected container";
 		}
-		
+
 		std::string dstfile = str_translate(t->Get("target").GetString(), translate);
 		std::filesystem::path dst = destpath / dstfile;
 		file_translate(src.string().c_str(), dst.string().c_str(), translate);
-		
+
 		if(t->Get("c2").GetBool())
 		{
-			fprintf(fp,"\t\t\"%s\":{\n", dstfile.c_str());
-			fprintf(fp,"\t\t\t\"c2\" : true,\n");
-			fprintf(fp,"\t\t\t\"flags\" : \"%s\"\n",str_translate(t->Get("flags").GetString(), translate).c_str());
-			fprintf(fp,"\t\t},\n");
+			json::container *sc = new json::container;
+
+			f->data.push_back(
+				new json::pair(dstfile, sc)
+			);
+
+			sc->data.push_back(
+				new json::pair(
+					"c2",
+				   new json::boolean(true)
+				)
+			);
+
+			sc->data.push_back(
+				new json::pair(
+					"flags",
+					new json::string(
+					   str_translate(t->Get("flags").GetString(), translate).c_str()
+					)
+				)
+			);
 		}
 	}
-	
+
 	// source
-	
+
 	p = (json::array*)t->Find("source");
 	if (p->GetType() != json::type::ARRAY)
 	{
 		throw "template type not array";
 	}
-	
+
 	for (size_t r = 0; r < p->data.size(); r++)
 	{
 		json::pair *ppair = (json::pair *)p->data[r];
@@ -238,7 +264,7 @@ std::string ctemplate::create(int arga, const char *argc[])
 		{
 			throw "Config type not pair";
 		}
-		
+
 		std::filesystem::path src("source");
 		src /= ppair->first;
 		json::container *t = (json::container *)ppair->second;
@@ -246,16 +272,58 @@ std::string ctemplate::create(int arga, const char *argc[])
 		{
 			throw "Expected container";
 		}
-		
-		fprintf(fp,"\t\t\"%s\":{\n", src.string().c_str());
-		
-		fprintf(fp,"\t\t\t\"external\" : true,\n");
-		fprintf(fp,"\t\t\t\"flags\" : \"%s\"\n",str_translate(t->Get("flags").GetString(), translate).c_str());
-		fprintf(fp,"\t\t}%s\n", r != p->data.size()-1 ? "," : "");
+
+		json::container *sc = new json::container;
+
+		f->data.push_back(
+			new json::pair(src, sc)
+		);
+
+		sc->data.push_back(
+			new json::pair(
+				"external",
+				new json::boolean(true)
+			)
+		);
+
+		sc->data.push_back(
+			new json::pair(
+				"flags",
+				new json::string(
+					str_translate(t->Get("flags").GetString(), translate).c_str()
+				)
+			)
+		);
 	}
-	
-	fprintf(fp,"\t]\n}\n");
-	
+
+	return proj;
+}
+
+std::string ctemplate::create(int arga, const char *argc[])
+{
+	std::string title = argc[1];
+	std::filesystem::path destpath;
+	if(arga == 3)
+	{
+		destpath = argc[2];
+		std::filesystem::create_directories(destpath);
+	}
+
+	std::filesystem::path projfile = destpath / (title + ".c2.json");
+
+	if(std::filesystem::exists(projfile))
+		throw "A project already exist";
+
+	ctemplate::tjson proj = create(argc[0], title.c_str(), destpath.c_str());
+
+	std::string c2json = proj->Encode(false);
+
+	FILE *fp = fopen(projfile.string().c_str(), "w");
+
+	fwrite(c2json.c_str(), 1, c2json.size(), fp);
+
+	fclose(fp);
+
 	return projfile.string();
 }
 
