@@ -22,7 +22,6 @@ endif
 # Set flags depending on compiler
 ifeq ($(findstring mingw,$(CXX)),mingw)
 	LDFLAGS := $(LDFLAGS) -static-libgcc -static-libstdc++
-	CPPFLAGS := $(CPPFLAGS) -D_NATIVE_WCHAR_T_DEFINED=OFF
 else ifeq ($(findstring clang,$(CXX)),clang)
 
 else

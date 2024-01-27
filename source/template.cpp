@@ -276,7 +276,7 @@ ctemplate::tjson ctemplate::create(const char *intemplate, const char *intitle, 
 		json::container *sc = new json::container;
 
 		f->data.push_back(
-			new json::pair(src, sc)
+			new json::pair(src.string(), sc)
 		);
 
 		sc->data.push_back(
@@ -314,7 +314,7 @@ std::string ctemplate::create(int arga, const char *argc[])
 	if(std::filesystem::exists(projfile))
 		throw "A project already exist";
 
-	ctemplate::tjson proj = create(argc[0], title.c_str(), destpath.c_str());
+	ctemplate::tjson proj = create(argc[0], title.c_str(), destpath.string().c_str());
 
 	std::string c2json = proj->Encode(false);
 
