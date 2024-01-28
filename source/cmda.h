@@ -25,7 +25,10 @@ public:
 	void printf_info() override;
 	bool verify(int iter, const char *sw, int min_args, int max_args, int *arga, const char ***argc) override;
 	void cmdfree(void *ptr) override;
-	
+
+	std::string get_c2_exe();
+	std::string get_c2_exe_path();
+
 	std::string main();
 	std::vector<std::string> sargs;
 	
@@ -39,4 +42,6 @@ public:
 	};
 	
 	std::vector<cswitch> data;
+
+
 };

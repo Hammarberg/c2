@@ -55,7 +55,7 @@ namespace json
 
 		virtual std::string Encode(bool compact = true, int level = 0, bool com = false)
 		{
-			return "";
+			return std::string();
 		}
 		
 		static base *Decode(const char *p)
@@ -70,9 +70,9 @@ namespace json
 			return false;
 		}
 
-		virtual const char *GetString(void) const
+		virtual std::string GetString(void) const
 		{
-			return "";
+			return std::string();
 		}
 
 		virtual int64_t GetInteger(void) const
@@ -93,43 +93,28 @@ namespace json
 		base *Find(const char *path, size_t len = 0);
 
 		const base &Get(const char *path);
+
+		virtual size_t Size()
+		{
+			return 0;
+		}
 		
+		virtual base *GetAt(size_t pos)
+		{
+			return nullptr;
+		}
+
+		virtual base *Clone()
+		{
+			return new base;
+		}
+
 	protected:
 
-		static std::string _level(bool compact, int level)
-		{
-			std::string s;
-			if (!compact)for (int l = 0; l < level; l++)s += "\t";
-			return s;
-		}
-
-		static const char *_forward(const char *p)
-		{
-			while (*p && isspace(*p))
-				p++;
-
-			return p;
-		}
-
-		static const char *_string(std::string &out, const char *p)
-		{
-			while (*p && *p != '\"')
-			{
-				out += *p;
-				p++;
-			}
-			p++;
-
-			return p;
-		}
-
-		static size_t _slashparse(const char *in)
-		{
-			size_t n = 0;
-			while (in[n] && in[n] != '/')
-				n++;
-			return n;
-		}
+		static std::string _level(bool compact, int level);
+		static const char *_forward(const char *p);
+		static const char *_string(std::string &out, const char *p);
+		static size_t _slashparse(const char *in);
 
 		static const char *StaticDecode(base **out, const char *p);
 
@@ -149,6 +134,11 @@ namespace json
 		type GetType() const override
 		{
 			return PAIR;
+		}
+
+		base *Clone() override
+		{
+			return new pair(first, second->Clone());
 		}
 
 		pair(const std::string &in, base *insecond = nullptr)
@@ -180,6 +170,26 @@ namespace json
 			return CONTAINER;
 		}
 
+		size_t Size() override
+		{
+			return data.size();
+		}
+
+		base *GetAt(size_t pos) override
+		{
+			return data[pos];
+		}
+
+		base *Clone() override
+		{
+			container *c = new container;
+			for (auto i : data)
+			{
+				c->data.push_back(i->Clone());
+			}
+			return (base *)c;
+		}
+
 		container()
 		{
 		}
@@ -207,6 +217,26 @@ namespace json
 		type GetType() const override
 		{
 			return ARRAY;
+		}
+
+		size_t Size() override
+		{
+			return data.size();
+		}
+
+		base *GetAt(size_t pos) override
+		{
+			return data[pos];
+		}
+
+		base *Clone() override
+		{
+			array *a = new array;
+			for (auto i : data)
+			{
+				a->data.push_back(i->Clone());
+			}
+			return a;
 		}
 
 		array()
@@ -238,6 +268,11 @@ namespace json
 			return STRING;
 		}
 
+		base *Clone() override
+		{
+			return new string(data);
+		}
+
 		string(std::string in)
 			: data(in)
 		{
@@ -249,9 +284,9 @@ namespace json
 
 		std::string Encode(bool compact = true, int level = 0, bool com = false) override;
 
-		const char *GetString(void) const override
+		std::string GetString(void) const override
 		{
-			return data.c_str();
+			return data;
 		}
 
 		double GetBool(void) const override
@@ -274,6 +309,11 @@ namespace json
 		bool IsNum() const override
 		{
 			return true;
+		}
+
+		base *Clone() override
+		{
+			return new integer(data);
 		}
 
 		integer(int64_t in)
@@ -317,6 +357,11 @@ namespace json
 		bool IsNum() const override
 		{
 			return true;
+		}
+
+		base *Clone() override
+		{
+			return new boolean(data);
 		}
 
 		boolean(bool in)
@@ -363,6 +408,11 @@ namespace json
 			return true;
 		}
 
+		base *Clone() override
+		{
+			return new floating(data);
+		}
+
 		floating(double in)
 			: data(in)
 		{
@@ -389,5 +439,21 @@ namespace json
 
 		std::string Encode(bool compact = true, int level = 0, bool com = false) override;
 	};
+
+	template<typename Function>
+	void iterate(base *sw, type filter, Function && fn)
+	{
+		if(!sw)
+			return;
+
+		for(size_t r=0;r<sw->Size();r++)
+		{
+			base *p = sw->GetAt(r);
+			if(p->GetType() == filter)
+			{
+				fn(p);
+			}
+		}
+	}
 
 };

@@ -170,6 +170,7 @@ namespace json
 		case INTEGER:
 		case BOOLEAN:
 		case FLOAT:
+		case NONE:
 		default:
 			assert(0);
 		}
@@ -187,6 +188,40 @@ namespace json
 		return *p;
 	}
 	
+	std::string json::base::_level(bool compact, int level)
+	{
+		std::string s;
+		if (!compact)for (int l = 0; l < level; l++)s += "\t";
+		return s;
+	}
+
+	const char *json::base::_forward(const char *p)
+	{
+		while (*p && isspace(*p))
+			p++;
+
+		return p;
+	}
+
+	const char *json::base::_string(std::string &out, const char *p)
+	{
+		while (*p && *p != '\"')
+		{
+			out += *p;
+			p++;
+		}
+		p++;
+
+		return p;
+	}
+
+	size_t json::base::_slashparse(const char *in)
+	{
+		size_t n = 0;
+		while (in[n] && in[n] != '/')
+			n++;
+		return n;
+	}
 
 	const char *container::Decode(base **out, const char *p)
 	{

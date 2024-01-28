@@ -135,6 +135,7 @@ void cmda::cswitch::print()
 
 void cmda::printf_info()
 {
+	fprintf(stdout, "Usage: %s [options] [file]\n", get_c2_exe().c_str());
 	for(size_t r=0;r<data.size();r++)
 	{
 		data[r].print();
@@ -289,4 +290,16 @@ std::string cmda::main()
     }
 	
 	return project;
+}
+
+std::string cmda::get_c2_exe()
+{
+	std::filesystem::path s = sargs[0];
+	return s.filename().string();
+}
+
+std::string cmda::get_c2_exe_path()
+{
+	std::filesystem::path s = sargs[0];
+	return s.string();
 }

@@ -84,7 +84,7 @@ int main(int arga, char *argc[])
 		proj.command.invoke("--create-project", [&](int arga, const char *argc[])
 		{
 			ctemplate tpl(proj);
-			projpath = tpl.create(arga, argc);
+			projpath = tpl.tpl_create(arga, argc);
 			doexecute = false; //Only build
 		});
 		
@@ -110,6 +110,7 @@ int main(int arga, char *argc[])
 			}
 			
 			fprintf(stdout, TITLE);
+
 			proj.command.printf_info();
 			dobuild = false;
 			doexecute = false;
@@ -137,7 +138,7 @@ int main(int arga, char *argc[])
 		proj.command.invoke("--list-templates", [&](int arga, const char *argc[])
 		{
 			ctemplate tpl(proj);
-			tpl.list();
+			tpl.tpl_list();
 			dobuild = false;
 			doexecute = false;
 		});

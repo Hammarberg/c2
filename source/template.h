@@ -28,16 +28,21 @@ public:
 	ctemplate(clibrary &inlib);
 	~ctemplate();
 
-	typedef std::shared_ptr<json::base> tjson;
-	
-	void list();
-	std::string create(int arga, const char *argc[]);
-	tjson create(const char *intemplate, const char *intitle, const char *indestpath);
+	void tpl_list();
+	std::string tpl_create(int arga, const char *argc[]);
 
 private:
 	clibrary &lib;
 	bool loadfile(const char *file, std::string &out);
 	void file_translate(const char *src, const char *dst, const std::vector<std::pair<std::string, std::string>> &translate);
 	static std::string str_translate(std::string str, const std::vector<std::pair<std::string, std::string>> &translate);
+
+	typedef std::shared_ptr<json::base> tjson;
+
+	tjson tpl_load(const char *intemplate);
+	tjson create(const char *intemplate, const char *intitle, const char *indestpath);
+	void tpl_file_move(ctemplate::tjson &tpl, const std::filesystem::path &destpath, std::vector<std::pair<std::string, std::string>> &translate, bool copyall);
+
+	void tpl_build_translate(const std::string& super, const std::string& title, const std::string& include, std::vector<std::pair<std::string, std::string>>& translate);
 };
 
