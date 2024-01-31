@@ -12,15 +12,22 @@
 */
 
 #include "cmda.h"
+#include "log.h"
+
+#include <cstdio>
 #include <cstdlib>
 #include <filesystem>
-#include <cstdio>
+
+static bool _isspace(char b)
+{
+	return b == 0x0d || b == 0x0a || b == ' ' || b == '\t';
+}
 
 void cmda::add_args(int arga, char *args[])
 {
 	for(int r=0;r<arga;r++)
 	{
-		sargs.push_back(args[r]);
+		split(args[r]);
 	}
 }
 
@@ -60,13 +67,58 @@ void cmda::add_args(const char *argstr)
 			}
 		}
 		if(tmp.size())
+			split(tmp.c_str());
+	}
+}
+
+void cmda::split(const char *sarg)
+{
+	int pos = 0;
+
+	for(;;)
+	{
+		while(sarg[pos] && _isspace(sarg[pos]))
+			pos++;
+
+		if(!sarg[pos])
+			break;
+
+		if(sarg[pos] == '-' && sarg[pos+1] != 0 && sarg[pos+1] != '-')
+		{
+			pos++;
+			while(sarg[pos] && !_isspace(sarg[pos]))
+			{
+				std::string tmp = "-";
+				tmp += sarg[pos];
+				//printf("split: \"%s\"\n",tmp.c_str());
+				sargs.push_back(tmp);
+				pos++;
+			}
+		}
+		else
+		{
+			std::string tmp;
+			while(sarg[pos] && !_isspace(sarg[pos]))
+			{
+				tmp += sarg[pos];
+				pos++;
+			}
+			//printf("split: \"%s\"\n",tmp.c_str());
 			sargs.push_back(tmp);
+		}
 	}
 }
 
 void cmda::declare(const char *slong, const char *sshort, const char *sinfo, int min_args, int max_args)
 {
 	// Verify switches
+	/*
+	if(sshort)
+		VERBOSE(2, "Declaring switch %s, %s\n", sshort, slong);
+	else
+		VERBOSE(2, "Declaring switch %s\n", slong);
+	*/
+
 	std::string stmp = slong;
 	if(stmp.size() < 3 || (stmp.size() >= 3 && stmp.substr(0, 2) != "--"))
 	{
@@ -86,11 +138,6 @@ void cmda::declare(const char *slong, const char *sshort, const char *sinfo, int
 	{
 		if(data[r].slong == slong || (sshort && data[r].sshort == sshort))
 		{
-			if(sshort)
-				fprintf(stderr, "Declaring switch %s, %s\n", sshort, slong);
-			else
-				fprintf(stderr, "Declaring switch %s\n", slong);
-			
 			data[r].print();
 			throw "Switch already declared";
 		}

@@ -24,7 +24,6 @@ class sproject : public clibrary
 public:
 
 	sproject();
-
 	~sproject();
 
 	struct stimestamp
@@ -67,7 +66,7 @@ public:
 		void clear_dirty();
 	};
 
-	bool verbose = false;
+	int verbose = 0;
 
 	cmda command;
 

@@ -12,6 +12,7 @@
 */
 
 #include "c2a.h"
+#include "log.h"
 #include <algorithm>
 #include <cstdarg>
 
@@ -444,6 +445,7 @@ bool c2a::match_macro_parameters(const std::vector<stok *> &def, const std::vect
 bool c2a::match_macro(stok *io, toklink &link)
 {
 	stok *o = io;
+	info(6, o, "Testing macro %s\n", o->name);
 	//printf("%s\n", o->name);
 	std::string stmp = o->name;
 	stmp = makelower(stmp);
@@ -453,6 +455,8 @@ bool c2a::match_macro(stok *io, toklink &link)
 		return false;
 	}
 	
+	info(5, o, "Matching macro %s\n", o->name);
+
 	auto &v = i->second;
 	
 	stok *pend = o = o->get_next_nonspace();
@@ -1553,6 +1557,7 @@ void c2a::s_parse2(toklink &link)
 
 void c2a::c_parse(toklink &link)
 {
+	VERBOSE(3, "Parsing c2 sections\n");
 	std::string stmp;
 	for(;;)
 	{
@@ -1612,6 +1617,9 @@ void c2a::c_parse(toklink &link)
 
 void c2a::process(const char *infile, const char *outfile)
 {
+	VERBOSE(1, "Processing macros\n");
+	VERBOSE(3, "Processing macros of %s\n", infile);
+
 	tokline in(*this, files);
 	in.load(infile);
 	
@@ -1671,5 +1679,27 @@ void c2a::warning(stok *o, const char *format, ...)
 	else
 	{
 		fprintf(stderr, "warning: %s", tmp);
+	}
+}
+
+void c2a::info(int verboselevel, stok *o, const char *format, ...)
+{
+	if(verboselevel <= verbose)
+	{
+		char tmp[256];
+
+		va_list args;
+		va_start (args, format);
+		vsnprintf (tmp, sizeof(tmp), format, args);
+		va_end (args);
+
+		if(o)
+		{
+			fprintf(stderr, "%s:%d: %s", files[o->fileindex].c_str(), o->line, tmp);
+		}
+		else
+		{
+			fprintf(stderr, "%s", tmp);
+		}
 	}
 }

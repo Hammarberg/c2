@@ -22,7 +22,7 @@ class c2a : public slinear_alloc<>
 {
 public:
 
-	c2a(bool inverbose)
+	c2a(int inverbose)
 	: verbose(inverbose)
 	{
 		// Create root scope space
@@ -96,7 +96,7 @@ public:
 	stok *c2_asm = nullptr;
 	stok *c2_end = nullptr;
 	
-	bool verbose = false;
+	int verbose = 0;
 	
 	stok *preprocessprefix(stok *o, toklink &link);
 
@@ -132,5 +132,5 @@ private:
 	
 	void error(stok *o, const char *format, ...);
 	void warning(stok *o, const char *format, ...);
-	
+	void info(int verboselevel, stok *o, const char *format, ...);
 };

@@ -38,7 +38,7 @@ int main(int arga, char *argc[])
 		proj.command.declare("--list-templates", "-l", "List available templates for project creation");
 		proj.command.declare("--c2-library-dir", "-D", "<path>: Add a c2 library path", 1);
 		proj.command.declare("--include", "-i", "<path>: Add an include search path for source and binaries", 1);
-		proj.command.declare("--verbose", "-v", "Output more information");
+		proj.command.declare("--verbose", "-v", "Output more information. Can be stacked for even more: -vvv");
 		
 		bool doexecute = true;
 		bool dobuild = true;
@@ -46,7 +46,7 @@ int main(int arga, char *argc[])
 		
 		proj.command.invoke("--verbose", [&](int arga, const char *argc[])
 		{
-			proj.verbose = true;
+			proj.verbose++;
 		});
 		
 		{

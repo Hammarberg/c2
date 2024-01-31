@@ -13,6 +13,7 @@
 #include "project.h"
 #include "json.h"
 #include "c2a.h"
+#include "log.h"
 
 #include <cstring>
 #include <sys/stat.h>
@@ -277,10 +278,8 @@ void sproject::extract_dependencies(sproject::sfile *data, const std::string &fi
     command += lib_generate_includes(c2) + stdc + " -MM -MG " + quote_path(file);
     std::string output;
 
-    if (verbose)
-    {
-        fprintf(stderr, "Executing: %s\n", command.c_str());
-    }
+    VERBOSE(2,"Executing: %s\n", command.c_str());
+
 #ifdef _WIN32
     command = "\"" + command + "\"";
 #endif
@@ -456,10 +455,7 @@ void sproject::sh_execute(const char *str, bool silent)
 #else
     std::string tmp = str;
 #endif
-    if(verbose)
-    {
-        fprintf(stderr ,"Executing: %s\n", tmp.c_str());
-    }
+    VERBOSE(2 ,"Executing: %s\n", tmp.c_str());
     FILE *ep = popen(tmp.c_str(), "r");
     if(!ep)
     {
@@ -601,11 +597,7 @@ bool sproject::load_project(const char* projectfile, bool readonly)
     // Invalidate everything if project file changed
     if(!(projecttime == tproj))
     {
-        if(verbose)
-        {
-            fprintf(stderr, "%s is dirty\n", projectfile);
-        }
-
+        VERBOSE(1, "%s is dirty\n", projectfile);
         should_rebuild = true;
     }
 
@@ -700,13 +692,11 @@ void sproject::build(bool doexecute)
         std::filesystem::path final_file = file_subpath;
 
         bool dirty = f->is_dirty();
-        if(verbose && dirty)
-        {
-            fprintf(stderr, "%s is dirty\n", final_file.string().c_str());
-        }
 
         if(dirty)
         {
+            VERBOSE(1, "%s is dirty\n", final_file.string().c_str());
+
             dirty_link = true;
             extract_dependencies(f, final_file.string(), f->c2);
 
@@ -778,10 +768,7 @@ void sproject::build(bool doexecute)
 
     if(dirty_link)
     {
-        if(verbose)
-        {
-            fprintf(stderr, "%s is dirty\n", link_target.c_str());
-        }
+        VERBOSE(1, "%s is dirty\n", link_target.c_str());
         cmd = compiler + stdc + " -g -shared -o " + quote_path(link_target);
         for(size_t r=0; r<files.size(); r++)
         {
@@ -792,10 +779,7 @@ void sproject::build(bool doexecute)
         sh_execute(cmd.c_str());
     }
 
-    if (verbose)
-    {
-        fprintf(stderr, "Shared object path: '%s'\n", link_target.c_str());
-    }
+    VERBOSE(2, "Shared object path: '%s'\n", link_target.c_str());
 
     if(!load_module())
     {
@@ -829,10 +813,7 @@ void sproject::build(bool doexecute)
 
     if(doexecute && execute.size())
     {
-        if(verbose)
-        {
-            fprintf(stderr ,"Executing: %s\n", execute.c_str());
-        }
+        VERBOSE(2 ,"Executing: %s\n", execute.c_str());
 
         system(execute.c_str());
     }
@@ -842,10 +823,7 @@ bool sproject::load_module()
 {
     if(!hasm)
     {
-        if (verbose)
-        {
-            fprintf(stderr, "Attempting to load shared object %s\n", get_link_target().c_str());
-        }
+        VERBOSE(3, "Attempting to load shared object %s\n", get_link_target().c_str());
 #ifndef _WIN32
         hasm = dlopen(get_link_target().c_str(), RTLD_LAZY);
 #else
@@ -855,10 +833,7 @@ bool sproject::load_module()
         {
             std::filesystem::path link_target_full = std::filesystem::absolute(get_link_target());
 
-            if (verbose)
-            {
-                fprintf(stderr, "Attempting to load shared object %s\n", link_target_full.string().c_str());
-            }
+            VERBOSE(3, "Attempting to load shared object %s\n", link_target_full.string().c_str());
 
             hasm = LoadLibraryA(link_target_full.string().c_str());
         }
@@ -872,10 +847,7 @@ bool sproject::load_module()
 #endif
         if(!c2_object_instance)
         {
-            if (verbose)
-            {
-                fprintf(stderr, "Failed to resolve c2_get_object_instance\n");
-            }
+            VERBOSE(1, "Failed to resolve c2_get_object_instance\n");
 
             unload_module();
             return false;
