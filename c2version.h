@@ -1,1 +1,1 @@
-#define C2_VERSION "0.5.1"
+#define C2_VERSION "0.5.2"
