@@ -100,7 +100,7 @@ public:
 	static std::string make_ext(const std::string &file, const char *ext);
 	void sh_execute(const char *str, bool silent = false);
 	void set_compiler();
-	bool load_project(const char* projectfile, bool readonly);
+	bool load_project(ctemplate::tjson cfg, const char* projectfile, bool readonly);
 	void build(bool doexecute);
 
 	c2i *(*c2_object_instance)(cmdi *) = nullptr;

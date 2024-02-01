@@ -43,4 +43,6 @@ public:
 	};
 	
 	std::vector<cswitch> data;
+
+
 };

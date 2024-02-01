@@ -90,7 +90,7 @@ int main(int arga, char *argc[])
 		
 		if(projpath.size())
 		{
-			if(!proj.load_project(projpath.c_str(), !dobuild))
+			if(!proj.load_project(nullptr, projpath.c_str(), !dobuild))
 			{
 				throw "Error loading project file";
 			}

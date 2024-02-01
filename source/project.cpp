@@ -552,17 +552,21 @@ void sproject::set_compiler()
     }
 }
 
-bool sproject::load_project(const char* projectfile, bool readonly)
+bool sproject::load_project(ctemplate::tjson cfg, const char* projectfile, bool readonly)
 {
-    std::string bdata, tmp;
-    if(!lib_load_file_direct(projectfile, bdata))
-        return false;
-
-    // Stat projectfile before changing directory
+    std::string tmp;
+	
     stimestamp tproj;
-    tproj.stat(projectfile);
-
-    std::unique_ptr<json::base> cfg(json::base::Decode(bdata.c_str()));
+	if(projectfile)
+	{
+		std::string bdata;
+		if(!lib_load_file_direct(projectfile, bdata))
+			return false;
+		
+		cfg.reset(json::base::Decode(bdata.c_str()));
+		// Stat projectfile before changing directory
+		tproj.stat(projectfile);
+	}
 
     // basedir
     basedir = projectfile;
@@ -595,7 +599,7 @@ bool sproject::load_project(const char* projectfile, bool readonly)
     bool should_rebuild = false;
 
     // Invalidate everything if project file changed
-    if(!(projecttime == tproj))
+    if(projectfile && !(projecttime == tproj))
     {
         VERBOSE(1, "%s is dirty\n", projectfile);
         should_rebuild = true;
