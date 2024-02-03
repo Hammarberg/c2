@@ -1,26 +1,16 @@
-﻿# c2 cross assembler
-### Disclaimer
-c2 is unstable and still under heavy development. Fundamental changes can still happen and unless we are already in contact, pull requests are not likely to be accepted.
-#### TODO and wish list
-* Branch a stable version.
-* Optimize C++ lambda to generation to greatly improve C++ compile times.
-* Option to bypass c2 project files entirely.
-* More Makefile friendly.
-* More system templates for already supported CPU's.
-* Set pre-processor switch.
-* Set variable switch.
-* More architecture support.
-* More, deeper and prettier README.
+# c2 cross assembler
 ## Overview
+The motivation behind c2 is to have an assembler framework capable of targeting a wide range of 8-32 bit CPU architectures while providing strong meta-programming capabilities.
+
 c2 is an assembler wrapper top of a C++ compiler. It's highly configurable and architecture independent in the sense that all assembly pseudo opcodes are built with text macros. Macro files are included with the standard C pre-processor.
 
-Much of the syntax should be familiar to anyone with Assembly, C/C++, Java, JS, C# experience.
+Much of the syntax should be familiar to anyone with Assembly, C/C++, Java, JS or C# experience.
 
 Some of the highlights:
 * Macro oriented
 * C pre-processor
 * Inline C++ for additional meta-programming
-* Multiple pass assembly for conditional code generation and forward references
+* Multiple pass assembly for conditional code generation with forward references
 ### License
 Copyright (C) 2022-2024  John Hammarberg (crt@nospam.binarybone.com)
 
@@ -31,37 +21,39 @@ c2 is free software: you can redistribute it and/or modify it under the terms of
 c2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with c2. If not, see <https://www.gnu.org/licenses/>.
+### Disclaimer
+c2 is unstable and still under heavy development. Breaking changes can still happen.
 ### Contributors
 John Hammarberg, Jocelyn Houle, Johan Samuelsson, Monstersgoboom
-## Build & Installation
+# Build & Installation
 c2 requires either clang++ or g++ for building c2 itself and for running c2. Clang is a bit faster on compile times.
 
-At this point c2 has only been tested on 64 bit hosts with little endian.
+At this point c2 has only been tested on 64 bit hosts with little endian (AMD64 and ARM64).
 
 Put the c2 executable in your path. Make sure the c2lib/ directory is next to c2 or two levels above (see c2lib section) and that a 64 bit compatible clang++ or g++ is in path.
-### Get the source
+## Get the source
 git clone https://github.com/Hammarberg/c2.git or download and extract the zip archive of the source.
-### GNU/Linux/BSD/OSX
+## GNU/Linux/BSD/OSX
 From the c2 root type `make` (or `make CXX=clang++ -j`) and a c2 executable will be created in the same folder.
 
 Installation is optional as you can run c2 directly from the source root. If you want a global installation, type `sudo make install`. To uninstall, `sudo make uninstall`.
 
 If necessary, modify Makefile to your needs.
-#### Suggested Debian packages
+### Suggested Debian packages
 `build-essential` or `clang` and `make`.
-### Windows
-Precompiled packages can be found at [binarybone.com/c2](https://binarybone.com/c2/). Tagged versions includes [WinLibs MinGW64](https://www.winlibs.com/) and are a standalone without additional dependencies: Unzip to any location and then double click `c2 cmd` to start a preconfigured command prompt.
-#### Option 1: VS2022 and clang
+## Windows
+Pre-compiled packages can be found at [binarybone.com/c2](https://binarybone.com/c2/). Tagged versions includes [WinLibs MinGW64](https://www.winlibs.com/) and are a standalone without additional dependencies: Unzip to any location and then double click `c2 cmd` to start a pre-configured command prompt.
+### Option 1: VS2022 and clang
 You need [Visual Studio 2022 Community](https://visualstudio.microsoft.com/vs/community/) or better installed. You also need to select the optional clang tools during VS install. It's possible to modify an existing VS installation to include it.
 
 If you already have VS without clang or if you just want a more up to date clang, you can install it separately from [clang/LLVM](https://github.com/llvm/llvm-project/releases/download/llvmorg-17.0.6/LLVM-17.0.6-win64.exe).
 
 Run `WindowsVSBuild.bat` and a c2 executable will be created. You may of course also open the solution in VS2022 and build there.
-#### Option 2: Cygwin
+### Option 2: Cygwin
 Clang seems outdated in Cygwin. Install gcc/g++ and GNU make and then follow the GNU/Linux instructions and set up any path needed.
-#### Option 3: MinGW / GNU tools
+### Option 3: MinGW / GNU tools
 The Makefile will detect MinGW and apply appropriate switches: `make CXX=x86_64-w64-mingw32-g++`
-#### Windows PATH
+### Windows PATH
 My Computer -> Properties -> Advanced System Settings -> Environment Variables -> Edit path for either User or System. Set the path to the directory where `c2.exe` was built to.
 # Usage
 ## Command line
@@ -71,11 +63,17 @@ When executing c2 without any arguments in a project folder, it will build/assem
 
 Note that the help listing will extend with project specific options when a project file is loaded or detected in the same folder. For example, a Motorola 68000 project might have different switches listed compared to a MOS 6502 project.
 
-c2 command line switches comes in two variants, the descriptive long version prefixed with two dahses (`--`) and the short variant prefixed with a single dash (`-`). Switches can take optional arguments. The description of each switch has `<mandatory>` and `[optional]` argument fields. Arguments are separated from the switch with a space like `--out file.bin`. Short switches with no or only optional arguments can be stacked and in that case only the last switch of the stack can have arguments: `-rvVo file.bin` where `-o` is the short version of `--out`.
+c2 command line switches comes in two variants, the descriptive long version prefixed with two dashes (`--`) and the short variant prefixed with a single dash (`-`). Switches can take optional arguments. The description of each switch has `<mandatory>` and `[optional]` argument fields. Arguments are separated from the switch with a space like `--out file.bin`. Short switches with no or only optional arguments can be stacked and in that case only the last switch of the stack can have arguments: `-rvVo file.bin` where `-o` is the short version of `--out`.
 ## Templates overview
-## Project files
+When assembling with c2, the template selected sets the target architecture, project configuration and may provides additional tools, definitions or macros for the target platform.
+  
+Some templates provides a "hello word" as a starting point when setting up a new project.
+
+A template is specified at either at project creation (`--create-project`) or during direct assembly (`--direct`).
+## Projects
+c2 comes with a built in project and build system.
 ## Creating a c2 project
-c2 comes with a built in project and build system and set of pre-defined templates for creating new projects. To list them type
+Each project is based on a template. To list templates.
 
 `c2 --list-templates`
 
@@ -92,11 +90,11 @@ When executing `c2` without arguments in a project folder, it will build/assembl
 To use c2 with an external build system, use `--direct <template> <source>`.
 
 `c2 --direct c64 game.asm`
-# Compile and assembly errors, tips and tricks
-Internally c2 translates much of the assembly source file into intermediate C++ for the first steps. When this goes wrong, which it will do when a human inevitable makes a mistake like a typo or forgotten reference, the error can look very cryptic. The C++ compiler might mention pieces of code that does not look familiar to the assembly source. The important part here is to look at the line number and source file mentioned rather than the error itself. If it's still not obvious what is wrong in the assembly source, try the `--verbose` (`-v`) switch to view more of the compiler output.
+## Compile and assembly errors, tips and tricks
+Internally c2 translates much of the assembly source file into intermediate C++ for the first steps. When this goes wrong, the error can look very cryptic. The C++ compiler might mention pieces of code that does not look familiar to the assembly source. The important part here is to look at the line number and source file mentioned rather than the error itself. If it's still not obvious what is wrong in the assembly source, try the `--verbose` (`-v`) switch to view more of the compiler output.
 # Syntax
 ## Comments
-Only C/C++ style comments are supported. This might hurt for some people used to `;` as comment prefix.
+Only C/C++ style comments are supported with either `// comment ` or `/* comment */. This might hurt for some people used to `;` as comment prefix.
 ## Numbers
 Decimal: `0, 1337`
 
@@ -105,13 +103,6 @@ Binary, prefixed with `0b` or `%` as in `0b10101010` or `%10100111001`.
 Hexadecimal, prefixed with `0x` or `$` as in `0xfffd` or `$1B46B1`.
 
 Octal numbers looks a lot like decimal number but are prefixed with a `0` as in `020, 02471`. Beware of this if you have a habit of prefixing decimal numbers with `0` for esthetics.
-
-### Explicit bit size
-You can explicitly force a bit size by prefixing hexadecimal, binary or octal numbers.
-
-```
-        lda $0002
-```
 ## ORG pointer
 Note, many classical assemblers use `*` for ORG but not c2. Instead the at (`@`) sign is used.
 
@@ -224,10 +215,10 @@ Currently, variables doesn't support label namespaces (design decisions yet to b
         //Other code here
 }
 ```
-Variables can hold and remember explicit bit counts:
+Variables can hold and remember explicit bit counts and this can be supported depending on target architecture.
 ```
         var src = $0002
-        lda src //Absolute rather than zero page addressing mode
+        lda src //16 bit absolute rather than zero page addressing mode
 ```
 Variables declared inside macros are automatically scoped to the macro.
 ### Indexed, array & string variables
@@ -371,26 +362,6 @@ macro set_color @[black,white,red,cyan,purple,green,blue,yellow]col
         set_color green
 ```
 It is also possible to combine enum with variadic input.
-## Pre-defined macros
-`c2lib/include/c2.s` is included in every c2 project and contains the following:
-
-`incbin "<filename>" [, offset [, length] ]`
-Includes a binary from the file system at current org. Optionally, byte offset and byte length can be given.
-
-`incstream "<command>" [, offset [, length] ]`
-Includes the stdout of the command at the current org. Optionally, byte offset and byte length can be given.
-
-`postarg "<switch>"`
-Adds c2 command line switches for the post assembly pass from the convenience of your source.
-
-`repeat(X)` and `rrepeat(X)`
-Repeats the following line or C code block X times. The variable `c2repn` can be read. `rrepeat` counts in reverse from X-1.
-
-Example:
-```
-        repeat(10)
-                byte 10+c2repn
-```
 ## yourproject.cpp
 Your project comes with a .cpp-file. In most cases you can completely ignore this file as long as you keep it around and treat is as part of your project. To c2, this is your main source file as it itself includes your assembly file.
 ```
@@ -402,7 +373,7 @@ Your project comes with a .cpp-file. In most cases you can completely ignore thi
         }
     }
 ```
-You might realize now that all of your assembly is included inside of the C++ method c2_pass(). This method and hence your expanded assembly macros are called multiple times, once for each pass. Each pass helps resolve references and conditionally expand any macros until everything is resolved or an error occurred. For each pass, the binary assembly output is run through an 128 bit murmur3 hash. When 2 consecutive hashes match, assembly is considered complete. c2 will stop with an error if a hash repeats itself non consecutively. This can happen if resolving forward references gets stuck with paradoxes, at which point you should rethink your code. If c2 gets to pass 50, it will also stop with an error. This would likely be due to a bug in c2 or the introduction of something random to the passes.
+All of the assembly source is included inside of the C++ method c2_pass(). This method and hence the expanded assembly macros are called multiple times, once for each pass. Each pass helps resolve references and conditionally expand any macros until everything is resolved or an error occurred. For each pass, the binary assembly output is run through an 128 bit murmur3 hash. When 2 consecutive hashes match, assembly is considered complete. c2 will stop with an error if a hash repeats itself non consecutively. This can happen if resolving forward references gets stuck with paradoxes, at which point you should rethink your code. If c2 gets to pass 50, it will also stop with an error. This would likely be due to a bug in c2 or the introduction of something random to the passes.
 
 `C2_SECTION_ASM` and the following scope is a marker for c2 to know where to limit macro expansion to. `C2_SECTION_TOP` marks the spot where c2 will declare labels.
 
@@ -475,7 +446,7 @@ A plain 6502 template with 64KB of RAM.
 ## c64
 Commodore 64 with provided utilities.
 ### c64vice
-Commodore 64 with provided utilities configured to auto-lauch in VICE (x64sc) with symbols and optional breakpoints.
+Commodore 64 with provided utilities configured to auto lauch in VICE (x64sc) with symbols and optional breakpoints.
 ### atari2600
 Atari2600 with 4KB of ROM at $f000
 ## 6809
@@ -486,3 +457,25 @@ GCE Vectrex with 32KB of ROM between $0000-$8000
 Highly experimental for c2 development, 68k CPU support is b0rken/buggy at best
 ## void
 A plain template containing no included assembly pseudo opcodes. Useful for experimentation or rendering of binaries using macros and meta-programming. 10MB of RAM is allocated in the default project file, add more as needed.
+# Targets
+## Pre-defined macros
+`c2lib/include/c2.s` is included in every c2 project and contains the following:
+
+`incbin "<filename>" [, offset [, length] ]`
+Includes a binary from the file system at current org. Optionally, byte offset and byte length can be given.
+
+`incstream "<command>" [, offset [, length] ]`
+Includes the stdout of the command at the current org. Optionally, byte offset and byte length can be given.
+
+`postarg "<switch>"`
+Adds c2 command line switches for the post assembly pass from the convenience of your source.
+Example: `-- "chunks", 1024, 1024 //Loads the second kilobyte of the file`
+
+`repeat(X)` and `rrepeat(X)`
+Repeats the following line or C code block X times. The variable `c2repn` can be read. `rrepeat` counts in reverse from X-1.
+
+Example:
+```
+        repeat(10)
+                byte 10+c2repn
+```
