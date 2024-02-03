@@ -34,6 +34,7 @@ int main(int arga, char *argc[])
 		proj.command.declare("--no-execute", "-X", "Do not execute anything after build");
 		proj.command.declare("--no-build", "-B", "Do not build");
 		proj.command.declare("--project", "-p", "<filename>: Explicitly load project file", 1);
+		proj.command.declare("--direct", "-d", "<template> <source>: Direct assembly", 2);
 		proj.command.declare("--create-project", "-c", "<template> <name> [path]: Creates a new project based on the specified template. If a path is given it will be created and used, otherwise the current directory is used", 2, 3);
 		proj.command.declare("--list-templates", "-l", "List available templates for project creation");
 		proj.command.declare("--c2-library-dir", "-D", "<path>: Add a c2 library path", 1);
@@ -71,6 +72,12 @@ int main(int arga, char *argc[])
 		
 		bool loaded = false;
 		
+		ctemplate::tjson direct_tpl;
+		proj.command.invoke("--direct", [&](int arga, const char *argc[])
+		{
+			direct_tpl = proj.tpl_direct(arga, argc);
+		});
+
 		proj.command.invoke("--project", [&](int arga, const char *argc[])
 		{
 			projpath = argc[0];
@@ -83,14 +90,13 @@ int main(int arga, char *argc[])
 		
 		proj.command.invoke("--create-project", [&](int arga, const char *argc[])
 		{
-			ctemplate tpl(proj);
-			projpath = tpl.tpl_create(arga, argc);
+			projpath = proj.tpl_create(arga, argc);
 			doexecute = false; //Only build
 		});
 		
-		if(projpath.size())
+		if(projpath.size() || direct_tpl.get())
 		{
-			if(!proj.load_project(nullptr, projpath.c_str(), !dobuild))
+			if(!proj.load_project(direct_tpl, projpath.c_str(), !dobuild))
 			{
 				throw "Error loading project file";
 			}

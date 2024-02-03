@@ -54,6 +54,8 @@ public:
 
 	static std::string quote_path(std::string path);
 	
+	static int verbose;
+
 private:
 
 	void push_path(const std::filesystem::path &path, bool first = false);

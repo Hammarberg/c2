@@ -74,20 +74,24 @@ Note that the help listing will extend with project specific options when a proj
 c2 command line switches comes in two variants, the descriptive long version prefixed with two dahses (`--`) and the short variant prefixed with a single dash (`-`). Switches can take optional arguments. The description of each switch has `<mandatory>` and `[optional]` argument fields. Arguments are separated from the switch with a space like `--out file.bin`. Short switches with no or only optional arguments can be stacked and in that case only the last switch of the stack can have arguments: `-rvVo file.bin` where `-o` is the short version of `--out`.
 ## Templates overview
 ## Project files
-## Your first simple project tutorial
-c2 comes with a set of pre-defined templates for creating new projects.
+## Creating a c2 project
+c2 comes with a built in project and build system and set of pre-defined templates for creating new projects. To list them type
 
 `c2 --list-templates`
 
-Create an empty folder for your project and step into it.
+To create a c2 Create a new project in the current folder, use `--create-project <template> <name> [path]`.
 
-`c2 --create-project c64vice myawesomeproject`
+`c2 --create-project vectrex myawesomeproject`
 
 Optionally you can create the destination path with c2 directly. For Windows, use backslashes (`\`) for paths.
 
-`c2 --create-project c64vice myawesomeproject sources/hack`
+`c2 --create-project 6502 myawesomeproject sources/hack`
 
-When executing c2 without arguments in a project folder, it will build/assemble and depending on the template, it can automatically launch an emulator if in path.
+When executing `c2` without arguments in a project folder, it will build/assemble and depending on the template, it can automatically launch an emulator if in path.
+### Direct assembly
+To use c2 with an external build system, use `--direct <template> <source>`.
+
+`c2 --direct c64 game.asm`
 # Compile and assembly errors, tips and tricks
 Internally c2 translates much of the assembly source file into intermediate C++ for the first steps. When this goes wrong, which it will do when a human inevitable makes a mistake like a typo or forgotten reference, the error can look very cryptic. The C++ compiler might mention pieces of code that does not look familiar to the assembly source. The important part here is to look at the line number and source file mentioned rather than the error itself. If it's still not obvious what is wrong in the assembly source, try the `--verbose` (`-v`) switch to view more of the compiler output.
 # Syntax

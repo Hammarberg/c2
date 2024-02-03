@@ -11,7 +11,7 @@ C2_SECTION_TOP
 	{
 		C2_SECTION_ASM
 		{
-			#include "{title}.s"
+			#include "{asmpath}{asmtemplate}"
 		}
 	}
 

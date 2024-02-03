@@ -5,6 +5,7 @@
 			"super" : "c2i",
 			"include" : "c2/h/c2i.h",
 			"arguments" : "--address-range 0x0 0x10000 --out - + {title}.bin",
+			"output" : "--out - + {title}.bin",
 			"source":[
 				"c2i.cpp":{
 					"flags" : "-O2"
@@ -12,12 +13,12 @@
 			],
 			"template":[
 				"asm.cpp":{
-					"target" : "{title}.cpp"
+					"target" : "{source}.cpp"
 					"c2" : true
 					"flags" : "-O0"
 				},
 				"6502.s":{
-					"target" : "{title}.s"
+					"target" : "{source}.s"
 				}
 			]
 		},
@@ -25,7 +26,8 @@
 			"description" : "Commodore 64",
 			"super" : "c64",
 			"include" : "c2/c64/c64.h",
-			"arguments" : "--out-prg - + {title}.prg",
+			"arguments" : "",
+			"output" : "--out-prg - + {title}.prg",
 			"source":[
 				"c2i.cpp":{
 					"flags" : "-O2"
@@ -36,12 +38,12 @@
 			],
 			"template":[
 				"asm.cpp":{
-					"target" : "{title}.cpp"
+					"target" : "{source}.cpp"
 					"c2" : true
 					"flags" : "-O0"
 				},
 				"c64.s":{
-					"target" : "{title}.s"
+					"target" : "{source}.s"
 				}
 			]
 		},
@@ -49,7 +51,8 @@
 			"description" : "Commodore 64 with VICE configuration",
 			"super" : "c64",
 			"include" : "c2/c64/c64.h",
-			"arguments" : "--out-prg - + {title}.prg --vice-cmd {title}.sym",
+			"arguments" : "--vice-cmd {title}.sym",
+			"output" : "--out-prg - + {title}.prg",
 			"execute" : "x64sc -silent -moncommands {title}.sym {title}.prg",
 			"source":[
 				"c2i.cpp":{
@@ -61,12 +64,12 @@
 			],
 			"template":[
 				"asm.cpp":{
-					"target" : "{title}.cpp"
+					"target" : "{source}.cpp"
 					"c2" : true
 					"flags" : "-O0"
 				},
 				"c64.s":{
-					"target" : "{title}.s"
+					"target" : "{source}.s"
 				}
 			]
 		},
@@ -74,7 +77,8 @@
 			"description" : "Atari2600 with 4KB of ROM at $f000",
 			"super" : "c2i",
 			"include" : "c2/h/c2i.h",
-			"arguments" : "--address-range 0xf000 0x10000 --out 0xf000 0x10000 {title}.rom",
+			"arguments" : "--address-range 0xf000 0x10000",
+			"output" : "--out 0xf000 0x10000 {title}.rom",
 			"source":[
 				"c2i.cpp":{
 					"flags" : "-O2"
@@ -82,12 +86,12 @@
 			],
 			"template":[
 				"asm.cpp":{
-					"target" : "{title}.cpp"
+					"target" : "{source}.cpp"
 					"c2" : true
 					"flags" : "-O0"
 				},
 				"atari2600.s":{
-					"target" : "{title}.s"
+					"target" : "{source}.s"
 				}
 			]
 		},
@@ -95,7 +99,8 @@
 			"description" : "NES NROM 256",
 			"super" : "c2i",
 			"include" : "c2/h/c2i.h",
-			"arguments" : "--address-range 0x0000 0x12000 --out 0x7ff0 0x12000 {title}.nes",
+			"arguments" : "--address-range 0x0000 0x12000",
+			"output" : "--out 0x7ff0 0x12000 {title}.nes",
 			"source":[
 				"c2i.cpp":{
 					"flags" : "-O2"
@@ -103,12 +108,12 @@
 			],
 			"template":[
 				"asm.cpp":{
-					"target" : "{title}.cpp"
+					"target" : "{source}.cpp"
 					"c2" : true
 					"flags" : "-O0"
 				},
 				"nes.s":{
-					"target" : "{title}.s"
+					"target" : "{source}.s"
 				}
 			]
 		},
@@ -116,7 +121,8 @@
 			"description" : "Turbo Grafx 16 HuC6280",
 			"super" : "c2i",
 			"include" : "c2/h/c2i.h",
-			"arguments" : "--address-range 0x0000 0x20000 --out 0xe000 0x20000 {title}.pce",
+			"arguments" : "--address-range 0x0000 0x20000",
+			"output" : "--out 0xe000 0x20000 {title}.pce",
 			"source":[
 				"c2i.cpp":{
 					"flags" : "-O2"
@@ -124,12 +130,12 @@
 			],
 			"template":[
 				"asm.cpp":{
-					"target" : "{title}.cpp"
+					"target" : "{source}.cpp"
 					"c2" : true
 					"flags" : "-O0"
 				},
 				"tg16.s":{
-					"target" : "{title}.s"
+					"target" : "{source}.s"
 				}
 			]
 		},
@@ -137,7 +143,8 @@
 			"description" : "Plain 6809",
 			"super" : "motorola6809",
 			"include" : "c2/motorola/6809.h",
-			"arguments" : "--address-range 0x0 0x10000 --out - + {title}.bin",
+			"arguments" : "--address-range 0x0 0x10000",
+			"output" : "--out - + {title}.bin",
 			"source":[
 				"c2i.cpp":{
 					"flags" : "-O2"
@@ -148,12 +155,12 @@
 			],
 			"template":[
 				"asm.cpp":{
-					"target" : "{title}.cpp"
+					"target" : "{source}.cpp"
 					"c2" : true
 					"flags" : "-O0"
 				},
 				"6809.s":{
-					"target" : "{title}.s"
+					"target" : "{source}.s"
 				}
 			]
 		},
@@ -161,7 +168,8 @@
 			"description" : "GCE Vectrex",
 			"super" : "motorola6809",
 			"include" : "c2/motorola/6809.h",
-			"arguments" : "--address-range 0x0 0x8000 --longbranch --absolute --out - + {title}.bin",
+			"arguments" : "--address-range 0x0 0x8000 --longbranch --absolute",
+			"output" : "--out - + {title}.bin",
 			"source":[
 				"c2i.cpp":{
 					"flags" : "-O2"
@@ -172,12 +180,12 @@
 			],
 			"template":[
 				"asm.cpp":{
-					"target" : "{title}.cpp"
+					"target" : "{source}.cpp"
 					"c2" : true
 					"flags" : "-O0"
 				},
 				"vectrex.s":{
-					"target" : "{title}.s"
+					"target" : "{source}.s"
 				}
 			]
 		},
@@ -185,7 +193,8 @@
 			"description" : "Not functioning yet!",
 			"super" : "motorola68000",
 			"include" : "c2/motorola/68000.h",
-			"arguments" : "--out - + {title}.bin",
+			"arguments" : "",
+			"output" : "--out - + {title}.bin",
 			"source":[
 				"c2i.cpp":{
 					"flags" : "-O2"
@@ -196,12 +205,12 @@
 			],
 			"template":[
 				"asm.cpp":{
-					"target" : "{title}.cpp"
+					"target" : "{source}.cpp"
 					"c2" : true
 					"flags" : "-O0"
 				},
 				"68000.s":{
-					"target" : "{title}.s"
+					"target" : "{source}.s"
 				}
 			]
 		},
@@ -209,7 +218,8 @@
 			"description" : "Void c2 project, no target architecture for custom assembly of binaries and hacking",
 			"super" : "c2i",
 			"include" : "c2/h/c2i.h",
-			"arguments" : "--address-range 0x0 0xa00000 --out - + {title}.bin",
+			"arguments" : "--address-range 0x0 0xa00000",
+			"output" : "--out - + {title}.bin",
 			"source":[
 				"c2i.cpp":{
 					"flags" : "-O2"
@@ -217,12 +227,12 @@
 			],
 			"template":[
 				"asm.cpp":{
-					"target" : "{title}.cpp"
+					"target" : "{source}.cpp"
 					"c2" : true
 					"flags" : "-O0"
 				},
 				"void.s":{
-					"target" : "{title}.s"
+					"target" : "{source}.s"
 				}
 			]
 		}

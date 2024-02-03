@@ -30,6 +30,8 @@
 #define NIX_GLOBAL "/usr/local/lib/" C2LIB
 #define C2CONFIG "config.c2.json"
 
+int clibrary::verbose = 0;
+
 clibrary::clibrary()
 {
 }

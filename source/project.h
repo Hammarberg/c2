@@ -10,7 +10,6 @@
 
 	You should have received a copy of the GNU General Public License along with c2. If not, see <https://www.gnu.org/licenses/>.
 */
-#include "library.h"
 #include "cmda.h"
 #include "c2lib/include/c2/h/c2i.h"
 #include "template.h"
@@ -19,7 +18,7 @@
 #include <windows.h>
 #endif
 
-class sproject : public clibrary
+class sproject : public ctemplate
 {
 public:
 
@@ -66,15 +65,12 @@ public:
 		void clear_dirty();
 	};
 
-	int verbose = 0;
-
 	cmda command;
 
 	std::string compiler;
 	std::string stdc;
 
 	std::filesystem::path basedir;
-	std::filesystem::path intermediatedir = ".im";
 	std::string title = "noname";
 	std::string arguments;
 	std::string execute;

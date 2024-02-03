@@ -31,6 +31,8 @@
 
 const uint32_t MAGIC_VERSION = 1337*1337+4;
 
+#define C2CACHE std::string(title+std::string("_c2cache"))
+
 static void save(FILE *fp, const std::string &s)
 {
 	const char *p = s.c_str();
@@ -151,15 +153,24 @@ void sproject::sfile::load(FILE *fp, std::vector<std::shared_ptr<sdependency>> &
 bool sproject::sfile::is_dirty()
 {
     if(!sproject::file_exist(obj.c_str()))	// No obj file, rebuild
+	{
+		VERBOSE(3, "%s is missing\n", obj.c_str());
         return true;
+	}
 
     if(!dependency.size()) // There is always at least one unless imm was not loaded, then rebuild
+	{
+		VERBOSE(3, "im not loaded\n");
         return true;
+	}
 
     for(size_t r=0;r<dependency.size();r++)	// Check if a dependency has been modified
     {
         if(!(dependency[r].second == dependency[r].first->timestamp))
+		{
+			VERBOSE(3, "Dependency change\n");
             return true;
+		}
     }
     return false;
 }
@@ -396,6 +407,7 @@ void sproject::load_imm(const std::filesystem::path &path)
     FILE *fp = fopen(path.string().c_str(),"rb");
     if(!fp)
     {
+		VERBOSE(3, "%s not found\n", path.string().c_str());
         return;
     }
 
@@ -557,7 +569,8 @@ bool sproject::load_project(ctemplate::tjson cfg, const char* projectfile, bool 
     std::string tmp;
 	
     stimestamp tproj;
-	if(projectfile)
+	bool direct = true;
+	if(!cfg.get())
 	{
 		std::string bdata;
 		if(!lib_load_file_direct(projectfile, bdata))
@@ -566,6 +579,7 @@ bool sproject::load_project(ctemplate::tjson cfg, const char* projectfile, bool 
 		cfg.reset(json::base::Decode(bdata.c_str()));
 		// Stat projectfile before changing directory
 		tproj.stat(projectfile);
+		direct = false;
 	}
 
     // basedir
@@ -581,6 +595,12 @@ bool sproject::load_project(ctemplate::tjson cfg, const char* projectfile, bool 
     chdir(basedir.string().c_str());
     lib_basepath();	// Let clibrary know we are in the project folder
     set_compiler();
+	
+    tmp = cfg->Get("title").GetString();
+    if (tmp.size()) title = tmp;
+
+    arguments = cfg->Get("arguments").GetString();
+    execute = cfg->Get("execute").GetString();
 
     // Intermediate
     tmp = cfg->Get("intermediate").GetString();
@@ -594,14 +614,14 @@ bool sproject::load_project(ctemplate::tjson cfg, const char* projectfile, bool 
         std::filesystem::create_directories(intermediatedir);
     }
 
-    load_imm(intermediatedir / "c2cache");
+    load_imm(intermediatedir / C2CACHE);
 
     bool should_rebuild = false;
 
     // Invalidate everything if project file changed
-    if(projectfile && !(projecttime == tproj))
+    if(!direct && !(projecttime == tproj))
     {
-        VERBOSE(1, "%s is dirty\n", projectfile);
+        VERBOSE(2, "%s is dirty\n", projectfile);
         should_rebuild = true;
     }
 
@@ -653,12 +673,6 @@ bool sproject::load_project(ctemplate::tjson cfg, const char* projectfile, bool 
             file->ext = ext;
         }
     }
-
-    tmp = cfg->Get("title").GetString();
-    if (tmp.size()) title = tmp;
-
-    arguments = cfg->Get("arguments").GetString();
-    execute = cfg->Get("execute").GetString();
 
     clean_dependencies();
     clean_files();
@@ -760,7 +774,7 @@ void sproject::build(bool doexecute)
     if(dirty_link)
     {
         index_dependencies();
-        save_imm(intermediatedir / "c2cache");
+        save_imm(intermediatedir / C2CACHE);
     }
 
     std::string link_target = get_link_target();
