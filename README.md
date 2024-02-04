@@ -94,7 +94,7 @@ To use c2 with an external build system, use `--direct <template> <source>`.
 Internally c2 translates much of the assembly source file into intermediate C++ for the first steps. When this goes wrong, the error can look very cryptic. The C++ compiler might mention pieces of code that does not look familiar to the assembly source. The important part here is to look at the line number and source file mentioned rather than the error itself. If it's still not obvious what is wrong in the assembly source, try the `--verbose` (`-v`) switch to view more of the compiler output.
 # Syntax
 ## Comments
-Only C/C++ style comments are supported with either `// comment ` or `/* comment */. This might hurt for some people used to `;` as comment prefix.
+Only C/C++ style comments are supported with either `// comment ` or `/* comment */`. This might hurt for some people used to `;` as comment prefix.
 ## Numbers
 Decimal: `0, 1337`
 
