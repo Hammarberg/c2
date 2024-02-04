@@ -837,19 +837,26 @@ void sproject::build(bool doexecute)
     }
 }
 
-bool sproject::load_module()
+bool sproject::load_module(const char *name)
 {
+    std::string tmpname;
+    if(!name)
+    {
+        tmpname = get_link_target();
+        name = tmpname.c_str();
+    }
+
     if(!hasm)
     {
-        VERBOSE(3, "Attempting to load shared object %s\n", get_link_target().c_str());
+        VERBOSE(3, "Attempting to load shared object %s\n", name);
 #ifndef _WIN32
-        hasm = dlopen(get_link_target().c_str(), RTLD_LAZY);
+        hasm = dlopen(name, RTLD_LAZY);
 #else
-        hasm = LoadLibraryA(get_link_target().c_str());
+        hasm = LoadLibraryA(name);
 
         if (!hasm)
         {
-            std::filesystem::path link_target_full = std::filesystem::absolute(get_link_target());
+            std::filesystem::path link_target_full = std::filesystem::absolute(name);
 
             VERBOSE(3, "Attempting to load shared object %s\n", link_target_full.string().c_str());
 

@@ -106,12 +106,34 @@ int main(int arga, char *argc[])
 		
 		proj.command.invoke("--help", [&](int arga, const char *argc[])
 		{
-			if(loaded)
+			// Try load and instance shared object
+			if(loaded && proj.load_module())
 			{
-				// Try load and instance shared object
-				if(proj.load_module())
+				proj.c2_object_instance(&proj.command);
+			}
+			else
+			{
+				// Look for any shared objects in the intermediatedir
+				if(std::filesystem::exists(proj.intermediatedir))
 				{
-					proj.c2_object_instance(&proj.command);
+					for (auto const &entry : std::filesystem::directory_iterator(proj.intermediatedir))
+					{
+						std::string tmp = entry.path().string();
+
+						size_t s = tmp.size();
+#ifndef _WIN32
+						if(s >= 3 && tmp.substr(s-3,3) == ".so")
+#else
+						if(s >= 4 && tmp.substr(s-4,4) == ".dll")
+#endif
+						{
+							if(proj.load_module(tmp.c_str()))
+							{
+								proj.c2_object_instance(&proj.command);
+								break;
+							}
+						}
+					}
 				}
 			}
 			

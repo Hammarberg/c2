@@ -106,7 +106,7 @@ public:
 	HMODULE hasm = nullptr;
 #endif
 
-	bool load_module();
+	bool load_module(const char *name = nullptr);
 	void unload_module();
 	std::string get_link_target();
 };
