@@ -366,12 +366,13 @@ c2i::c2i(cmdi *pcmd)
 	sinternal *p = new sinternal;
 	pinternal = (void *)p;
 	
-	c2_cmd.declare("--out", "-o", "<from> <to> [filename]: Outputs a binary. If no filename is given stdout will be used. To and from can be either addresses, labels or '-' or '+' as lowest/highest+1 address assembled.",2 ,3);
-	c2_cmd.declare("--out-c", "-C", "<from> <to> [filename]: Outputs a C-style formated hex array. Parameters are the same as for --out", 2, 3);
+	c2_cmd.declare("--out", "-o", "<from> <to> [filename]: Outputs a binary. If no filename is given stdout will be used. To and from can be either addresses, labels or '-' or '+' as lowest/highest+1 address assembled",2 ,3);
+	c2_cmd.declare("--out-c", nullptr, "<from> <to> [filename]: Outputs a C-style formated hex array. Parameters are the same as for --out", 2, 3);
 	c2_cmd.declare("--dump-vars", "-V", "[filename]: Output variables. If no filename is given, stdout will be used", 0, 1);
-	c2_cmd.declare("--dump-enum", "-E", "[filename]: Output variables in C-style enum format. If no filename is given, stdout will be used", 0, 1);
+	c2_cmd.declare("--dump-enum", nullptr, "[filename]: Output variables in C-style enum format. If no filename is given, stdout will be used", 0, 1);
 	c2_cmd.declare("--address-range", "-m", "<start> <end>: Set the valid memory address range available for the assembly to target. Addresses must be numerical", 2);
-	c2_cmd.declare("--assembly-hash", "-H", "Verbosely outputs a hash for each assembly step.");
+	c2_cmd.declare("--assembly-hash", nullptr, "Verbosely outputs a hash for each assembly step");
+	c2_cmd.declare("--org", "-O", "Set ORG", 1);
 }
 
 c2i::~c2i()
@@ -536,7 +537,15 @@ void c2i::c2_reset_pass()
 	
 	memset(RAM, 0, RAM_size);
 	memset(RAM_use, 0, RAM_size);
-	
+
+	c2_cmd.invoke("--org", [&](int arga, const char *argc[])
+	{
+		int64_t addr;
+		if(!c2_resolve(argc[0], addr, false))
+			throw "--org could not resolve address";
+
+		c2_org = addr;
+	});
 }
 
 bool c2i::c2_assemble()
