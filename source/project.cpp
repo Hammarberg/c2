@@ -609,6 +609,11 @@ bool sproject::load_project(ctemplate::tjson cfg, const char* projectfile, bool 
         intermediatedir = tmp;
     }
 
+    command.invoke("--clean", [&](int arga, const char *argc[])
+    {
+        std::filesystem::remove_all(intermediatedir);
+    });
+
     if(!readonly)
     {
         std::filesystem::create_directories(intermediatedir);

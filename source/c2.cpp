@@ -31,6 +31,7 @@ int main(int arga, char *argc[])
 		proj.command.declare("--version", nullptr, "Show version");
 		proj.command.declare("--license", "-L", "Show GPL3");
 		proj.command.declare("--rebuild", "-r", "Force a project rebuild");
+		proj.command.declare("--clean", nullptr, "Delete project intermediate files");
 		proj.command.declare("--no-execute", "-X", "Do not execute anything after build");
 		proj.command.declare("--no-build", "-B", "Do not build");
 		proj.command.declare("--project", "-p", "<filename>: Explicitly load project file", 1);
@@ -70,6 +71,11 @@ int main(int arga, char *argc[])
 			dobuild = false;
 		});
 		
+		proj.command.invoke("--clean", [&](int arga, const char *argc[])
+		{
+			dobuild = false;
+		});
+
 		bool loaded = false;
 		
 		ctemplate::tjson direct_tpl;
