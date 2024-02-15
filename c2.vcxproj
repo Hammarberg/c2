@@ -29,6 +29,7 @@
     <ClInclude Include="source\library.h" />
     <ClInclude Include="source\linear.h" />
     <ClInclude Include="source\lines.h" />
+    <ClInclude Include="source\log.h" />
     <ClInclude Include="source\macro.h" />
     <ClInclude Include="source\project.h" />
     <ClInclude Include="source\template.h" />
