@@ -6,12 +6,22 @@ SRC_DIR := source
 SRCS := $(shell find $(SRC_DIR) -name *.cpp)
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
+MODE := normal
 
 INC_DIRS := $(SRC_DIR) ./
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 CPPFLAGS ?= $(INC_FLAGS) -MMD -MP
-CXXFLAGS ?= -O2 -Wno-unused-result
+
+ifeq ($(MODE),debug)
+	CXXFLAGS := -O0 -g
+else ifeq ($(MODE),optimize)
+	CXXFLAGS := -O2 -flto=auto
+else ifeq ($(MODE),native)
+	CXXFLAGS := -O2 -flto=auto -march=native
+else
+	CXXFLAGS ?= -O2
+endif
 
 OS := $(shell uname -o)
 
