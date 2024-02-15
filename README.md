@@ -2,6 +2,8 @@
 ## Overview
 The motivation behind c2 is to have an assembler framework capable of targeting a wide range of 8-32 bit CPU architectures while providing strong meta-programming capabilities.
 
+Currently c2 works well with 6502+variants and 6809. Experimental support for Z80 exist 68000 is under development.
+
 c2 is an assembler wrapper top of a C++ compiler. It's highly configurable and architecture independent in the sense that all assembly pseudo opcodes are built with text macros. Macro files are included with the standard C pre-processor.
 
 Much of the syntax should be familiar to anyone with Assembly, C/C++, Java, JS or C# experience.
@@ -29,16 +31,12 @@ John Hammarberg, Jocelyn Houle, Johan Samuelsson, Monstersgoboom
 c2 requires either clang++ or g++ for building c2 itself and for running c2. Clang is a bit faster on compile times.
 
 At this point c2 has only been tested on 64 bit hosts with little endian (AMD64 and ARM64).
-
-Put the c2 executable in your path. Make sure the c2lib/ directory is next to c2 or two levels above (see c2lib section) and that a 64 bit compatible clang++ or g++ is in path.
 ## Get the source
 git clone https://github.com/Hammarberg/c2.git or download and extract the zip archive of the source.
 ## GNU/Linux/BSD/OSX
 From the c2 root type `make` (or `make CXX=clang++ -j`) and a c2 executable will be created in the same folder.
 
 Installation is optional as you can run c2 directly from the source root. If you want a global installation, type `sudo make install`. To uninstall, `sudo make uninstall`.
-
-If necessary, modify Makefile to your needs.
 ### Suggested Debian packages
 `build-essential` or `clang` and `make`.
 ## Windows
@@ -57,27 +55,27 @@ The Makefile will detect MinGW and apply appropriate switches: `make CXX=x86_64-
 My Computer -> Properties -> Advanced System Settings -> Environment Variables -> Edit path for either User or System. Set the path to the directory where `c2.exe` was built to.
 # Usage
 ## Command line
-When executing c2 without any arguments in a project folder, it will build/assemble and depending on the settings in the project file, it can automatically launch an emulator if in path. However, there are many useful command line switches you can use directly or in conjunction with a project file. To get an overview:
+When executing c2 without any arguments in a project folder, it will build/assemble and depending on the settings in the project file (`.c2.json`), it can automatically launch custom scripts or a target emulator. To get an overview of command line options:
 
 `c2 --help` or simply `c2 -h`.
 
-Note that the help listing will extend with project specific options when a project file is loaded or detected in the same folder. For example, a Motorola 68000 project might have different switches listed compared to a MOS 6502 project.
+The help listing will extend with project specific options when a project file is detected or loaded. For example, a Motorola 68000 project might have different switches listed compared to a MOS 6502 project.
 
 c2 command line switches comes in two variants, the descriptive long version prefixed with two dashes (`--`) and the short variant prefixed with a single dash (`-`). Switches can take optional arguments. The description of each switch has `<mandatory>` and `[optional]` argument fields. Arguments are separated from the switch with a space like `--out file.bin`. Short switches with no or only optional arguments can be stacked and in that case only the last switch of the stack can have arguments: `-rvVo file.bin` where `-o` is the short version of `--out`.
 ## Templates overview
 When assembling with c2, the template selected sets the target architecture, project configuration and may provides additional tools, definitions or macros for the target platform.
-  
-Some templates provides a "hello word" as a starting point when setting up a new project.
+
+Templates provides a "hello word" as a starting for new projects.
 
 A template is specified at either at project creation (`--create-project`) or during direct assembly (`--direct`).
 ## Projects
-c2 comes with a built in project and build system.
+c2 comes with an easy to use build system.
 ## Creating a c2 project
 Each project is based on a template. To list templates.
 
 `c2 --list-templates`
 
-To create a c2 Create a new project in the current folder, use `--create-project <template> <name> [path]`.
+To create a new c2 project in the current folder, use `--create-project <template> <name> [path]`.
 
 `c2 --create-project vectrex myawesomeproject`
 
@@ -85,11 +83,11 @@ Optionally you can create the destination path with c2 directly. For Windows, us
 
 `c2 --create-project 6502 myawesomeproject sources/hack`
 
-When executing `c2` without arguments in a project folder, it will build/assemble and depending on the template, it can automatically launch an emulator if in path.
+When executing `c2` without arguments in a project folder, it will build/assemble and depending on the template. Tt can automatically launch an emulator if in path.
 ### Direct assembly
-To use c2 with an external build system, use `--direct <template> <source>`.
+To use c2 with an external build system like `make`, use `--direct <template> [other arguments] <source>`.
 
-`c2 --direct c64 game.asm`
+Example: `c2 -d c64 game.asm`
 ## Compile and assembly errors, tips and tricks
 Internally c2 translates much of the assembly source file into intermediate C++ for the first steps. When this goes wrong, the error can look very cryptic. The C++ compiler might mention pieces of code that does not look familiar to the assembly source. The important part here is to look at the line number and source file mentioned rather than the error itself. If it's still not obvious what is wrong in the assembly source, try the `--verbose` (`-v`) switch to view more of the compiler output.
 # Syntax
@@ -155,7 +153,7 @@ Local labels can be referenced from the outside of its parent scope by `<parent>
 Example:
 ```
 main:
-        moveq #data.end - data, d0
+        moveq #data.end - data, d0 //size of data as immediate
 data:
         dword $01020304, $baadbeef
 .end:
@@ -172,7 +170,7 @@ for(int index=0; index<10; index++)
 }
 .exit:
 ```
-There is nothing to consider as a programmer here except that this mode works automatically when a scope is repeated. The label `.small` is in this case duplicated 10 times and automatically indexed. Beware this can break or cause bugs when scopes and repeats are too complicated for c2 to resolve. For a more explicit control over the labels see see indexed labels below.
+This mode works automatically when a scope is repeated. The label `.small` is in this case duplicated 10 times and automatically indexed. Beware this can break or cause bugs when scopes and repeats are too complicated for c2 to resolve. For a more explicit control over the labels see see indexed labels.
 ### Anonymous labels
 Anonymous labels are declared with a single colon at the beginning of a line and can only be referenced with relative addressing.
 
@@ -199,7 +197,7 @@ data[index]:
 }
 ```
 ## c2 variables
-c2 provides a variable type, internally it holds up to 64 bits signed.
+c2 provides a variable type.
 
 Syntax: `var <name> [= expression]`
 ```
@@ -215,10 +213,10 @@ Currently, variables doesn't support label namespaces (design decisions yet to b
         //Other code here
 }
 ```
-Variables can hold and remember explicit bit counts and this can be supported depending on target architecture.
+Variables remembers explicit bit counts and this is supported by some target.
 ```
         var src = $0002
-        lda src //16 bit absolute rather than zero page addressing mode
+        lda src //16 bit absolute rather than zero page addressing mode on 6502
 ```
 Variables declared inside macros are automatically scoped to the macro.
 ### Indexed, array & string variables
@@ -227,6 +225,7 @@ A variable can be used as an array or string.
         var x = {12,34,$56}
         var y = "hollow world"
 
+        // Use of logging and member method .str()
         c2_info("Assembling PETSCII: %s", y.str());
         petscii y
 
@@ -469,13 +468,12 @@ Includes the stdout of the command at the current org. Optionally, byte offset a
 
 `postarg "<switch>"`
 Adds c2 command line switches for the post assembly pass from the convenience of your source.
-Example: `-- "chunks", 1024, 1024 //Loads the second kilobyte of the file`
 
 `repeat(X)` and `rrepeat(X)`
-Repeats the following line or C code block X times. The variable `c2repn` can be read. `rrepeat` counts in reverse from X-1.
+Repeats the following line or C code block X times. The variable `c2repn` can be read. `rrepeat` counts in reverse from X-1 to and including 0.
 
 Example:
 ```
         repeat(10)
-                byte 10+c2repn
+                byte offset + c2repn*7
 ```
