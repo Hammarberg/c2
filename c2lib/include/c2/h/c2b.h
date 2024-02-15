@@ -1,6 +1,6 @@
 /*
 	c2 - cross assembler
-	Copyright (C) 2022-2023  John Hammarberg (crt@nospam.binarybone.com)
+	Copyright (C) 2022-2024  John Hammarberg (crt@nospam.binarybone.com)
 
 	This file is part of c2.
 
@@ -12,6 +12,7 @@
 */
 
 #pragma once
+#include "c2i.h"
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -154,7 +155,9 @@ struct sinternal
 	size_t pre_log_count = 0;
 	std::vector<std::string> files;
 	std::vector<std::string> include_paths;
-	std::unordered_map<std::string, c2i::c2_vardata *> registered_vars;
+	std::unordered_map<std::string, std::pair<c2i::c2_vardata *, int>> registered_vars;
+	std::unordered_map<c2i::c2_vardata *, std::string> rregistered_vars;
+	std::vector<std::pair<std::string, int64_t>> imported_vars;
 
 	std::unordered_map<uint32_t, int64_t> scope_label_index_register;
 	
@@ -162,7 +165,8 @@ struct sinternal
 	
 	std::string added_arg;
 	
-	void get_sorted_vars(std::vector<std::pair<std::string, int64_t>> &out);
+	void get_sorted_vars(std::vector<std::pair<std::string, int64_t>> &out, bool imported=true);
+	void import_vars(std::vector<std::pair<std::string, int64_t>> &in);
 	bool lookup_var(const std::string &in, int64_t &out);
 	
 	FILE *search_fopen(const char *file)

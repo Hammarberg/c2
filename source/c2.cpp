@@ -107,7 +107,7 @@ int main(int arga, char *argc[])
 				throw "Error loading project file";
 			}
 			loaded = true;
-			proj.command.add_args(proj.arguments.c_str());
+			proj.command.add_args(proj.arguments.c_str(), true);	//Arguments from template
 		}
 		
 		proj.command.invoke("--help", [&](int arga, const char *argc[])

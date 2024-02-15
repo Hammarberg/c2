@@ -13,9 +13,11 @@
 
 #include "cmda.h"
 #include "log.h"
+#include "project.h"
 
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <filesystem>
 
 static bool _isspace(char b)
@@ -25,16 +27,20 @@ static bool _isspace(char b)
 
 void cmda::add_args(int arga, char *args[])
 {
+	std::vector<std::string> tmps;
 	for(int r=0;r<arga;r++)
 	{
-		split(args[r]);
+		split(args[r], tmps);
 	}
+
+	store(tmps, false);
 }
 
-void cmda::add_args(const char *argstr)
+void cmda::add_args(const char *argstr, bool fromtemplate)
 {
 	const char *p = argstr;
 	std::string tmp;
+	std::vector<std::string> tmps;
 	for(;;)
 	{
 		tmp.clear();
@@ -67,11 +73,13 @@ void cmda::add_args(const char *argstr)
 			}
 		}
 		if(tmp.size())
-			split(tmp.c_str());
+			split(tmp.c_str(), tmps);
 	}
+
+	store(tmps, fromtemplate);
 }
 
-void cmda::split(const char *sarg)
+void cmda::split(const char *sarg, std::vector<std::string> &tmps)
 {
 	int pos = 0;
 
@@ -90,8 +98,7 @@ void cmda::split(const char *sarg)
 			{
 				std::string tmp = "-";
 				tmp += sarg[pos];
-				//printf("split: \"%s\"\n",tmp.c_str());
-				sargs.push_back(tmp);
+				tmps.push_back(tmp);
 				pos++;
 			}
 		}
@@ -103,9 +110,20 @@ void cmda::split(const char *sarg)
 				tmp += sarg[pos];
 				pos++;
 			}
-			//printf("split: \"%s\"\n",tmp.c_str());
-			sargs.push_back(tmp);
+			tmps.push_back(tmp);
 		}
+	}
+}
+
+void cmda::store(std::vector<std::string> &tmps, bool fromtemplate)
+{
+	if(!fromtemplate)
+	{
+		sargs.insert(sargs.end(), tmps.begin(), tmps.end());
+	}
+	else
+	{
+		sargs.insert(sargs.begin()+1, tmps.begin(), tmps.end());
 	}
 }
 
@@ -347,6 +365,58 @@ std::string cmda::get_c2_exe()
 
 std::string cmda::get_c2_exe_path()
 {
-	std::filesystem::path s = sargs[0];
-	return s.string();
+	return sargs[0];
+}
+
+int cmda::get_c2_exe_path(char *buffer, int buffersize)
+{
+	int size = int(get_c2_exe_path().size()) + 1;
+	if(buffer && buffersize)
+	{
+		if(buffersize < size)
+			return -1;
+
+		strncpy(buffer, get_c2_exe_path().c_str(), buffersize);
+	}
+
+	return size;
+}
+
+int cmda::get_sub_assemply_tmp(const char *source, const char *type, char *buffer, int buffersize)
+{
+	std::string stmp = pproject->make_intermediate_path(source) + type;
+
+	int size = int(stmp.size()) + 1;
+	if(buffer && buffersize)
+	{
+		if(buffersize < size)
+			return -1;
+
+		strncpy(buffer, stmp.c_str(), buffersize);
+	}
+
+	return size;
+}
+
+int cmda::get_cmd_line(char *buffer, int buffersize)
+{
+	std::string line;
+
+	for(size_t r=0;r<sargs.size();r++)
+	{
+		if(line.size())
+			line += " ";
+		line += sargs[r];
+	}
+
+	int size = int(line.size()) + 1;
+	if(buffer && buffersize)
+	{
+		if(buffersize < size)
+			return -1;
+
+		strncpy(buffer, line.c_str(), buffersize);
+	}
+
+	return size;
 }

@@ -26,6 +26,11 @@ C2_SECTION_TOP
 		motorola6809::c2_post();
 		// Insert custom post-pass code here
 	}
+
+	const char *c2_get_template() override
+	{
+		return "vectrex";
+	}
 };
 
 c2i *c2_create_object_instance(cmdi *pcmd) {return new c2_project_vpong(pcmd);}

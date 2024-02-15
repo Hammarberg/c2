@@ -12,6 +12,7 @@
 */
 #include "cmda.h"
 #include "c2lib/include/c2/h/c2i.h"
+#include "c2lib/include/c2/h/c2c.h"
 #include "template.h"
 
 #ifdef _WIN32

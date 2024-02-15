@@ -186,7 +186,8 @@ ctemplate::tjson ctemplate::create(bool direct, const char *intemplate, const ch
 	std::string source;
 	std::string asmpath;
 	std::string asmtemplate;
-	
+	std::string stemplate = intemplate;
+
 	if(direct)
 	{
 		title = std::filesystem::path(intitle).stem().string();
@@ -211,6 +212,7 @@ ctemplate::tjson ctemplate::create(bool direct, const char *intemplate, const ch
 	translate.push_back({ "{source}", source });
 	translate.push_back({ "{asmpath}", asmpath });
 	translate.push_back({ "{asmtemplate}", asmtemplate });
+	translate.push_back({ "{template}", stemplate });
 	translate.push_back({ "{include}", include });
 
 	json::container *c = new json::container();

@@ -14,6 +14,7 @@
 #include "json.h"
 #include "c2a.h"
 #include "log.h"
+#include "c2lib/include/c2/h/c2t.h"
 
 #include <cstring>
 #include <sys/stat.h>
@@ -33,29 +34,8 @@ const uint32_t MAGIC_VERSION = 1337*1337+4;
 
 #define C2CACHE std::string(title+std::string("_c2cache"))
 
-static void save(FILE *fp, const std::string &s)
-{
-	const char *p = s.c_str();
-	for(;;p++)
-	{
-		fwrite(p, 1, 1, fp);
-		if (!*p)break;
-	}
-}
-
-static void load(FILE *fp, std::string &s)
-{
-	s.clear();
-	char b;
-	for(;;)
-	{
-		fread(&b, 1, 1, fp);
-		if(!b)break;
-		s += b;
-	}
-}
-
 sproject::sproject()
+    :command(this)
 {
 }
 
@@ -101,12 +81,12 @@ void sproject::stimestamp::stat(const char *file)
 
 void sproject::sdependency::save(FILE *fp)
 {
-    ::save(fp, file);
+    c2tools::save(fp, file);
 }
 
 void sproject::sdependency::load(FILE *fp)
 {
-    ::load(fp, file);
+    c2tools::load(fp, file);
 }
 
 void sproject::sdependency::stat()
@@ -396,7 +376,7 @@ void sproject::save_imm(const std::filesystem::path &path)
     fwrite(&n, 1, sizeof(n), fp);
     for(size_t r=0;r<n;r++)
     {
-        save(fp, parser_files[r]);
+        c2tools::save(fp, parser_files[r]);
     }
 
     fclose(fp);
@@ -441,7 +421,7 @@ void sproject::load_imm(const std::filesystem::path &path)
     fread(&n, 1, sizeof(n), fp);
     for(size_t r=0;r<n;r++)
     {
-        load(fp, stmp);
+        c2tools::load(fp, stmp);
         parser_files.push_back(stmp);
     }
 

@@ -26,6 +26,11 @@ C2_SECTION_TOP
 		c2i::c2_post();
 		// Insert custom post-pass code here
 	}
+
+	const char *c2_get_template() override
+	{
+		return "NESnrom";
+	}
 };
 
 c2i *c2_create_object_instance(cmdi *pcmd) {return new c2_project_bounce(pcmd);}

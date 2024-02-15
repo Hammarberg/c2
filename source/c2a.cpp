@@ -366,7 +366,7 @@ bool c2a::match_macro_parameters(const std::vector<stok *> &def, const std::vect
 				// Sanity check potential argument
 				int start = l ? ridx[l-1] + 1 : 0;
 				int end = l<NUM_RDEF-1 ? ridx[l+1] : NUM_PAR;
-				int count = end - start;
+				//int count = end - start;
 
 				// Indexed variables
 				const std::vector<const char *> &iv = inputs[v].second;
@@ -1179,7 +1179,7 @@ void c2a::s_parse1(toklink &link)
 										// Local label setup
 										clabel &cr = *root_labels[root_labelindex - (numdots - 1)].second;
 										
-										s2 = "c2i::var " + stmp + "={\"" + mapname + "\",0};\n";
+										s2 = "c2i::var " + stmp + "={\"" + mapname + "\",nullptr,0};\n";
 										cr.sub = link.link(maketok(psub, s2.c_str()), cr.sub);
 										
 										stok *c;
@@ -1220,7 +1220,7 @@ void c2a::s_parse1(toklink &link)
 										stok *c = nullptr;
 										if(!macrospace)
 										{
-											s2 = "c2_basevar<" + subname + "> " + stmp + "={\"" + mapname + "\",0};\n";
+											s2 = "c2_basevar<" + subname + "> " + stmp + "={\"" + mapname + "\",nullptr,0};\n";
 											linkinit(maketok(o, s2.c_str()), link);
 											
 											stok *ta;

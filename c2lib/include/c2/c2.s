@@ -61,3 +61,12 @@ macro postarg @arg
 
 #define rrepeat(TIMES) for(int c2repn=(TIMES)-1;c2repn>=0;c2repn--)
 #define RREPEAT rrepeat
+
+#define import(X) static var X(#X, nullptr, 1);
+#define IMPORT import
+
+macro assemble @src
+{
+	c2_subassemble(src.str());
+}
+#define ASSEMBLE assemble

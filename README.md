@@ -477,3 +477,23 @@ Example:
         repeat(10)
                 byte offset + c2repn*7
 ```
+
+`assemble "<source>"`
+Externally assemble the source and include the results at the current ORG. Unlike the C pre-processor `#include` statement that merge at the source level, `assemble` will assemble the source separately and then merge at the binary level. This creates isolation between the including and included source and can improve build times on large projects.
+
+Sharing of labels between the two source files must be set explicitly with `import`.
+
+`import(<label>)`
+Import a global label from an externally assembled source.
+
+Example:
+```
+        // Import labels before use
+        import(data)
+        import(routine)
+
+        move data, d0
+        jmp routine
+
+        assemble "dataset.asm"
+```

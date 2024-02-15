@@ -1,6 +1,6 @@
 /*
 	c2 - cross assembler
-	Copyright (C) 2022-2023  John Hammarberg (crt@nospam.binarybone.com)
+	Copyright (C) 2022-2024  John Hammarberg (crt@nospam.binarybone.com)
 
 	This file is part of c2.
 
@@ -39,8 +39,7 @@ public:
 		//operator var() const;
 		void backup(int64_t &a, int64_t &w);
 		void restore(int64_t a, int64_t w);
-		int64_t orga = 0;
-		int64_t orgw = 0;
+		int64_t orga = 0, orgw = 0;
 	}c2_org;
 	
 	struct c2_void{};
@@ -65,6 +64,9 @@ public:
 		char *c2vs = nullptr;	//Holds temporary string buffer
 		
 		int64_t get() const { if(!c2va){ return c2vv.c2vn; } return c2vv.c2vp[0]; }
+		void set(int64_t n) {internal_clear(); c2va=c2vb=0; c2vv.c2vn=n; c2vc = 1;}
+	protected:
+		void internal_clear() { if(c2va){ c2i::c2_free(c2vv.c2vp);} }
 	};
 
 	template<typename T>
@@ -74,7 +76,7 @@ public:
 	friend c2i;
 	public:
 		c2_basevar() {}
-		c2_basevar(const char *name, void *dum) { c2_get_single()->register_var(name, this); }
+		c2_basevar(const char *name, const char *from, int mode) { c2_get_single()->c2_register_var(name, from, mode, this); }
 		template<typename I> c2_basevar(const c2_basevar<I> &o) { copy(o); }
 		c2_basevar(const c2_basevar &o) { copy(o); }
 		c2_basevar(int64_t n, uint32_t ib = 0) : c2_vardata(n) { c2vb = ib ? ib : calc_bits(n); }
@@ -121,7 +123,7 @@ public:
 			}
 		}
 		
-		~c2_basevar() { internal_clear(); if(c2vs){ c2i::c2_free(c2vs); } }
+		~c2_basevar() { c2_get_single()->c2_unregister_var(this); internal_clear(); if(c2vs){ c2i::c2_free(c2vs); } }
 		
 		template<typename I> c2_basevar &operator=(const c2_basevar<I> &o) { internal_clear(); copy(o); return *this; }
 		c2_basevar& operator=(const c2_basevar &o) { internal_clear(); copy(o); return *this; }
@@ -156,8 +158,6 @@ public:
 		int value() const { return get(); }
 		
 	private:
-		void internal_clear() { if(c2va){ c2i::c2_free(c2vv.c2vp); } }
-		
 		template<typename I> void copy(const c2_basevar<I> &o)
 		{
 			if(!o.c2va)
@@ -410,7 +410,11 @@ public:
 	void *c2_get_internal(){return pinternal;}
 	
 	bool c2_resolve(const char *addr, int64_t &out, bool allow_labels = true);
+
+	void c2_subassemble(const char *source);
 	
+	virtual const char *c2_get_template();
+
 protected:
 	// Hides internals to avoid includes
 	void *pinternal;
@@ -419,8 +423,9 @@ protected:
 	int32_t error_count, warning_count;
 	int c2_pass_count = 0;
 	
-	void register_var(const char *name, c2i::c2_vardata *p);
-	
+	void c2_register_var(const char *name, const char *from, int mode, c2i::c2_vardata *pv);
+	void c2_unregister_var(c2i::c2_vardata *pv);
+
 	static c2i *c2_single;
 	
 	uint8_t *RAM = nullptr;

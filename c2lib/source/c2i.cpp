@@ -1,10 +1,11 @@
 /*
 	c2 - cross assembler
-	Copyright (C) 2022-2023  John Hammarberg (crt@nospam.binarybone.com)
+	Copyright (C) 2022-2024  John Hammarberg (crt@nospam.binarybone.com)
 
 	This file is part of c2.
 
 	c2 is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+	store(tmps, false);
 
 	c2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
@@ -19,6 +20,7 @@
 
 #include "c2/h/c2i.h"
 #include "c2/h/c2b.h"
+#include "c2/h/c2t.h"
 
 #include <cstdio>
 #include <cstdarg>
@@ -115,19 +117,35 @@ void c2i::c2_corg::restore(int64_t a, int64_t w)
 ///////////////////////////////////////////////////////////////////////////////
 
 
-void sinternal::get_sorted_vars(std::vector<std::pair<std::string, int64_t>> &out)
+void sinternal::get_sorted_vars(std::vector<std::pair<std::string, int64_t>> &out, bool imported)
 {
 	std::multimap<int64_t, std::string> sorted;
 	
-	for(auto i=registered_vars.begin(); i!=registered_vars.end(); i++)
+	for(auto i : registered_vars)
 	{
-		if(!strstr(i->first.c_str(), "c2_auto_"))
-			sorted.insert({i->second->get(),i->first});
+		if(!strstr(i.first.c_str(), "c2_auto_"))
+		{
+			if(imported || (!imported && i.second.second == 0))
+				sorted.insert({i.second.first->get(),i.first});
+		}
 	}
 	
-	for(auto i=sorted.begin(); i!=sorted.end(); i++)
+	for(auto i : sorted)
 	{
-		out.push_back(std::pair<std::string, int64_t>(i->second, i->first));
+		out.push_back({i.second, i.first});
+	}
+}
+
+void sinternal::import_vars(std::vector<std::pair<std::string, int64_t>> &in)
+{
+	for(auto i : in)
+	{
+		auto r = registered_vars.find(i.first);
+		if(r != registered_vars.end() && r->second.second == 1)
+		{
+			//fprintf(stderr, "importing \"%s\" %ld\n",i.first.c_str(), i.second);
+			r->second.first->set(i.second);
+		}
 	}
 }
 
@@ -136,7 +154,7 @@ bool sinternal::lookup_var(const std::string &in, int64_t &out)
 	auto i = registered_vars.find(in);
 	if(i != registered_vars.end())
 	{
-		out = i->second->get();
+		out = i->second.first->get();
 		return true;
 	}
 	return false;
@@ -372,7 +390,7 @@ c2i::c2i(cmdi *pcmd)
 	c2_cmd.declare("--dump-enum", nullptr, "[filename]: Output variables in C-style enum format. If no filename is given, stdout will be used", 0, 1);
 	c2_cmd.declare("--address-range", "-m", "<start> <end>: Set the valid memory address range available for the assembly to target. Addresses must be numerical", 2);
 	c2_cmd.declare("--assembly-hash", nullptr, "Verbosely outputs a hash for each assembly step");
-	c2_cmd.declare("--org", "-O", "Set ORG", 1);
+	c2_cmd.declare("--org", "-O", "<address> [reloc address]: Set ORG. Addresses must be numerical", 1, 2);
 }
 
 c2i::~c2i()
@@ -540,11 +558,22 @@ void c2i::c2_reset_pass()
 
 	c2_cmd.invoke("--org", [&](int arga, const char *argc[])
 	{
-		int64_t addr;
-		if(!c2_resolve(argc[0], addr, false))
+		int64_t a,w;
+
+		if(!c2_resolve(argc[0], a, false))
 			throw "--org could not resolve address";
 
-		c2_org = addr;
+		if(arga == 1)
+		{
+			c2_org = a;
+		}
+		else
+		{
+			if(!c2_resolve(argc[1], w, false))
+				throw "--org could not resolve address";
+
+			c2_org = {a,w};
+		}
 	});
 }
 
@@ -555,24 +584,6 @@ bool c2i::c2_assemble()
 
 	try
 	{
-		c2_cmd.invoke("--address-range", [&](int arga, const char *argc[])
-		{
-			int64_t from,to;
-			
-			if(!c2_resolve(argc[0], from, false))
-				throw "--address-range could not resolve 'from' address";
-			
-			if(!c2_resolve(argc[1], to, false))
-				throw "--address-range could not resolve 'to' address";
-				
-			if(from >= to || from < 0 )
-				throw "--address-range addresses out of range";
-				
-			// Valid range of RAM
-			c2_set_ram(from, to-from);
-				
-		});
-
 		c2_pre();
 
 		c2_reset_pass();
@@ -595,7 +606,7 @@ bool c2i::c2_assemble()
 				c2_org.restore(org_backup_a, org_backup_w);
 				c2_reset_pass();
 
-				if(!c2_assembly_hash)
+				if(!c2_assembly_hash && c2_verbose)
 				{
 					fprintf(stderr, "Pass %d", pass);
 				}
@@ -603,20 +614,13 @@ bool c2i::c2_assemble()
 				p->hash_state.finalize();
 				cmur3::shash hash = p->hash_state.hash;
 
-				if(!c2_assembly_hash)
+				if(!c2_assembly_hash && c2_verbose)
 				{
-					if(c2_verbose)
-					{
-	#ifndef _MSC_VER
-						fprintf(stderr, ": %016lx%016lx\n", hash.h1, hash.h2);
-	#else
-						fprintf(stderr, ": %016llx%016llx\n", hash.h1, hash.h2);
-	#endif
-					}
-					else
-					{
-						fprintf(stderr, "\n");
-					}
+#ifndef _MSC_VER
+					fprintf(stderr, ": %016lx%016lx\n", hash.h1, hash.h2);
+#else
+					fprintf(stderr, ": %016llx%016llx\n", hash.h1, hash.h2);
+#endif
 				}
 
 				if(history.size())
@@ -835,9 +839,48 @@ bool c2i::c2_resolve(const char *addr, int64_t &out, bool allow_labels)
 
 void c2i::c2_pre()
 {
+	sinternal *p = (sinternal *)pinternal;
+
+	c2_cmd.invoke("--address-range", [&](int arga, const char *argc[])
+	{
+		int64_t from,to;
+
+		if(!c2_resolve(argc[0], from, false))
+			throw "--address-range could not resolve 'from' address";
+
+		if(!c2_resolve(argc[1], to, false))
+			throw "--address-range could not resolve 'to' address";
+
+		if(from >= to || from < 0 )
+			throw "--address-range addresses out of range";
+
+		// Valid range of RAM
+		//fprintf(stderr, "Ram size %d\n", int(to-from));
+		c2_set_ram(from, to-from);
+	});
+
 	c2_cmd.invoke("--assembly-hash", [&](int arga, const char *argc[])
 	{
 		c2_assembly_hash = true;
+	});
+
+	c2_cmd.invoke("--c2-link-mode", [&](int arga, const char *argc[])
+	{
+		FILE *fp = stdin;
+
+		// Read labels
+		std::string name;
+		int64_t val;
+
+		for(;;)
+		{
+			c2tools::load(fp, name);
+			if(!name.size())
+				break;
+
+			fread(&val, 1, sizeof(int64_t), fp);
+			p->imported_vars.push_back({name, val});
+		}
 	});
 }
 
@@ -870,6 +913,26 @@ void c2i::c2_post()
 		
 		if(fp != stdout)
 			fclose(fp);
+	});
+
+	c2_cmd.invoke("--c2-link-mode", [&](int arga, const char *argc[])
+	{
+		FILE *fp = stdout;
+
+		std::vector<std::pair<std::string, int64_t>> sorted;
+		p->get_sorted_vars(sorted, false);
+
+		for(size_t r=0;r<sorted.size();r++)
+		{
+			c2tools::save(fp, sorted[r].first.c_str());
+			fwrite(&sorted[r].second, 1, sizeof(int64_t), fp);
+		}
+		fputc(0, fp);
+
+		fwrite(&c2_org, 1, sizeof(c2_org), fp);
+
+		fwrite(RAM, 1, RAM_size, fp);
+		fwrite(RAM_use, 1, RAM_size, fp);
 	});
 	
 	c2_cmd.invoke("--out-c", [&](int arga, const char *argc[])
@@ -973,7 +1036,6 @@ void c2i::c2_post()
 
 void c2i::loadbin(const char *path, size_t offset, size_t length)
 {
-	
 	c2_file fp;
 	
 	if(!fp.open(path))
@@ -999,7 +1061,7 @@ void c2i::loadbin(const char *path, size_t offset, size_t length)
 	}
 	else if(length > size - offset)
 	{
-		iwarning("Requested size (%d) to read is larger than the file size for: %s", int(length), path);
+		iwarning("Requested size (%d) to read goes beyond end of file: %s", int(length), path);
 		toread = size - offset;
 	}
 	else
@@ -1027,7 +1089,7 @@ c2i::var c2i::loadvar(const char *path, size_t offset, size_t length)
 	
 	if(offset > size)
 	{
-		ierror("Requested offset (%d) to is beyond the file size for: %s", int(offset), path);
+		ierror("Requested offset (%d) is beyond the file size for: %s", int(offset), path);
 		return v;
 	}
 	
@@ -1041,7 +1103,7 @@ c2i::var c2i::loadvar(const char *path, size_t offset, size_t length)
 	}
 	else if(length > size - offset)
 	{
-		iwarning("Requested size (%d) to read is larger than the file size for: %s", int(length), path);
+		iwarning("Requested read size (%d) is goes beyond end of file: %s", int(length), path);
 		toread = size - offset;
 	}
 	else
@@ -1087,7 +1149,7 @@ void c2i::loadstream(const char *cmd, size_t offset, size_t length)
 		n = fread(&b, 1, sizeof(b), ep);
 		if(!n)
 		{
-			ierror("Requested offset (%d) to is beyond the end of the stream", int(offset));
+			ierror("Requested offset (%d) is beyond the stream size for: %s", int(offset), cmd);
 			pclose(ep);
 			return;
 		}
@@ -1276,10 +1338,53 @@ void c2i::c2_log(c2_eloglevel level, const char *file, int line, const char *for
 	//std::cerr << out.c_str();
 }
 
-void c2i::register_var(const char *name, c2i::c2_vardata *pv)
+void c2i::c2_register_var(const char *name, const char *from, int mode, c2i::c2_vardata *pv)
 {
 	sinternal *p = (sinternal *)pinternal;
-	p->registered_vars[name] = pv;
+
+	auto i = p->registered_vars.find(name);
+	if(i != p->registered_vars.end())
+	{
+		throw "Label is already registered";
+	}
+
+	p->registered_vars[name] = {pv, mode};
+	p->rregistered_vars[pv] = name;
+
+	if(mode == 1)
+	{
+		for(auto i : p->imported_vars)
+		{
+			if(i.first == name)
+			{
+				//fprintf(stderr, "direct importing \"%s\" %ld\n",i.first.c_str(), i.second);
+				pv->set(i.second);
+				break;
+			}
+		}
+	}
+}
+
+void c2i::c2_unregister_var(c2i::c2_vardata *pv)
+{
+	sinternal *p = (sinternal *)pinternal;
+
+	auto r = p->rregistered_vars.find(pv);
+	if(r == p->rregistered_vars.end())
+	{
+		return;
+	}
+
+	std::string &name = r->second;
+
+	auto i = p->registered_vars.find(name);
+	if(i == p->registered_vars.end())
+	{
+		throw "Internal error";
+	}
+	
+	p->registered_vars.erase(i);
+	p->rregistered_vars.erase(r);
 }
 
 void *c2i::c2_malloc(size_t size)
@@ -1312,6 +1417,11 @@ void *c2i::c2_memcpy(void *dest, const void *src, size_t n)
 	return memcpy(dest, src, n);
 }
 
+const char *c2i::c2_get_template()
+{
+	return "void";
+}
+
 void c2i::c2_set_ram(int64_t base, int64_t size)
 {
 	if(RAM)
@@ -1328,4 +1438,172 @@ void c2i::c2_set_ram(int64_t base, int64_t size)
 	
 	RAM_base = base;
 	RAM_size = size;
+}
+
+void c2i::c2_subassemble(const char *source)
+{
+	sinternal *p = (sinternal *)pinternal;
+
+	std::vector<char> buf;
+
+	buf.resize(c2_cmd.get_sub_assemply_tmp(source, ".in", nullptr, 0));
+	c2_cmd.get_sub_assemply_tmp(source, ".in",buf.data(), int(buf.size()));
+	std::string in = buf.data();
+
+	buf.resize(c2_cmd.get_sub_assemply_tmp(source, ".err", nullptr, 0));
+	c2_cmd.get_sub_assemply_tmp(source, ".err",buf.data(), int(buf.size()));
+	std::string err = buf.data();
+
+	buf.resize(c2_cmd.get_c2_exe_path(nullptr, 0));
+	c2_cmd.get_c2_exe_path(buf.data(), int(buf.size()));
+	std::string command = buf.data();
+
+	buf.resize(1024);
+	for(;;)
+	{
+		int n = snprintf(buf.data(), int(buf.size()), " --c2-link-mode -m %ld %ld -O %ld %ld -Xd %s %s <%s 2>%s",
+				RAM_base,
+				RAM_base+RAM_size,
+				c2_org.orga,
+				c2_org.orgw,
+				c2_get_template(),
+				source,
+				in.c_str(),
+				err.c_str()
+				);
+
+		if(n < int(buf.size()))
+			break;
+
+		buf.resize(n+256);
+	}
+
+	command += buf.data();
+
+	FILE *fp = fopen(in.c_str(), "wb");
+	if(!fp)
+	{
+		ierror("Intermediate file error executing sub assembly: %s", command.c_str());
+		return;
+	}
+
+	// Write labels
+	std::vector<std::pair<std::string, int64_t>> sorted;
+	p->get_sorted_vars(sorted, false);
+
+	for(size_t r=0;r<sorted.size();r++)
+	{
+		c2tools::save(fp, sorted[r].first.c_str());
+		fwrite(&sorted[r].second, 1, sizeof(int64_t), fp);
+	}
+	fputc(0, fp);
+
+	fclose(fp);
+
+	iverbose("Executing: %s\n", command.c_str());
+
+#ifdef _WIN32
+	command = "\"" + command + "\"";
+	FILE *ep = popen(command.c_str(), "rb");
+#else
+	FILE *ep = popen(command.c_str(), "r");
+#endif
+
+	if(!ep)
+	{
+		ierror("Error executing sub assembly: %s", command.c_str());
+		return;
+	}
+
+	size_t pos = 0;
+	const size_t RSIZE = 1024;
+
+	buf.resize(0);
+	buf.reserve(256*1024);
+
+	for(;;)
+	{
+		buf.resize(pos + RSIZE);
+		int n = fread(buf.data()+pos, 1, RSIZE, ep);
+
+		if(n < 0)
+		{
+			ierror("Error reading sub assembly data: %s", command.c_str());
+			return;
+		}
+
+		pos += n;
+
+		if(n < int(RSIZE))
+		{
+			buf.resize(pos);
+			break;
+		}
+	}
+
+	int result = pclose(ep);
+
+	if(result)
+	{
+		std::string error;
+		fp = fopen(err.c_str(),"r");
+		if(!fp)
+		{
+			ierror("Intermediate file error executing sub assembly: %s", command.c_str());
+			return;
+		}
+
+		c2tools::load(fp, error);
+		fclose(fp);
+		ierror("\"%s\"", error.c_str());
+		return;
+	}
+
+	// Read exports
+	std::string name;
+	int64_t val;
+	pos = 0;
+	sorted.clear();
+
+	for(;;)
+	{
+		pos = c2tools::load(buf, pos, name);
+		if(!name.size())
+			break;
+
+		memcpy(&val, buf.data()+pos, sizeof(int64_t));
+		pos += sizeof(int64_t);
+
+		sorted.push_back({name, val});
+	}
+
+	p->import_vars(sorted);
+
+	// Read ORG
+	memcpy(&c2_org, buf.data()+pos, sizeof(c2_org));
+	pos += sizeof(c2_org);
+
+	if(buf.size()-pos != RAM_size * 2)
+	{
+		ierror("Wrong sub assembly RAM map size: %d", int(buf.size()-pos));
+		return;
+	}
+
+	// Read ram maps
+	std::vector<uint8_t> ram;
+	std::vector<uint8_t> use;
+	ram.resize(RAM_size);
+	use.resize(RAM_size);
+
+	memcpy(ram.data(), buf.data()+pos, RAM_size);
+	pos += RAM_size;
+
+	memcpy(use.data(), buf.data()+pos, RAM_size);
+	//pos += RAM_size;
+
+	for(int64_t pos = 0; pos<RAM_size; pos++)
+	{
+		if(use[pos])
+			c2_poke(RAM_base + pos, ram[pos]);
+	}
 }
