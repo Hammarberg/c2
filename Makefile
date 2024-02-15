@@ -11,7 +11,7 @@ INC_DIRS := $(SRC_DIR) ./
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 CPPFLAGS ?= $(INC_FLAGS) -MMD -MP
-CXXFLAGS ?= -O2 -Wno-unused-result -g
+CXXFLAGS ?= -O2 -Wno-unused-result
 
 OS := $(shell uname -o)
 
