@@ -2,7 +2,7 @@
 ## Overview
 The motivation behind c2 is to have an assembler framework capable of targeting a wide range of 8-32 bit CPU architectures while providing strong meta-programming capabilities.
 
-Currently c2 works well with 6502+variants and 6809. Experimental support for Z80 exist 68000 is under development.
+Currently c2 works well with 6502+variants and 6809. Experimental support for Z80 exist and 68000 is under development.
 
 c2 is an assembler wrapper top of a C++ compiler. It's highly configurable and architecture independent in the sense that all assembly pseudo opcodes are built with text macros. Macro files are included with the standard C pre-processor.
 
@@ -25,7 +25,7 @@ c2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
 You should have received a copy of the GNU General Public License along with c2. If not, see <https://www.gnu.org/licenses/>.
 ### Disclaimer
 c2 is unstable and still under heavy development. Breaking changes can still happen.
-### Contributors
+### Main contributors
 John Hammarberg, Jocelyn Houle, Johan Samuelsson, Monstersgoboom
 # Build & Installation
 c2 requires either clang++ or g++ for building c2 itself and for running c2. Clang is a bit faster on compile times.
@@ -65,7 +65,7 @@ c2 command line switches comes in two variants, the descriptive long version pre
 ## Templates overview
 When assembling with c2, the template selected sets the target architecture, project configuration and may provides additional tools, definitions or macros for the target platform.
 
-Templates provides a "hello word" as a starting for new projects.
+Many templates provides a "hello word" as a starting for new projects.
 
 A template is specified at either at project creation (`--create-project`) or during direct assembly (`--direct`).
 ## Projects
@@ -206,7 +206,7 @@ Syntax: `var <name> [= expression]`
         // If you re-assign it, it will be needed
         x = 10;
 ```
-Currently, variables doesn't support label namespaces (design decisions yet to be made) and works more like C++ variables. If you need to limit a scope of a variable you can use C++ scopes:
+Currently, variables doesn't support label namespaces (design decisions yet to be made) and works more like C++ variables. If you need to limit a scope of a variable you can use C scopes:
 ```
 {
         var x = 5
@@ -380,7 +380,7 @@ If you need to add additional C/C++ include files, this is the proper place to d
 
 `c2_pre()` and `c2_post()` can be extended with pre and post assembly code. Post will only be executed if the assembly is successful.
 ## C pre-processor
-There is not a lot to add here but you have the complete power of the C pre-processor. Some ideas and examples:
+You have the complete power of the C pre-processor. Some ideas and examples:
 ```
 #include "mymacros.s"
 #define SCREEN $0400
@@ -390,7 +390,7 @@ lda #LIMIT8BIT(258)
 sta SCREEN
 ```
 ## Inline C++
-All C/C++ loops, variables, if/else, case switches are available at your disposal. As your assembly source resides inside the C++ method `c2_pass()` there are some logical restrictions. If you want to declare your own functions you must normally do that as member methods in the .cpp-file. A way to get around this is to declare a struct:
+All C/C++ loops, variables, if/else, case switches are available. As the assembly source resides inside the C++ method `c2_pass()` there are some logical restrictions. If you want to declare your own function, that's normally done as a member method in the .cpp-file. A way to get around this is to declare a struct:
 ```
         // Your assemblerfile.s
 struct
@@ -424,7 +424,7 @@ Besides the executable, c2 is also dependent on its library to operate. The libr
 
 `source` contains target platform and architecture specific C++ files compiled alongside projects.
 
-`template` contains templated base files referenced by `templates.c2.json`. These are copied and translated to your project folder when creating a new project.
+`template` contains templated base files referenced by `templates.c2.json`. These are copied and translated to your project or intermediate folder when creating a new project or during direct assembly.
 ### c2lib search order
 * In the project path alongside `<project>.c2.json`
 * Explicitly set with `--c2-library-dir`
