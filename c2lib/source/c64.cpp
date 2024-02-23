@@ -625,15 +625,13 @@ c64::sid c64::load_sid(const char *path)
 
 	obj.address = load_address;
 
-	int size = 0;
-
-	while(!fp.eof())
-	{
-		obj.data[size] = fp.pop8();
-		size++;
-	}
-
+	size_t size = fp.size() - fp.pos();
 	obj.size = size;
+
+	for(size_t r=0;r<size;r++)
+	{
+		obj.data[r] = fp.pop8();
+	}
 	
 	c2_verbose("SID $%04x-$%04x, init $%04x, play $%04x", int(load_address), int(load_address+size), int(obj.init), int(obj.play));
 
