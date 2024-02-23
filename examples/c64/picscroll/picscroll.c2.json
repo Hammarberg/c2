@@ -1,7 +1,7 @@
 {
 	"title" : "picscroll",
 	"basedir":".",
-	"arguments" : "--out-rle start + start picscroll.prg --vice-cmd picscroll.sym -v",
+	"arguments" : "--out-rle start + start picscroll.prg --vice-cmd picscroll.sym",
 	"execute" : "x64sc -silent -moncommands picscroll.sym picscroll.prg",
 	"files":[
 		"picscroll.cpp":{
