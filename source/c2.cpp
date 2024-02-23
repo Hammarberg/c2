@@ -39,6 +39,7 @@ int main(int arga, char *argc[])
 		proj.command.declare("--create-project", "-c", "<template> <name> [path]: Creates a new project based on the specified template. If a path is given it will be created and used, otherwise the current directory is used", 2, 3);
 		proj.command.declare("--list-templates", "-l", "List available templates for project creation");
 		proj.command.declare("--c2-library-dir", "-D", "<path>: Add a c2 library path", 1);
+		proj.command.declare("--compiler", "-C", "<path>: Explicitly set compiler", 1);
 		proj.command.declare("--include", "-i", "<path>: Add an include search path for source and binaries", 1);
 		proj.command.declare("--verbose", "-v", "Output more information. Can be stacked for even more: -vvv");
 		

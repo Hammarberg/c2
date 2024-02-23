@@ -28,7 +28,6 @@ public:
 	int get_c2_exe_path(char *buffer, int buffersize) override;
 	int get_cmd_line(char *buffer, int buffersize) override;
 
-
 	std::string get_c2_exe();
 	std::string get_c2_exe_path();
 
@@ -55,6 +54,6 @@ public:
 private:
 	int get_sub_assemply_tmp(const char *source, const char *type, char *buffer, int buffersize) override;
 
-	void split(const char *sarg, std::vector<std::string> &tmps);
+	void split(const char *sarg, std::vector<std::string> &tmps, bool quote);
 	void store(std::vector<std::string> &tmps, bool fromtemplate);
 };

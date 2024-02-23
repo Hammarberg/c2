@@ -491,7 +491,16 @@ void sproject::sh_execute(const char *str, bool silent)
 
 void sproject::set_compiler()
 {
-    compiler = quote_path(lib_cfg_get_string("compiler"));
+    command.invoke("--compiler", [&](int arga, const char *argc[])
+    {
+        compiler = quote_path(argc[0]);
+    });
+
+    if(!compiler.size())
+    {
+        compiler = quote_path(lib_cfg_get_string("compiler"));
+    }
+
     if(!compiler.size())
     {
         // Try auto detect
@@ -531,7 +540,7 @@ void sproject::set_compiler()
 
     if(!compiler.size())
     {
-        throw "No compiler found in path. Either add clang/gcc to system path or specify the full path in config";
+        throw "No compiler found in path. Either add clang/gcc to system path, specify the full path in config or set using --compiler";
     }
 
     if(compiler.find("clang") != std::string::npos)
@@ -574,7 +583,6 @@ bool sproject::load_project(ctemplate::tjson cfg, const char* projectfile, bool 
 
     chdir(basedir.string().c_str());
     lib_basepath();	// Let clibrary know we are in the project folder
-    set_compiler();
 	
     tmp = cfg->Get("title").GetString();
     if (tmp.size()) title = tmp;
@@ -674,6 +682,8 @@ void sproject::build(bool doexecute)
     {
         lib_add_include_path(argc[0]);
     });
+
+    set_compiler();
 
     c2a parser(verbose);
     std::string cmd, precmd;

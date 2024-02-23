@@ -28,9 +28,12 @@ static bool _isspace(char b)
 void cmda::add_args(int arga, char *args[])
 {
 	std::vector<std::string> tmps;
-	for(int r=0;r<arga;r++)
+	
+	split(args[0], tmps, true);
+	
+	for(int r=1;r<arga;r++)
 	{
-		split(args[r], tmps);
+		split(args[r], tmps, false);
 	}
 
 	store(tmps, false);
@@ -51,10 +54,13 @@ void cmda::add_args(const char *argstr, bool fromtemplate)
 		if(!*p)
 			break;
 		
+		bool quote = false;
 		for(;*p && *p != ' ';p++)
 		{
+			quote = false;
 			if(*p == '\"')
 			{
+				quote = true;
 				p++;
 				while(*p)
 				{
@@ -73,14 +79,20 @@ void cmda::add_args(const char *argstr, bool fromtemplate)
 			}
 		}
 		if(tmp.size())
-			split(tmp.c_str(), tmps);
+			split(tmp.c_str(), tmps, quote);
 	}
 
 	store(tmps, fromtemplate);
 }
 
-void cmda::split(const char *sarg, std::vector<std::string> &tmps)
+void cmda::split(const char *sarg, std::vector<std::string> &tmps, bool quote)
 {
+	if(quote)
+	{
+		tmps.push_back(sarg);
+		return;
+	}
+	
 	int pos = 0;
 
 	for(;;)
@@ -193,7 +205,7 @@ void cmda::cswitch::print()
 			tmp += sinfo[r];
 			r++;
 		}
-		fprintf(stdout, "%s\n", tmp.c_str());
+		fprintf(stderr, "%s\n", tmp.c_str());
 		tmp = "";
 	}
 }
