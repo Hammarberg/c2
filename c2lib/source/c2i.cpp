@@ -517,7 +517,7 @@ void c2i::c2_poke(int64_t pos, int64_t data)
 	
 	if(c2_assembly_step_hash)
 	{
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) && !defined(__MINGW64__)
 		iinfo("%016lx%016lx", p->hash_state.hash.h1, p->hash_state.hash.h2);
 #else
 		iinfo("%016llx%016llx", p->hash_state.hash.h1, p->hash_state.hash.h2);
@@ -617,7 +617,7 @@ bool c2i::c2_assemble()
 
 				if(!c2_assembly_step_hash && c2_verbose)
 				{
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) && !defined(__MINGW64__)
 					fprintf(stderr, ": %016lx%016lx\n", hash.h1, hash.h2);
 #else
 					fprintf(stderr, ": %016llx%016llx\n", hash.h1, hash.h2);
@@ -805,21 +805,21 @@ bool c2i::c2_resolve(const char *addr, int64_t &out, bool allow_labels)
 		out = c2_high_bound();
 		break;
 	case dec:
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) && !defined(__MINGW64__)
 		sscanf(p, "%ld", &out);
 #else
 		sscanf(p, "%lld", &out);
 #endif
 		break;
 	case oct:
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) && !defined(__MINGW64__)
 		sscanf(p, "%lo", &out);
 #else
 		sscanf(p, "%llo", &out);
 #endif
 		break;
 	case hex:
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) && !defined(__MINGW64__)
 		sscanf(p, "%lx", &out);
 #else
 		sscanf(p, "%llx", &out);
@@ -1025,7 +1025,11 @@ void c2i::c2_post()
 			std::string tmp = sorted[r].first;
 			std::replace(tmp.begin(), tmp.end(), '.', '_');
 
+#if !defined(_MSC_VER) && !defined(__MINGW64__)
 			fprintf(fp, "\t%s = 0x%lx%s\n", tmp.c_str(), sorted[r].second, (r != sorted.size()-1 ? "," : ""));
+#else
+			fprintf(fp, "\t%s = 0x%llx%s\n", tmp.c_str(), sorted[r].second, (r != sorted.size()-1 ? "," : ""));
+#endif
 		}
 		fprintf(fp, "};\n");
 		
@@ -1040,7 +1044,7 @@ void c2i::c2_post()
 
 		cmur3::shash hash = p->hash_state.hash;
 
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) && !defined(__MINGW64__)
 		sprintf(buf, "%016lx%016lx", hash.h1, hash.h2);
 #else
 		sprintf(buf, "%016llx%016llx", hash.h1, hash.h2);
@@ -1487,7 +1491,11 @@ void c2i::c2_subassemble(const char *source)
 	buf.resize(1024);
 	for(;;)
 	{
+#if !defined(_MSC_VER) && !defined(__MINGW64__)
 		int n = snprintf(buf.data(), int(buf.size()), " --c2-link-mode -m %ld %ld -O %ld %ld -Xd %s %s <%s 2>%s",
+#else
+		int n = snprintf(buf.data(), int(buf.size()), " --c2-link-mode -m %lld %lld -O %lld %lld -Xd %s %s <%s 2>%s",
+#endif
 				RAM_base,
 				RAM_base+RAM_size,
 				c2_org.orga,
