@@ -1179,7 +1179,7 @@ void c2a::s_parse1(toklink &link)
 										// Local label setup
 										clabel &cr = *root_labels[root_labelindex - (numdots - 1)].second;
 										
-										s2 = "c2i::var " + stmp + "={\"" + mapname + "\",nullptr,0};\n";
+										s2 = "c2i::var " + stmp + "=c2_slabel(\"" + mapname + "\",0);\n";
 										cr.sub = link.link(maketok(psub, s2.c_str()), cr.sub);
 										
 										stok *c;
@@ -1220,7 +1220,7 @@ void c2a::s_parse1(toklink &link)
 										stok *c = nullptr;
 										if(!macrospace)
 										{
-											s2 = "c2_basevar<" + subname + "> " + stmp + "={\"" + mapname + "\",nullptr,0};\n";
+											s2 = "c2_basevar<" + subname + "> " + stmp + "=c2_slabel(\"" + mapname + "\",0);\n";
 											linkinit(maketok(o, s2.c_str()), link);
 											
 											stok *ta;

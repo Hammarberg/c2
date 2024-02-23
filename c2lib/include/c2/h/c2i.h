@@ -69,6 +69,14 @@ public:
 		void internal_clear() { if(c2va){ c2i::c2_free(c2vv.c2vp);} }
 	};
 
+	struct c2_slabel
+	{
+		c2_slabel(const char *inname, int inmode)
+		:name(inname),mode(inmode){}
+		const char *name;
+		int mode;
+	};
+
 	template<typename T>
 	class c2_basevar : public T, protected c2_vardata
 	{
@@ -76,27 +84,34 @@ public:
 	friend c2i;
 	public:
 		c2_basevar() {}
-		c2_basevar(const char *name, const char *from, int mode) { c2_get_single()->c2_register_var(name, from, mode, this); }
+		c2_basevar(const c2_slabel &o) { c2_get_single()->c2_register_var(o.name, nullptr, o.mode, this); }
 		template<typename I> c2_basevar(const c2_basevar<I> &o) { copy(o); }
 		c2_basevar(const c2_basevar &o) { copy(o); }
 		c2_basevar(int64_t n, uint32_t ib = 0) : c2_vardata(n) { c2vb = ib ? ib : calc_bits(n); }
 		c2_basevar(int n) : c2_vardata(n) { c2vb = calc_bits(n); }
 		c2_basevar(const c2_corg &o) : c2_vardata(o.orga) { c2vb = calc_bits(o.orga); }
 		
-		c2_basevar(std::initializer_list<int64_t> elements)
+		c2_basevar(std::initializer_list<c2_basevar> elements)
 		{
-			size_t count = elements.size();
-			c2va = c2vc = count;
-			c2vv.c2vp = (int64_t *) c2i::c2_malloc(sizeof(int64_t) * count);
-			int32_t nb = 0;
-			size_t r=0;
-			for(auto i = elements.begin(); i != elements.end(); i++, r++)
+			const size_t count = elements.size();
+			if(count == 1)
 			{
-				int32_t cb = calc_bits(c2vv.c2vp[r] = *i);
-				if(cb > nb)
-					nb = cb;
+				copy(*elements.begin());
 			}
-			c2vb = nb;
+			else
+			{
+				c2va = c2vc = count;
+				c2vv.c2vp = (int64_t *) c2i::c2_malloc(sizeof(int64_t) * count);
+				int32_t nb = 0;
+				size_t r=0;
+				for(auto i = elements.begin(); i != elements.end(); i++, r++)
+				{
+					int32_t cb = calc_bits(c2vv.c2vp[r] = i->get());
+					if(cb > nb)
+						nb = cb;
+				}
+				c2vb = nb;
+			}
 		}
 		
 		c2_basevar(const char *pstr)
@@ -403,7 +418,7 @@ public:
 	
 	bool c2_allow_overwrite = false;
 	bool c2_verbose = false;
-	bool c2_assembly_hash = false;
+	bool c2_assembly_step_hash = false;
 
 	cmdi &c2_cmd;
 	

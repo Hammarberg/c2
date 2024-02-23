@@ -16,6 +16,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #define popen _popen
 #define pclose _pclose
+#define strcasecmp _stricmp
 #endif
 
 #include "c2/h/c2i.h"
@@ -389,7 +390,7 @@ c2i::c2i(cmdi *pcmd)
 	c2_cmd.declare("--dump-vars", "-V", "[filename]: Output variables. If no filename is given, stdout will be used", 0, 1);
 	c2_cmd.declare("--dump-enum", nullptr, "[filename]: Output variables in C-style enum format. If no filename is given, stdout will be used", 0, 1);
 	c2_cmd.declare("--address-range", "-m", "<start> <end>: Set the valid memory address range available for the assembly to target. Addresses must be numerical", 2);
-	c2_cmd.declare("--assembly-hash", nullptr, "Verbosely outputs a hash for each assembly step");
+	c2_cmd.declare("--hash", nullptr, "[expected]: Compare the final assembly hash with the expected hash. If no expected hash is given, output final hash", 0, 1);
 	c2_cmd.declare("--org", "-O", "<address> [reloc address]: Set ORG. Addresses must be numerical", 1, 2);
 }
 
@@ -514,7 +515,7 @@ void c2i::c2_poke(int64_t pos, int64_t data)
 		RAM_use[pos - RAM_base] = 1;
 	}
 	
-	if(c2_assembly_hash)
+	if(c2_assembly_step_hash)
 	{
 #ifndef _MSC_VER
 		iinfo("%016lx%016lx", p->hash_state.hash.h1, p->hash_state.hash.h2);
@@ -606,7 +607,7 @@ bool c2i::c2_assemble()
 				c2_org.restore(org_backup_a, org_backup_w);
 				c2_reset_pass();
 
-				if(!c2_assembly_hash && c2_verbose)
+				if(!c2_assembly_step_hash && c2_verbose)
 				{
 					fprintf(stderr, "Pass %d", pass);
 				}
@@ -614,7 +615,7 @@ bool c2i::c2_assemble()
 				p->hash_state.finalize();
 				cmur3::shash hash = p->hash_state.hash;
 
-				if(!c2_assembly_hash && c2_verbose)
+				if(!c2_assembly_step_hash && c2_verbose)
 				{
 #ifndef _MSC_VER
 					fprintf(stderr, ": %016lx%016lx\n", hash.h1, hash.h2);
@@ -859,9 +860,9 @@ void c2i::c2_pre()
 		c2_set_ram(from, to-from);
 	});
 
-	c2_cmd.invoke("--assembly-hash", [&](int arga, const char *argc[])
+	c2_cmd.invoke("--assembly-step-hash", [&](int arga, const char *argc[])	//Hidden switch, for debugging mostly
 	{
-		c2_assembly_hash = true;
+		c2_assembly_step_hash = true;
 	});
 
 	c2_cmd.invoke("--c2-link-mode", [&](int arga, const char *argc[])
@@ -1031,7 +1032,32 @@ void c2i::c2_post()
 		if(fp != stdout)
 			fclose(fp);
 	});
-	
+
+	c2_cmd.invoke("--hash", [p](int arga, const char *argc[])
+	{
+		FILE *fp = stdout;
+		char buf[256];
+
+		cmur3::shash hash = p->hash_state.hash;
+
+#ifndef _MSC_VER
+		sprintf(buf, "%016lx%016lx", hash.h1, hash.h2);
+#else
+		sprintf(buf, "%016llx%016llx", hash.h1, hash.h2);
+#endif
+
+		if(arga)
+		{
+			if(strcasecmp(buf, argc[0]))
+			{
+				throw "Hash mismatch failure";
+			}
+		}
+		else
+		{
+			fprintf(fp, "%s\n", buf);
+		}
+	});
 }
 
 void c2i::loadbin(const char *path, size_t offset, size_t length)
