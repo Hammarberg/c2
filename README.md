@@ -53,6 +53,8 @@ Clang seems outdated in Cygwin. Install gcc/g++ and GNU make and then follow the
 The Makefile will detect MinGW and apply appropriate switches: `make CXX=x86_64-w64-mingw32-g++`
 ### Windows PATH
 My Computer -> Properties -> Advanced System Settings -> Environment Variables -> Edit path for either User or System. Set the path to the directory where `c2.exe` was built to.
+## Verify c2
+There are test scripts to verify the functionality and integrity of c2. For bash, `utils/test.sh` and for Windows, `utils\test.bat`.
 # Usage
 ## Command line
 When executing c2 without any arguments in a project folder, it will build/assemble and depending on the settings in the project file (`.c2.json`), it can automatically launch custom scripts or a target emulator. To get an overview of command line options:
