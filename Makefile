@@ -3,7 +3,8 @@ TARGET_EXEC ?= c2
 BUILD_DIR := build
 SRC_DIR := source
 
-SRCS := $(shell find $(SRC_DIR) -name *.cpp)
+SRCS := $(shell find $(SRC_DIR) | grep .cpp)
+
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 MODE := normal
@@ -11,7 +12,7 @@ MODE := normal
 INC_DIRS := $(SRC_DIR) ./
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-CPPFLAGS ?= $(INC_FLAGS) -MMD -MP
+CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -Wno-unused-result
 
 ifeq ($(MODE),debug)
 	CXXFLAGS := -O0 -g
@@ -74,6 +75,7 @@ debug:
 	@echo CPPFLAGS=$(CPPFLAGS)
 	@echo LDFLAGS=$(LDFLAGS)
 	@echo LDLIBS=$(LDLIBS)
+	@echo SRCS=$(SRCS)
 
 install: $(TARGET_EXEC)
 	install -d /usr/local/bin
