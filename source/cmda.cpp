@@ -29,11 +29,9 @@ void cmda::add_args(int arga, char *args[])
 {
 	std::vector<std::string> tmps;
 	
-	split(args[0], tmps, true);
-	
-	for(int r=1;r<arga;r++)
+	for(int r=0;r<arga;r++)
 	{
-		split(args[r], tmps, false);
+		split(args[r], tmps, args[r][0] != '-');
 	}
 
 	store(tmps, false);
@@ -281,15 +279,18 @@ bool cmda::verify(int iter, const char *sw, int min_args, int max_args, int *arg
 			{
 				r++;
 				int start = int(r), count = 0;
-				for(; checkargcount && r<sargs.size(); r++, count++)
+				if(checkargcount)
 				{
-					if(sargs[r].size() > 1 && sargs[r][0] == '-')
+					for(; r<sargs.size(); r++, count++)
 					{
-						break;
+						if(sargs[r].size() > 1 && sargs[r][0] == '-')
+						{
+							break;
+						}
 					}
 				}
 				
-				if(count < min_args || count > max_args)
+				if(count < min_args /*|| count > max_args*/)
 				{
 					if(pd)
 						pd->print();
