@@ -240,17 +240,19 @@ bool c2a::match_macro_parameters_pos_forward(int pos, const std::vector<stok *> 
 
 bool c2a::match_macro_parameters(const std::vector<stok *> &def, const std::vector<stok *> &par, const std::vector<std::pair<std::string, std::vector<const char *>>> &inputs, std::vector<std::vector<stok *>> &outargs, std::vector<bool> &outisarray)
 {
-	/*
-	printf("def: ");
-	for(size_t r=0;r<def.size();r++)
-		printf("%s", def[r]->format().c_str());
-	printf("\n");
-	
-	printf("par: ");
-	for(size_t r=0;r<par.size();r++)
-		printf("%s", par[r]->format().c_str());
-	printf("\n");
-	*/
+	if(verbose >= 6)
+	{
+		fprintf(stderr, "def: ");
+		for(size_t r=0;r<def.size();r++)
+			fprintf(stderr, "%s", def[r]->format().c_str());
+		fprintf(stderr, "\n");
+
+		fprintf(stderr, "par: ");
+		for(size_t r=0;r<par.size();r++)
+			fprintf(stderr, "%s", par[r]->format().c_str());
+		fprintf(stderr, "\n");
+	}
+
 	const int NUM_RDEF = int(def.size());
 	const int NUM_PAR = int(par.size());
 	
@@ -315,7 +317,10 @@ bool c2a::match_macro_parameters(const std::vector<stok *> &def, const std::vect
 		}
 	}
 	if(set != NUM_DEF)
+	{
+		info(6, nullptr, "Failed setting initial positions\n");
 		return false;	//Failed setting initial positions, there can be no match
+	}
 
 	for(;;)
 	{
