@@ -400,6 +400,7 @@ c2i::~c2i()
 	delete p;
 	
 	delete [] RAM;
+	delete [] RAM_last;
 	delete [] RAM_use;
 }
 
@@ -529,10 +530,10 @@ uint8_t c2i::c2_peek(int64_t pos)
 {
 	if(pos < RAM_base || pos >= RAM_base+RAM_size)
 	{
-		ierror("Out of range writing to address 0x%x", int(c2_org.orgw));
+		ierror("Out of range reading from address 0x%x", int(c2_org.orgw));
 		return 0;
 	}
-	return RAM[pos - RAM_base];
+	return RAM_last[pos - RAM_base];
 }
 
 void c2i::c2_reset_pass()
@@ -554,6 +555,9 @@ void c2i::c2_reset_pass()
 	p->scope_label_index_register.clear();
 	p->added_arg.clear();
 	
+	delete [] RAM_last;
+	RAM_last = RAM;
+	RAM = new uint8_t[RAM_size];
 	memset(RAM, 0, RAM_size);
 	memset(RAM_use, 0, RAM_size);
 
@@ -1458,14 +1462,17 @@ void c2i::c2_set_ram(int64_t base, int64_t size)
 	{
 		delete [] RAM;
 		delete [] RAM_use;
+		delete [] RAM_last;
 	}
 		
 	RAM = new uint8_t[size];
 	RAM_use = new uint8_t[size];
-	
+	RAM_last = new uint8_t[size];
+
 	memset(RAM, 0, size);
 	memset(RAM_use, 0, size);
-	
+	memset(RAM_last, 0, size);
+
 	RAM_base = base;
 	RAM_size = size;
 }

@@ -444,6 +444,7 @@ protected:
 	static c2i *c2_single;
 	
 	uint8_t *RAM = nullptr;
+	uint8_t *RAM_last = nullptr;
 	uint8_t *RAM_use = nullptr;
 	int64_t RAM_base = 0, RAM_size = 0;
 };
