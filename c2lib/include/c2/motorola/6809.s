@@ -2339,7 +2339,7 @@ macro cmps [@addr]
 
 macro cmpu #@imm
 {
-	push16be($1156);
+	push16be($1183);
 	push16be(imm);
 }
 
@@ -2857,7 +2857,7 @@ macro comb
 	push8($53);
 }
 
-macro cwai #@[C2_6809_CC]iflag...
+macro cwai @[C2_6809_CC]iflag...
 {
 	push8($3c);
 	uint8_t mask=$ff;
@@ -5649,7 +5649,7 @@ macro orcc #@imm
 	push8(imm);
 }
 
-macro pshs #@[C2_6809_SS]iflag...
+macro pshs @[C2_6809_SS]iflag...
 {
 	push8($34);
 	uint8_t mask=0;
@@ -5664,7 +5664,7 @@ macro pshs #@mask
 	push8(mask);
 }
 
-macro pshu #@[C2_6809_SU]iflag...
+macro pshu @[C2_6809_SU]iflag...
 {
 	push8($36);
 	uint8_t mask = 0;
@@ -5679,7 +5679,7 @@ macro pshu #@mask
 	push8(mask);
 }
 
-macro puls #@[C2_6809_SS]iflag...
+macro puls @[C2_6809_SS]iflag...
 {
 	push8($35);
 	uint8_t mask=0;
@@ -5694,7 +5694,7 @@ macro puls #@mask
 	push8(mask);
 }
 
-macro pulu #@[C2_6809_SU]iflag...
+macro pulu @[C2_6809_SU]iflag...
 {
 	push8($37);
 	uint8_t mask = 0;
