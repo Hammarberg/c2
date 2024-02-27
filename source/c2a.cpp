@@ -376,15 +376,15 @@ bool c2a::match_macro_parameters(const std::vector<stok *> &def, const std::vect
 			}
 			else
 			{
-				bool isarray = ridx[l] == -2;
-				
-				outargs.push_back({});
-				std::vector<stok *> &args = outargs[outargs.size()-1];
+				bool isarray = cur == -2;
 				
 				// Sanity check potential argument
 				int start = l ? ridx[l-1] + 1 : 0;
 				int end = l<NUM_RDEF-1 ? ridx[l+1] : NUM_PAR;
 				//int count = end - start;
+
+				outargs.push_back({});
+				std::vector<stok *> &args = outargs[outargs.size()-1];
 
 				// Indexed variables
 				const std::vector<const char *> &iv = inputs[v].second;
@@ -434,13 +434,13 @@ bool c2a::match_macro_parameters(const std::vector<stok *> &def, const std::vect
 					args.push_back(d);
 				}
 
-				if(bc)
+				if(bc || args.size() == 0)
 				{
-					// Uneven number of brackets
+					// Uneven number of brackets or no argument
 					results = false;
 					break;
 				}
-				
+
 				outisarray.push_back(isarray);
 				v++;
 			}
@@ -581,7 +581,7 @@ bool c2a::match_macro(stok *io, toklink &link)
 					
 					stok *anon_first = nullptr;
 					stok *anon_last = nullptr;
-					bool anon_valid = true;
+					bool anon_valid = args.size() != 0;
 					
 					for(size_t r=0;r<args.size();r++)
 					{
