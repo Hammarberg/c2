@@ -324,6 +324,19 @@ bool c2a::match_macro_parameters(const std::vector<stok *> &def, const std::vect
 
 	for(;;)
 	{
+		if(verbose >= 6)
+		{
+			fprintf(stderr, "ridx:");
+			for(size_t r=0;r<NUM_RDEF;r++)
+				fprintf(stderr, " %d", ridx[r]);
+			fprintf(stderr, "\n");
+
+			fprintf(stderr, "idx:");
+			for(size_t r=0;r<NUM_DEF;r++)
+				fprintf(stderr, " %d", *idx[r]);
+			fprintf(stderr, "\n");
+		}
+
 		bool results = true;
 		
 		outargs.clear();
@@ -1013,6 +1026,11 @@ void c2a::s_parse1(toklink &link)
 				else if((o->ord == 0 || label_declared) && match_macro(o, link))
 				{
 					// Macro expanded, nothing to do here
+					info(6, o, "Expanded macro\n");
+				}
+				else
+				{
+					info(6, o, "No expansion\n");
 				}
 			}
 			break;
@@ -1510,6 +1528,8 @@ void c2a::s_parse2(toklink &link)
 		};
 	}
 	
+	VERBOSE(5, "Set anonymous references\n");
+
 	// Set anonymous references
 	for(size_t r=0; r<anonymous.size(); r++)
 	{
@@ -1610,12 +1630,15 @@ void c2a::c_parse(toklink &link)
 	after = link.link(maketok(c2_asm, ":", etype::OP, 1), after);
 	/*after =*/ link.link(maketok(c2_asm, "\n", etype::SPACE, 2), after);
 	
+	VERBOSE(4, "Parse 0\n");
 	s_parse0(link);
 	c2_end = link.pull_tok();
 	
+	VERBOSE(4, "Parse 1\n");
 	link.restart(c2_asm, c2_end);
 	s_parse1(link);
 	
+	VERBOSE(4, "Parse 2\n");
 	link.restart(c2_asm, c2_end);
 	s_parse2(link);
 }
