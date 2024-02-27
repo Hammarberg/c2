@@ -54,7 +54,7 @@ void motorola6809::c2_6809_idx_direct_off(cint off, cint r1)
 	}
 	else if(c2st<8>(off))
 	{
-		push8(0b10001000|(r1<<5)|(off&255));
+		push8(0b10001000|(r1<<5));
 		push8(off);
 	}
 	else
@@ -72,7 +72,7 @@ void motorola6809::c2_6809_idx_indirect_off(cint off, cint r1)
 	}
 	else if(c2st<8>(off))
 	{
-		push8(0b10011000|(r1<<5)|(off&255));
+		push8(0b10011000|(r1<<5));
 		push8(off);
 	}
 	else
