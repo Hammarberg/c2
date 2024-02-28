@@ -4,7 +4,7 @@
 			"description" : "Plain 6502 for embedded projects",
 			"super" : "c2i",
 			"include" : "c2/h/c2i.h",
-			"arguments" : "--address-range 0x0 0x10000 --out - + {title}.bin",
+			"arguments" : "--address-range 0x0 0x10000",
 			"output" : "--out - + {title}.bin",
 			"source":[
 				"c2i.cpp":{
