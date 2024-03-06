@@ -80,7 +80,7 @@ public:
 	
 	//stok *traverse_argument(stok *o, toklink &link);
 	
-	static bool match_macro_parameters_pos_forward(int pos, const std::vector<stok *> &def, const std::vector<stok *> &par, int **idx, const int NUM_DEF, const int NUM_PAR);
+	static bool match_macro_parameters_pos_forward(int pos, const std::vector<stok *> &def, const std::vector<stok *> &par, std::vector<int *> &idx, const int NUM_DEF, const int NUM_PAR);
 	bool match_macro_parameters(const std::vector<stok *> &def, const std::vector<stok *> &par, const std::vector<std::pair<std::string, std::vector<const char *>>> &inputs, std::vector<std::vector<stok *>> &outargs, std::vector<bool> &outisarray);
 	bool match_macro(stok *o, toklink &link);
 	

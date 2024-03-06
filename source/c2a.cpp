@@ -197,7 +197,7 @@ stok *c2a::linkinit(stok *p, toklink &out)
 	return c2_top = p;
 }
 
-bool c2a::match_macro_parameters_pos_forward(int pos, const std::vector<stok *> &def, const std::vector<stok *> &par, int **idx, const int NUM_DEF, const int NUM_PAR)
+bool c2a::match_macro_parameters_pos_forward(int pos, const std::vector<stok *> &def, const std::vector<stok *> &par, std::vector<int *> &idx, const int NUM_DEF, const int NUM_PAR)
 {
 	if(!NUM_DEF)
 		return false;	// There is nothing to move
@@ -274,15 +274,10 @@ bool c2a::match_macro_parameters(const std::vector<stok *> &def, const std::vect
 	
 	const int NUM_DEF = set;
 
-#ifndef _WIN32
 	// Holds only static parameter indexes
-	int *idx[NUM_DEF];
+	std::vector<int *> idx(NUM_DEF);
 	// Same but also holds variables flagged with -1 or -2
-	int ridx[NUM_RDEF];
-#else
-	int **idx = (int **)_alloca(sizeof(int *) * NUM_DEF);
-	int *ridx = (int *)_alloca(sizeof(int) * NUM_RDEF);
-#endif
+	std::vector<int> ridx(NUM_RDEF);
 	
 	// Set initial positions
 	set = 0;
