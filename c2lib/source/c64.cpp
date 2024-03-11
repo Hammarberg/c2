@@ -208,12 +208,13 @@ void c64::basic(const char *format, ...)
 				push8(0x80+r);
 				p+=n;
 			}
-			else
+			else  if(*p != 0x0d)
 			{
 				push8(ascii2petscii(*p));
 				p++;
 			}
-			if(*p == '\n')
+
+			if(*p == 0x0a)
 			{
 				p++;
 				break;
