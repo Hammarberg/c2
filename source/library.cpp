@@ -406,3 +406,17 @@ std::string clibrary::lib_cfg_get_string(const char *name)
 		
 	return i->second;
 }
+
+void clibrary::lib_print()
+{
+	for(auto i : libraries)
+	{
+		fprintf(stderr, "%s\n", i.string().c_str());
+	}
+
+	for(auto i : config)
+	{
+		fprintf(stderr, "\"%s\" \"%s\"\n", i.first.c_str(), i.second.c_str());
+	}
+}
+

@@ -53,6 +53,8 @@ public:
 	std::string lib_cfg_get_string(const char *name);
 
 	static std::string quote_path(std::string path);
+
+	void lib_print();
 	
 	static int verbose;
 
