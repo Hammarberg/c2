@@ -389,7 +389,7 @@ void clibrary::load_config(const char *file)
 
 			std::string sec = ppair->second->GetString();
 
-			if (sec.size())
+			if (sec.size() && config.find(ppair->first) == config.end())
 			{
 				config[ppair->first] = sec;
 			}
