@@ -14,6 +14,7 @@
 #include "library.h"
 #include "template.h"
 #include "json.h"
+#include "log.h"
 #include <cstdlib>
 #if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
@@ -91,7 +92,7 @@ void clibrary::lib_initialize(const std::vector<std::filesystem::path> &expaths)
 #endif
 		if(envpath)
 		{
-			std::filesystem::path tmp = envpath;
+			std::filesystem::path tmp = std::filesystem::canonical(envpath);
 			
 			if(std::filesystem::is_directory(tmp))
 			{
@@ -176,6 +177,14 @@ void clibrary::lib_basepath()
 
 void clibrary::push_path(const std::filesystem::path &path, bool first)
 {
+	for(auto i : libraries)
+	{
+		if(i == path)
+			return;
+	}
+
+	VERBOSE(2, "Adding library path %s\n", path.string().c_str());
+
 	if(first)
 	{
 		libraries.insert(libraries.begin(), path);
