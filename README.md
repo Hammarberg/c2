@@ -4,7 +4,7 @@ The motivation behind c2 is to have an assembler framework capable of targeting 
 
 Currently c2 works well with 6502+variants and 6809. Experimental support for Z80 exist and 68000 is under development.
 
-c2 is an assembler wrapper top of a C++ compiler. It's highly configurable and architecture independent in the sense that all assembly pseudo opcodes are built with text macros. Macro files are included with the standard C pre-processor.
+c2 is an assembler wrapper on top of a C++ compiler. It's highly configurable and architecture independent in the sense that all assembly pseudo opcodes are built with text macros. Macro files are included with the standard C pre-processor.
 
 Much of the syntax should be familiar to anyone with Assembly, C/C++, Java, JS or C# experience.
 
@@ -40,7 +40,7 @@ Installation is optional as you can run c2 directly from the source root. If you
 ### Suggested Debian packages
 `build-essential` or `clang` and `make`.
 ## Windows
-Pre-compiled packages can be found at [binarybone.com/c2](https://binarybone.com/c2/). Tagged versions includes [WinLibs MinGW64](https://www.winlibs.com/) and are a standalone without additional dependencies: Unzip to any location and then double click `c2 cmd` to start a pre-configured command prompt.
+Pre-compiled packages can be found at [binarybone.com/c2](https://binarybone.com/c2/). Tagged versions includes [WinLibs MinGW64](https://www.winlibs.com/) and are a standalone without additional dependencies: Unzip to any location and then double click `c2_cmd` to start a pre-configured command prompt.
 ### Option 1: VS2022 and clang
 You need [Visual Studio 2022 Community](https://visualstudio.microsoft.com/vs/community/) or better installed. You also need to select the optional clang tools during VS install. It's possible to modify an existing VS installation to include it.
 
@@ -67,7 +67,7 @@ c2 command line switches comes in two variants, the descriptive long version pre
 ## Templates overview
 When assembling with c2, the template selected sets the target architecture, project configuration and may provides additional tools, definitions or macros for the target platform.
 
-Many templates provides a "hello word" as a starting for new projects.
+Many templates provides a "hello word" as a starting point for new projects.
 
 A template is specified at either at project creation (`--create-project`) or during direct assembly (`--direct`).
 ## Projects
@@ -250,7 +250,7 @@ In its simplest form, macros are pieces of declared information that can be reca
 
 Syntax:
 ```
-macro <name>,[alias] [arguments]
+macro <name>[,alias] [arguments]
 {
         [contents]
 }
