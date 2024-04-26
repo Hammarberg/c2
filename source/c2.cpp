@@ -18,7 +18,7 @@
 #include "c2gitversion.h"
 #define C2_DISPLAYVERSION C2_VERSION " (" C2_GITVERSION ")"
 
-#define TITLE "c2 cross assembler version: " C2_DISPLAYVERSION "\nCopyright (C) 2022-2024  John Hammarberg (CRT)\n"
+#define TITLE "c2 cross assembler version: " C2_DISPLAYVERSION " - " C2_TAG "\nCopyright (C) 2022-2024  John Hammarberg (CRT)\n"
 
 int main(int arga, char *argc[])
 {
