@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 
 # Smoke test for wine environment
 cd $(dirname "$0")/../
