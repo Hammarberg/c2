@@ -454,6 +454,8 @@ Atari2600 with 4KB of ROM at $f000
 A plain 6809 template with 64KB of RAM.
 ## vectrex
 GCE Vectrex with 32KB of ROM between $0000-$8000
+## dragon
+Dragon 32/64, also highly compatible with Tandy Color Computer (CoCo). Configured with 64KB of RAM.
 ## 68000
 Highly experimental for c2 development, 68k CPU support is b0rken/buggy at best
 ## void

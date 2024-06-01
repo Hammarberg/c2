@@ -406,7 +406,8 @@ public:
 	static size_t c2_strlen(const char *s);
 	static void *c2_memset(void *s, int c, size_t n);
 	static void *c2_memcpy(void *dest, const void *src, size_t n);
-	
+	static const char *c2_strchr(const char *s, int c);
+
 	static c2i *c2_get_single(){ return c2i::c2_single; }
 	
 	void c2_poke(int64_t pos, int64_t data);

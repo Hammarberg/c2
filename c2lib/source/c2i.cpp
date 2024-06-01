@@ -1451,6 +1451,11 @@ void *c2i::c2_memcpy(void *dest, const void *src, size_t n)
 	return memcpy(dest, src, n);
 }
 
+const char *c2i::c2_strchr(const char *s, int c)
+{
+	return strchr(s, c);
+}
+
 const char *c2i::c2_get_template()
 {
 	return "void";

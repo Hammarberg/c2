@@ -189,6 +189,31 @@
 				}
 			]
 		},
+		"dragon":{
+			"description" : "Dragon 32/64 (& Tandy CoCo)",
+			"super" : "dragon",
+			"include" : "c2/dragon/dragon.h",
+			"arguments" : "--longbranch --absolute",
+			"output" : "--out - + {title}.bin",
+			"source":[
+				"c2i.cpp":{
+					"flags" : "-O2"
+				},
+				"6809.cpp":{
+					"flags" : "-O2"
+				}
+			],
+			"template":[
+				"asm.cpp":{
+					"target" : "{source}.cpp"
+					"c2" : true
+					"flags" : "-O0"
+				},
+				"dragon.s":{
+					"target" : "{source}.s"
+				}
+			]
+		},
 		"68000":{
 			"description" : "Not functioning yet!",
 			"super" : "motorola68000",
