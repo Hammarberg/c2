@@ -471,15 +471,6 @@ void sproject::sh_execute(const char *str, bool silent)
 
     if(res)
     {
-        if(!verbose)
-        {
-            size_t t = output.find(char(0x0a));
-            if(t != output.npos)
-            {
-                output = output.substr(0, t);
-            }
-        }
-
         if (!silent)
         {
             fprintf(stderr, "%s\n", output.c_str());
@@ -556,7 +547,7 @@ void sproject::set_compiler()
 bool sproject::load_project(ctemplate::tjson cfg, const char* projectfile, bool readonly)
 {
     std::string tmp;
-	
+
     stimestamp tproj;
 	bool direct = true;
 	if(!cfg.get())
@@ -564,7 +555,7 @@ bool sproject::load_project(ctemplate::tjson cfg, const char* projectfile, bool 
 		std::string bdata;
 		if(!lib_load_file_direct(projectfile, bdata))
 			return false;
-		
+
 		cfg.reset(json::base::Decode(bdata.c_str()));
 		// Stat projectfile before changing directory
 		tproj.stat(projectfile);
@@ -583,7 +574,7 @@ bool sproject::load_project(ctemplate::tjson cfg, const char* projectfile, bool 
 
     chdir(basedir.string().c_str());
     lib_basepath();	// Let clibrary know we are in the project folder
-	
+
     tmp = cfg->Get("title").GetString();
     if (tmp.size()) title = tmp;
 
