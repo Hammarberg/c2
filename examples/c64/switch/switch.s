@@ -1,5 +1,6 @@
 ﻿#include "c2/c64/c64.s"
 #include "c2/c64/kernal.s"
+#include "c2/mos/6502.s"
 
 			// Simple project specific switch example
 

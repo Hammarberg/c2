@@ -12,7 +12,6 @@
 */
 
 #pragma once
-#include "c2/mos/6502.s"
 
 macro basic_startup
 {
