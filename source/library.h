@@ -60,6 +60,7 @@ public:
 
 private:
 
+	void internal_init(const std::vector<std::filesystem::path> &expaths);
 	void push_path(const std::filesystem::path &path, bool first = false);
 
 	std::vector<std::filesystem::path> libraries;

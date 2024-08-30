@@ -28,7 +28,6 @@
 
 #define ENV_C2LIB_HOME "C2LIB_HOME"
 #define C2LIB "c2lib"
-#define NIX_GLOBAL "/usr/local/lib/" C2LIB
 #define C2CONFIG "config.c2.json"
 
 int clibrary::verbose = 0;
@@ -41,44 +40,42 @@ clibrary::~clibrary()
 {
 }
 
-void clibrary::lib_initialize(const std::vector<std::filesystem::path> &expaths)
+void clibrary::internal_init(const std::vector<std::filesystem::path> &expaths)
 {
+	// test lambda
+	auto test_push_path=[this](const std::filesystem::path &in) -> bool
+	{
+		VERBOSE(3, "Testing library path %s\n", in.string().c_str());
+		if(std::filesystem::is_directory(in))
+		{
+			push_path(in);
+			return true;
+		}
+		return false;
+	};
+
 	// Explicitly set paths
 	for(size_t r=0; r<expaths.size(); r++)
 	{
-		if(std::filesystem::is_directory(expaths[r]))
-		{
-			push_path(expaths[r]);
-		}
+		test_push_path(expaths[r]);
 	}
 	
-	// Get user/local path
-	//const char *home = getenv("HOME");
+	// ~/. and ~/
 	{
 #if defined(_WIN32) || defined(_WIN64)
-		const char* home = getenv("LOCALAPPDATA");
+		const char* homestr = getenv("LOCALAPPDATA");
 #elif defined(__APPLE__) || defined(__CYGWIN__)
-		const char *home = getenv("HOME");
+		const char *homestr = getenv("HOME");
 #else
-		const char *home = secure_getenv("HOME");
+		const char *homestr = secure_getenv("HOME");
 #endif
-		if(home)
+		if(homestr)
 		{
-			std::filesystem::path tmp = home;
-			tmp /= "." C2LIB;
-			
-			if(std::filesystem::is_directory(tmp))
+			std::filesystem::path home = homestr;
+
+			if(!test_push_path(home / "." C2LIB))
 			{
-				push_path(tmp);
-			}
-			else
-			{
-				tmp = home;
-				tmp /= C2LIB;
-				if(std::filesystem::is_directory(tmp))
-				{
-					push_path(tmp);
-				}
+				test_push_path(home / C2LIB);
 			}
 		}
 	}
@@ -92,29 +89,12 @@ void clibrary::lib_initialize(const std::vector<std::filesystem::path> &expaths)
 #endif
 		if(envpath)
 		{
-			std::filesystem::path tmp = std::filesystem::canonical(envpath);
-			
-			if(std::filesystem::is_directory(tmp))
-			{
-				push_path(tmp);
-			}
+			test_push_path(std::filesystem::canonical(envpath));
 		}
 	}
 	
-#if !(defined(_WIN32) || defined(_WIN64))
-	// Global path
-	{
-		std::filesystem::path tmp = NIX_GLOBAL;
-		
-		if(std::filesystem::is_directory(tmp))
-		{
-			push_path(tmp);
-		}
-	}
-#endif
-
 	// Relative to executable
-	{	
+	{
 #if defined(_WIN32) || defined(_WIN64)
 		char result[MAX_PATH] = {0};
 		GetModuleFileNameA(NULL, result, MAX_PATH);
@@ -126,36 +106,28 @@ void clibrary::lib_initialize(const std::vector<std::filesystem::path> &expaths)
 		char result[PATH_MAX] = {0};
 		/*ssize_t count =*/ readlink("/proc/self/exe", result, PATH_MAX);
 #endif
-		std::filesystem::path path = result;
+		std::filesystem::path exepath = result;
+		std::filesystem::path exedir = exepath.parent_path();
+
+		// Same folder as executable
+		if(test_push_path(exedir / C2LIB))
+			return;
+
+		// ../lib/
+		if(test_push_path(exedir.parent_path() / "lib/" C2LIB))
+			return;
 		
-		path = path.parent_path();
-		path /= C2LIB;
-
-		if(std::filesystem::is_directory(path))
-		{
-			push_path(path);
-		}
-		else
-		{
+		// Visual studio dev
 #if defined(_WIN32) || defined(_WIN64)
-			// Check one and two levels up, since MSVC puts binary under x64/Debug.
-			path = path.parent_path().parent_path().parent_path();
-			path /= C2LIB;
-
-			if(!std::filesystem::is_directory(path))
-			{
-				path = path.parent_path().parent_path();
-				path /= C2LIB;
-			}
-
-			if(std::filesystem::is_directory(path))
-			{
-				push_path(path);
-			}
+		if(test_push_path(exedir.parent_path().parent_path() / C2LIB))
+			return;
 #endif
-		}
 	}
-	
+}
+
+void clibrary::lib_initialize(const std::vector<std::filesystem::path> &expaths)
+{
+	internal_init(expaths);
 	// Load config in order
 	load_config();
 }
@@ -165,6 +137,7 @@ void clibrary::lib_basepath()
 	// Project is known, set any library overrides
 	std::filesystem::path base = C2LIB;
 	
+	VERBOSE(3, "Testing library path %s\n", base.string().c_str());
 	if(std::filesystem::is_directory(base))
 	{
 		push_path(base, true);

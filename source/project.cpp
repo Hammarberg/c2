@@ -500,6 +500,7 @@ void sproject::set_compiler()
 #ifdef _WIN32
             "C:\\Program Files\\LLVM\\bin\\clang++",
             "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\Llvm\\x64\\bin\\clang++",
+            "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\Llvm\\x64\\bin\\clang++",
 #endif
             "g++",
             nullptr};

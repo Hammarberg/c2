@@ -36,7 +36,11 @@ git clone https://github.com/Hammarberg/c2.git or download and extract the zip a
 ## GNU/Linux/BSD/OSX
 From the c2 root type `make` (or `make CXX=clang++ -j`) and a c2 executable will be created in the same folder.
 
-Installation is optional as you can run c2 directly from the source root. If you want a global installation, type `sudo make install`. To uninstall, `sudo make uninstall`.
+Installation is optional as you can run c2 directly from the source root. If you want a system wide installation, `sudo make install` or if you prefer a user local installation `make install PREFIX=~/.local`.
+
+To uninstall, `sudo make uninstall` or `make uninstall PREFIX=~/.local`.
+## Nix
+## NixOS
 ### Suggested Debian packages
 `build-essential` or `clang` and `make`.
 ## Windows
@@ -428,12 +432,11 @@ Besides the executable, c2 is also dependent on its library to operate. The libr
 
 `template` contains templated base files referenced by `templates.c2.json`. These are copied and translated to your project or intermediate folder when creating a new project or during direct assembly.
 ### c2lib search order
-* In the project path alongside `<project>.c2.json`
-* Explicitly set with `--c2-library-dir`
-* Nix home folder as `.c2lib` or `c2lib`. For windows `%LOCALAPPDATA%\c2lib`
-* At location of environment variable `C2LIB_HOME`
-* Nix global path `/usr/local/lib/c2lib`
-* Alongside executable and two folders above the executable.
+* In the project path alongside `<project>.c2.json`.
+* Explicitly set with `--c2-library-dir` or `-D`.
+* Home folder as `.c2lib` or `c2lib`. For windows `%LOCALAPPDATA%\c2lib`.
+* At location of environment variable `C2LIB_HOME`.
+* Alongside executable or`../lib/c2lib`. For Windows also two folders above the executable.
 
 It's possible to copy, modify or extend parts of c2lib and place those modifications in your local directory to override. This is highly recommended if you want to add your own reusable templates or macro extensions.
 ## Include files & search order

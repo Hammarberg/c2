@@ -51,6 +51,10 @@ ifeq ($(C2_GITVERSION),)
 	C2_GITVERSION := not set
 endif
 
+ifeq ($(PREFIX),)
+    PREFIX := /usr/local
+endif
+
 $(TARGET_EXEC): c2gitversion.h $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) $(LDFLAGS) $(LDLIBS) -o $@
 
@@ -61,7 +65,7 @@ $(BUILD_DIR)/%.cpp.o: %.cpp
 c2gitversion.h:
 	@echo "#define C2_GITVERSION \"$(value C2_GITVERSION)\"" > c2gitversion.h
 
-.PHONY: clean
+.PHONY: clean debug install uninstall
 
 clean:
 	$(RM) -r $(BUILD_DIR) c2gitversion.h
@@ -76,16 +80,17 @@ debug:
 	@echo LDFLAGS=$(LDFLAGS)
 	@echo LDLIBS=$(LDLIBS)
 	@echo SRCS=$(SRCS)
+	@echo PREFIX=$(PREFIX)
 
 install: $(TARGET_EXEC)
-	install -d /usr/local/bin
-	install $(TARGET_EXEC) /usr/local/bin
-	install -d /usr/local/lib
-	cp -r c2lib /usr/local/lib/
+	install -d $(PREFIX)/bin
+	install $(TARGET_EXEC) $(PREFIX)/bin
+	install -d $(PREFIX)/lib
+	cp -r c2lib $(PREFIX)/lib/
 
 uninstall:
-	rm /usr/local/bin/$(TARGET_EXEC)
-	rm -rf /usr/local/lib/c2lib
+	rm $(PREFIX)/bin/$(TARGET_EXEC)
+	rm -rf $(PREFIX)/lib/c2lib
 
 -include $(DEPS)
 
