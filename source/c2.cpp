@@ -14,11 +14,23 @@
 #include "project.h"
 #include <cstdint>
 
-#include "c2version.h"
-#include "c2gitversion.h"
-#define C2_DISPLAYVERSION C2_VERSION " (" C2_GITVERSION ")"
+#include "version.h"
+#include "gitversion.h"
 
-#define TITLE "c2 cross assembler version: " C2_DISPLAYVERSION " - " C2_TAG "\nCopyright (C) 2022-2024  John Hammarberg (CRT)\n"
+static std::string version()
+{
+	std::string str = C2_VERSION;
+
+	if(std::string(C2_GITVERSION) != "not set")
+		str += " (" C2_GITVERSION ")";
+
+	return str;
+}
+
+static std::string title()
+{
+	return std::string("c2 cross assembler version: " + version () + " - " C2_TAG "\nCopyright (C) 2022-2024  John Hammarberg (CRT)\n");
+}
 
 int main(int arga, char *argc[])
 {
@@ -145,7 +157,7 @@ int main(int arga, char *argc[])
 				}
 			}
 			
-			fprintf(stdout, TITLE);
+			fprintf(stdout, title().c_str());
 
 			proj.command.printf_info();
 			dobuild = false;
@@ -154,14 +166,14 @@ int main(int arga, char *argc[])
 		
 		proj.command.invoke("--version", [&](int arga, const char *argc[])
 		{
-			fprintf(stdout, C2_DISPLAYVERSION "\n");
+			fprintf(stdout, "%s\n", version().c_str());
 			dobuild = false;
 			doexecute = false;
 		});
 
 		proj.command.invoke("--license", [&](int arga, const char *argc[])
 		{
-			fprintf(stdout, TITLE);
+			fprintf(stdout, title().c_str());
 
 			fprintf(stdout, "\nc2 is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\n"
 							"c2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\n"

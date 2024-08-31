@@ -63,7 +63,7 @@ $(BUILD_DIR)/%.cpp.o: %.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 c2gitversion.h:
-	@echo "#define C2_GITVERSION \"$(value C2_GITVERSION)\"" > c2gitversion.h
+	@echo "#define C2_GITVERSION \"$(value C2_GITVERSION)\"" > gitversion.h
 
 .PHONY: clean debug install uninstall
 
