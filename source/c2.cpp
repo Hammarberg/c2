@@ -29,7 +29,7 @@ static std::string version()
 
 static std::string title()
 {
-	return std::string("c2 cross assembler version: " + version () + " - " C2_TAG "\nCopyright (C) 2022-2024  John Hammarberg (CRT)\n");
+	return std::string("c2 cross assembler version: " + version () + " - " C2_TAG "\nCopyright (C) 2022-2024  John Hammarberg (CRT)");
 }
 
 int main(int arga, char *argc[])
@@ -157,7 +157,7 @@ int main(int arga, char *argc[])
 				}
 			}
 			
-			fprintf(stdout, title().c_str());
+			fprintf(stdout, "%s\n", title().c_str());
 
 			proj.command.printf_info();
 			dobuild = false;
@@ -173,11 +173,10 @@ int main(int arga, char *argc[])
 
 		proj.command.invoke("--license", [&](int arga, const char *argc[])
 		{
-			fprintf(stdout, title().c_str());
-
-			fprintf(stdout, "\nc2 is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\n"
+			fprintf(stdout, "%s\n\nc2 is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\n"
 							"c2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\n"
-							"You should have received a copy of the GNU General Public License along with c2. If not, see <https://www.gnu.org/licenses/>.\n");
+							"You should have received a copy of the GNU General Public License along with c2. If not, see <https://www.gnu.org/licenses/>.\n",
+							title().c_str());
 			
 			dobuild = false;
 			doexecute = false;
