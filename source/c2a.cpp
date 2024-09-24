@@ -459,7 +459,6 @@ bool c2a::match_macro(stok *io, toklink &link)
 {
 	stok *o = io;
 	info(6, o, "Testing macro %s\n", o->name);
-	//printf("%s\n", o->name);
 	std::string stmp = o->name;
 	stmp = makelower(stmp);
 	auto i = macros.find(stmp);
@@ -484,6 +483,8 @@ bool c2a::match_macro(stok *io, toklink &link)
 	
 	std::vector<std::vector<stok *>> outargs;
 	std::vector<bool> outisarray;
+
+	bool disabled_detected = false;
 		
 	for(auto mi = v.rbegin(); mi != v.rend(); mi++)
 	{
@@ -499,8 +500,12 @@ bool c2a::match_macro(stok *io, toklink &link)
 			def.push_back(t);
 			t = t->get_next();
 		}
-		
-		if(match_macro_parameters(def, par, m->inputs, outargs, outisarray))
+
+		if(m->disablecount)
+		{
+			disabled_detected = true;
+		}
+		else if(match_macro_parameters(def, par, m->inputs, outargs, outisarray))
 		{
 			assert(outargs.size() == m->inputs.size());
 			
@@ -535,10 +540,14 @@ bool c2a::match_macro(stok *io, toklink &link)
 			
 			out.push_tok(maketok(rpos, "c2_scope_internal_push", etype::ALPHA));
 			out.push_tok(maketok(rpos, " ", etype::SPACE));
-			
+
+			//Disable the macro for re-reference, restored at c2_scope_internal_pop
+			m->disablecount++;
+			macro_stack.push_back(m);
+
 			out.push_tok(maketok(io, autolabel("macro").c_str(), etype::ALPHA, 0));		//Forcing ord
 			out.push_tok(maketok(io, ":", etype::OP, 1));
-			
+
 			// Push the rest of the macro
 			while((o = m->pull_tok()))
 			{
@@ -553,7 +562,7 @@ bool c2a::match_macro(stok *io, toklink &link)
 			// Pop current scope
 			out.push_tok(maketok(io, " ", etype::SPACE));
 			out.push_tok(maketok(io, "c2_scope_internal_pop", etype::ALPHA));
-			
+
 			out.push_tok(maketok(io, "(", etype::OP));
 			
 			// Expand arguments into vars or arrays
@@ -659,6 +668,11 @@ bool c2a::match_macro(stok *io, toklink &link)
 			
 			return true;
 		}
+	}
+
+	if(disabled_detected)
+	{
+		error(io, "Recursive macro");
 	}
 	
 	//Warn about nearly matched macro here
@@ -993,6 +1007,10 @@ void c2a::s_parse1(toklink &link)
 					scopeindex = scope_stack.back();
 					scope_stack.pop_back();
 					o->mute();
+					cmacro *m = macro_stack.back();
+					macro_stack.pop_back();
+					m->disablecount--;
+
 				}
 				else if(!strcasecmp("macro", o->name))
 				{

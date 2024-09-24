@@ -32,6 +32,7 @@ public:
 
 	// Map of discovered macro definitions
 	std::unordered_map<std::string, std::multimap<int, std::shared_ptr<cmacro>>> macros;
+	std::vector<cmacro *> macro_stack;
 
 	// Information about each label
 	struct clabel

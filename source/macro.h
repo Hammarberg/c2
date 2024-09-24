@@ -52,6 +52,8 @@ public:
 	
 	bool cmp(const cmacro &other);
 	void print();
+
+	int disablecount = 0;
 	
 private:
 	//stok *current = nullptr;
