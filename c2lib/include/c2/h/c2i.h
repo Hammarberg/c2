@@ -17,6 +17,7 @@
 #include <cstdint>
 #include <cstddef>
 #include <initializer_list>
+#include <cmath>
 
 #define c2_verbose(...) c2_log(c2_eloglevel::verbose, __FILE__, __LINE__, __VA_ARGS__);
 #define c2_info(...) c2_log(c2_eloglevel::info, __FILE__, __LINE__, __VA_ARGS__);
