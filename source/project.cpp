@@ -720,7 +720,7 @@ void sproject::build(bool doexecute)
 #ifndef _WIN32
             cmd += " -fpic";
 #endif
-            cmd += stdc + " -g -c -o " + quote_path(f->obj);
+            cmd += stdc + " -c -o " + quote_path(f->obj);
 
             if(f->c2)
             {
@@ -774,7 +774,7 @@ void sproject::build(bool doexecute)
     if(dirty_link)
     {
         VERBOSE(1, "%s is dirty\n", link_target.c_str());
-        cmd = compiler + stdc + " -g -shared -o " + quote_path(link_target);
+        cmd = compiler + stdc + " -shared -o " + quote_path(link_target);
         for(size_t r=0; r<files.size(); r++)
         {
             cmd += " " + quote_path(files[r]->obj);
