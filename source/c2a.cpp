@@ -1633,6 +1633,9 @@ void c2a::c_parse(toklink &link)
 		}
 	}
 	
+	if(!c2_top)
+		error(nullptr, "Missing C2_SECTION_TOP");
+
 	if(!c2_asm)
 		error(nullptr, "Missing C2_SECTION_ASM");
 		
