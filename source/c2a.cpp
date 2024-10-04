@@ -508,74 +508,93 @@ bool c2a::match_macro(stok *io, toklink &link)
 		else if(match_macro_parameters(def, par, m->inputs, outargs, outisarray))
 		{
 			assert(outargs.size() == m->inputs.size());
-			
+
+			stok *rpos = nullptr;
 			toklink out = link;
 			out.restart(io->get_prev());
 
-			//Prepare lambda header
-			out.push_tok(maketok(io, "[&]("));
-			for(size_t r=0;r<m->inputs.size();r++)
+			if(m->implementation.empty())
 			{
-				out.push_tok(maketok(io, "var "));
-				out.push_tok(maketok(io, m->inputs[r].first.c_str(), etype::ALPHA));
-				if(r != m->inputs.size() - 1)
-					out.push_tok(maketok(io, ",", etype::OP));
+				m->implementation = autolabel(io->name);
+
+				//Prepare function pointer
+				linkinit(maketok(io, "std::function<void("), link);
+				for(size_t r=0;r<m->inputs.size();r++)
+				{
+					linkinit(maketok(io, "var"), link);
+					if(r != m->inputs.size() - 1)
+						linkinit(maketok(io, ",", etype::OP), link);
+				}
+				linkinit(maketok(io, ")> "), link);
+				linkinit(maketok(io, m->implementation.c_str()), link);
+				linkinit(maketok(io, ";\n"), link);
+
+				// Generate macro lambda
+				out.push_tok(maketok(io, m->implementation.c_str()));
+				out.push_tok(maketok(io, "=[&]("));
+				for(size_t r=0;r<m->inputs.size();r++)
+				{
+					out.push_tok(maketok(io, "var "));
+					out.push_tok(maketok(io, m->inputs[r].first.c_str(), etype::ALPHA));
+					if(r != m->inputs.size() - 1)
+						out.push_tok(maketok(io, ",", etype::OP));
+				}
+				out.push_tok(maketok(io, ")"));
+
+				// Prepare macro link for streaming
+				m->restart();
+
+				// The first op from the macro should be '{', push it
+				o = m->pull_tok();
+				assert(o && *o->name == '{');
+				out.push_tok(rpos = clone(o));
+
+				//Avoid some preprocessor directions
+				rpos->line = io->line;
+				rpos->fileindex = io->fileindex;
+
+				out.push_tok(maketok(rpos, "c2_scope_internal_push", etype::ALPHA));
+				out.push_tok(maketok(rpos, " ", etype::SPACE));
+
+				//Disable the macro for re-reference, restored at c2_scope_internal_pop
+				m->disablecount++;
+				macro_stack.push_back(m);
+
+				out.push_tok(maketok(io, autolabel("macro").c_str(), etype::ALPHA, 0));		//Forcing ord
+				out.push_tok(maketok(io, ":", etype::OP, 1));
+
+				// Push the rest of the macro
+				while((o = m->pull_tok()))
+				{
+					out.push_tok(clone(o));
+				}
+
+				// Restore namespace
+				out.push_tok(maketok(io, "c2_namespace", etype::ALPHA));
+				out.push_tok(maketok(io, " ", etype::SPACE));
+				out.push_tok(maketok(io, parent_label.c_str(), etype::ALPHA));
+
+				// Pop current scope
+				out.push_tok(maketok(io, " ", etype::SPACE));
+				out.push_tok(maketok(io, "c2_scope_internal_pop", etype::ALPHA));
+
+				out.push_tok(maketok(io, ";", etype::OP));
 			}
-			out.push_tok(maketok(io, ")"));
-			
-			// Push current scope
-			
-			// Prepare macro link for streaming
-			m->restart();
-			
-			// The first op from the macro should be '{', push it
-			o = m->pull_tok();
-			assert(o && *o->name == '{');
-			stok *rpos;
-			out.push_tok(rpos = clone(o));
-			
-			//Avoid some preprocessor directions
-			rpos->line = io->line;
-			rpos->fileindex = io->fileindex;
-			
-			out.push_tok(maketok(rpos, "c2_scope_internal_push", etype::ALPHA));
-			out.push_tok(maketok(rpos, " ", etype::SPACE));
 
-			//Disable the macro for re-reference, restored at c2_scope_internal_pop
-			m->disablecount++;
-			macro_stack.push_back(m);
+			// Call lambda
+			out.push_tok(maketok(io, m->implementation.c_str()));
 
-			out.push_tok(maketok(io, autolabel("macro").c_str(), etype::ALPHA, 0));		//Forcing ord
-			out.push_tok(maketok(io, ":", etype::OP, 1));
-
-			// Push the rest of the macro
-			while((o = m->pull_tok()))
-			{
-				out.push_tok(clone(o));
-			}
-			
-			// Restore namespace
-			out.push_tok(maketok(io, "c2_namespace", etype::ALPHA));
-			out.push_tok(maketok(io, " ", etype::SPACE));
-			out.push_tok(maketok(io, parent_label.c_str(), etype::ALPHA));
-			
-			// Pop current scope
-			out.push_tok(maketok(io, " ", etype::SPACE));
-			out.push_tok(maketok(io, "c2_scope_internal_pop", etype::ALPHA));
+			// Set restart pos if not already set
+			if(!rpos)
+				rpos = out.get_pos();
 
 			out.push_tok(maketok(io, "(", etype::OP));
-			
+
 			// Expand arguments into vars or arrays
 			if(outargs.size())
 			{
-				//out.push_tok(maketok(io, "var", etype::ALPHA));
-				//out.push_tok(maketok(io, " ", etype::SPACE));
-					
 				for(size_t t=0; t<outargs.size(); t++)
 				{
-					//out.push_tok(maketok(io, m->inputs[t].c_str(), etype::ALPHA));
-					//out.push_tok(maketok(io, "=", etype::OP));
-					
 					std::vector<stok *> &args = outargs[t];
 					
 					bool isarray = outisarray[t];
@@ -1176,11 +1195,9 @@ void c2a::s_parse1(toklink &link)
 							
 							if(plabel)
 							{
-								//printf("label %s\n", stmp.c_str());
-								
 								// label detected
 								bool local = false;
-								std::string mapname;
+								std::string root_mapname, mapname;
 								
 								// Handle ..label
 								int numdots = 0;
@@ -1193,30 +1210,55 @@ void c2a::s_parse1(toklink &link)
 									
 									stmp = stmp.substr(numdots);
 									
-									mapname = root_labels[root_labelindex - (numdots - 1)].first ;
+									mapname = root_mapname = root_labels[root_labelindex - (numdots - 1)].first ;
 									mapname += "." + stmp;
 								}
 								else
 								{
-									mapname = stmp;
+									mapname = root_mapname = stmp;
 								}
 								
-								//printf("final label %s\n", mapname.c_str());
+								VERBOSE(6, "Label %s\n", mapname.c_str());
 								
 								auto i = labelmap.find(mapname);
 								if(i == labelmap.end())
 								{
+									auto init_subspace = [this](toklink &link, const std::string &mapname, bool macrospace)->stok*
+									{
+										std::string s2, subname = "c2_sub_s" + mapname;
+
+										s2 = "struct " + subname + " {\n";
+										stok *psub = linkinit(maketok(link.get_pos(), s2.c_str()), link);
+
+										if(macrospace)
+										{
+											s2 = "}"+mapname+";\n";
+										}
+										else
+										{
+											s2 = "};\n";
+										}
+
+										linkinit(maketok(link.get_pos(), s2.c_str()), link);
+
+										return psub;
+									};
+
 									std::string s2;
-									stok *psub = nullptr;
 									const char *pstring = linear_string(mapname);
 									
 									if(local)
 									{
 										// Local label setup
 										clabel &cr = *root_labels[root_labelindex - (numdots - 1)].second;
+
+										if(!cr.sub)
+										{
+											cr.sub = init_subspace(link, root_mapname, true);
+										}
 										
 										s2 = "c2i::var " + stmp + "=c2_slabel(\"" + mapname + "\",0);\n";
-										cr.sub = link.link(maketok(psub, s2.c_str()), cr.sub);
+										cr.sub = link.link(maketok(cr.sub, s2.c_str()), cr.sub);
 										
 										stok *c;
 										if(o->ord < 2)
@@ -1235,27 +1277,17 @@ void c2a::s_parse1(toklink &link)
 									else
 									{
 										// Root label setup
+										stok *psub = nullptr;
+
 										bool macrospace = mapname.size() >= 14 && mapname.substr(0, 14) == "c2_auto_macro_";
-										
-										std::string subname = "c2_sub_s" + mapname;
-										
-										s2 = "struct c2_sub_s" + mapname + " {\n";
-										psub = linkinit(maketok(o, s2.c_str()), link);
-										
-										if(macrospace)
-										{
-											s2 = "}"+mapname+";\n";
-										}
-										else
-										{
-											s2 = "};\n";
-										}
-										
-										linkinit(maketok(o, s2.c_str()), link);
-										
+
 										stok *c = nullptr;
 										if(!macrospace)
 										{
+											psub = init_subspace(link, mapname, false);
+
+											std::string subname = "c2_sub_s" + mapname;
+
 											s2 = "c2_basevar<" + subname + "> " + stmp + "=c2_slabel(\"" + mapname + "\",0);\n";
 											linkinit(maketok(o, s2.c_str()), link);
 											
@@ -1274,44 +1306,17 @@ void c2a::s_parse1(toklink &link)
 											}
 										}
 										
-										if(!indexed_label)
-										{
-											parent_label = mapname;
-											root_labelindex = uint32_t(root_labels.size());
-											clabel &cr = labelmap[mapname] = clabel(c, root_labelindex, psub);
-											root_labels.push_back({pstring, &cr});
-										}
-										else
-										{
-											labelmap[mapname] = clabel(c, root_labelindex);
-										}
+										parent_label = mapname;
+										root_labelindex = uint32_t(root_labels.size());
+										clabel &cr = labelmap[mapname] = clabel(c, root_labelindex, psub);
+										root_labels.push_back({pstring, &cr});
 									}
 										
-									if(indexed_label)
-									{
-										stok *after = link.link(maketok(plabel, autolabel("idx", true).c_str(), etype::ALPHA, 0), o);
-										link.link(maketok(plabel, ":", etype::OP, 1), after);
-									}
-									else
-									{
-										scope_labels[scopeindex].push_back(pstring);
-									}
+									scope_labels[scopeindex].push_back(pstring);
 								}
 								else
 								{
-									if(indexed_label)
-									{
-										link.link(maketok(plabel, mapname.c_str()), plabel->get_prev());
-										stok *ta = link.link(maketok(plabel, "=c2_org"), o->prev);
-										link.link(maketok(plabel, ";", etype::OP), ta);
-											
-										stok *after = link.link(maketok(plabel, autolabel("idx", true).c_str(), etype::ALPHA, 0), o);
-										link.link(maketok(plabel, ":", etype::OP, 1), after);
-									}
-									else
-									{
-										error(o, "Label already declared");
-									}
+									error(o, "Label already declared");
 								}
 								
 								// Remove label and/or ':'
@@ -1321,7 +1326,6 @@ void c2a::s_parse1(toklink &link)
 								
 								o = nullptr;
 								label_declared = true;
-								
 							}
 						}
 					}

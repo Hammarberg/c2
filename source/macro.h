@@ -54,7 +54,8 @@ public:
 	void print();
 
 	int disablecount = 0;
-	
+
+	std::string implementation;
 private:
 	//stok *current = nullptr;
 };

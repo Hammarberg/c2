@@ -39,8 +39,6 @@ From the c2 root type `make` (or `make CXX=clang++ -j`) and a c2 executable will
 Installation is optional as you can run c2 directly from the source root. If you want a system wide installation, `sudo make install` or if you prefer a user local installation `make install PREFIX=~/.local`.
 
 To uninstall, `sudo make uninstall` or `make uninstall PREFIX=~/.local`.
-## Nix
-## NixOS
 ### Suggested Debian packages
 `build-essential` or `clang` and `make`.
 ## Windows
@@ -89,7 +87,7 @@ Optionally you can create the destination path with c2 directly. For Windows, us
 
 `c2 --create-project 6502 myawesomeproject sources/hack`
 
-When executing `c2` without arguments in a project folder, it will build/assemble and depending on the template. Tt can automatically launch an emulator if in path.
+When executing `c2` without arguments in a project folder, it will build/assemble and depending on the template and can automatically external tools like an emulator or a deployment script.
 ### Direct assembly
 To use c2 with an external build system like `make`, use `--direct <template> [other arguments] <source>`.
 
@@ -188,7 +186,7 @@ Example:
 ### Relative label addressing
 When referencing a label, it's normally done by name. Anonymous labels can only be referenced with a relative count from the current location. To reference the previous label, anonymous or not, use a single `-`, to reference two labels back use `--`. In the same way, use one or more`+` to reference forward labels.
 ### Indexed labels
-Indexed labels are global in nature but they won't provide a namespace for local labels. They have to be declared and referenced with an index number or a variable. They are meant as a tool to address auto-generated code or expanded macros.
+Indexed labels are useful when addressing auto-generated code or expanded macros.
 
 Syntax: `<name>[<index>]:`
 
@@ -218,6 +216,7 @@ Currently, variables doesn't support label namespaces (design decisions yet to b
         var x = 5
         //Other code here
 }
+// x is not more
 ```
 Variables remembers explicit bit counts and this is supported by some target.
 ```
