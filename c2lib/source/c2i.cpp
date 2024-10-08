@@ -55,24 +55,185 @@ T swap_endian(T u)
 ///////////////////////////////////////////////////////////////////////////////
 // Var
 ///////////////////////////////////////////////////////////////////////////////
+c2i::c2_vardata::c2_vardata(c2i::cint in, int8_t ib)
+: c2va(0)
+, c2vc(1)
+{
+	c2vv.c2vn = in;
+	c2vb = ib ? ib : calc_bits(in);
+}
 
+c2i::c2_vardata::~c2_vardata()
+{
+	c2_get_single()->c2_unregister_var(this);
+	internal_clear();
+}
+
+void c2i::c2_vardata::reset(c2i::cint in)
+{
+	internal_clear();
+	c2vb = 0;
+	c2vv.c2vn = update_bits(in);
+	c2va = 0;
+	c2vc = 1;
+}
+
+uint8_t c2i::c2_vardata::calc_bits(c2i::cint n)
+{
+	uint8_t b = 1;
+	if(n >= 0)
+	{
+		for(; b < 64; b++)
+		{
+			if(!(n >> b))
+				break;
+		}
+		return b;
+	}
+
+	n = ~n;
+	for(; b < 64; b++)
+	{
+		if(!(n >> b))
+			break;
+	}
+	return b + 1;
+}
+
+c2i::cint c2i::c2_vardata::update_bits(c2i::cint n) const
+{
+	uint8_t bb = calc_bits(n);
+	if(bb > c2vb)
+		c2vb = bb;
+
+	return n;
+}
+
+uint8_t c2i::c2_vardata::bits() const
+{
+	if(!c2vb)
+	{
+		if(c2va)
+		{
+			for(uint32_t r=0; r<c2vc; r++)
+				update_bits(c2vv.c2vp[r]);
+		}
+		else
+			update_bits(c2vv.c2vn);
+	}
+
+	return c2vb;
+}
+
+c2i::cint c2i::c2_vardata::get() const
+{
+	if(!c2va)
+		return c2vv.c2vn;
+
+	return c2vv.c2vp[0];
+}
+
+c2i::cint &c2i::c2_vardata::getat(size_t index)
+{
+	if(!c2va && !index)
+		return c2vv.c2vn;
+
+	ensure(index + 1);
+
+	if(index+1 > c2vc)
+		c2vc = index+1;
+
+	return c2vv.c2vp[index];
+}
+
+c2i::cint c2i::c2_vardata::setat(size_t index, c2i::cint n)
+{
+	if(!index && !c2va)
+	{
+		c2vv.c2vn = update_bits(n);
+	}
+	else
+	{
+		ensure(index+1);
+
+		if(index+1 > c2vc)
+			c2vc = index+1;
+
+		c2vv.c2vp[index] = n;
+	}
+
+	return n;
+}
+
+void c2i::c2_vardata::ensure(size_t n)
+{
+	if(n <= 1 || n < c2vc)
+		return;
+
+	if(n < c2va)
+	{
+		return;
+	}
+
+	if(!c2va)
+	{
+		c2va = n * 2;
+		cint tmp = c2vv.c2vn;
+		c2vv.c2vp = (cint *)c2i::c2_malloc(sizeof(cint)*c2va);
+		c2vv.c2vp[0] = tmp;
+	}
+	else
+	{
+		size_t oa = c2va;
+		c2va = n * 2;
+		c2vv.c2vp = (cint *)c2i::c2_realloc(c2vv.c2vp, sizeof(cint)*c2va);
+		c2i::c2_memset((void *)&c2vv.c2vp[oa], 0, sizeof(cint)*(c2va - oa));
+	}
+}
+
+void c2i::c2_vardata::copy(const c2_vardata &o)
+{
+	internal_clear();
+	if(o.c2vc == 1)
+	{
+		c2va = 0;
+		c2vc = 1;
+		c2vv.c2vn = o.get();
+	}
+	else
+	{
+		c2vc = c2va = o.c2vc;
+		c2vv.c2vp = (cint *)c2i::c2_malloc(sizeof(cint)*c2va);
+		c2i::c2_memcpy(c2vv.c2vp, o.c2vv.c2vp, sizeof(cint)*c2vc);
+	}
+
+	c2vb = o.c2vb;
+}
+
+void c2i::c2_vardata::internal_clear()
+{
+	if(c2va)
+	{
+		c2i::c2_free(c2vv.c2vp);
+	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // corg
 ///////////////////////////////////////////////////////////////////////////////
 
-int64_t c2i::c2_corg::operator=(c2_corg &o)
+c2i::cint c2i::c2_corg::operator=(c2i::c2_corg &o)
 {
 	// @ = @ resets orga
 	return orga = o.orgw;
 }
 
-int64_t c2i::c2_corg::operator=(int64_t n)
+c2i::cint c2i::c2_corg::operator=(c2i::cint n)
 {
 	return orga = orgw = n;
 }
 
-int64_t c2i::c2_corg::operator=(std::initializer_list<int64_t> elements)
+c2i::cint c2i::c2_corg::operator=(std::initializer_list<cint> elements)
 {
 	auto i = elements.begin();
 	if(elements.size() >= 2)
@@ -89,7 +250,7 @@ int64_t c2i::c2_corg::operator=(std::initializer_list<int64_t> elements)
 	return orga;
 }
 
-c2i::c2_corg::operator int64_t() const
+c2i::c2_corg::operator c2i::cint() const
 {
 	return orga;
 }
@@ -101,13 +262,13 @@ c2i::c2_corg::operator var() const
 }
 */
 
-void c2i::c2_corg::backup(int64_t &a, int64_t &w)
+void c2i::c2_corg::backup(c2i::cint &a, c2i::cint &w)
 {
 	a = orga;
 	w = orgw;
 }
 
-void c2i::c2_corg::restore(int64_t a, int64_t w)
+void c2i::c2_corg::restore(c2i::cint a, c2i::cint w)
 {
 	orga = a;
 	orgw = w;
@@ -118,9 +279,9 @@ void c2i::c2_corg::restore(int64_t a, int64_t w)
 ///////////////////////////////////////////////////////////////////////////////
 
 
-void sinternal::get_sorted_vars(std::vector<std::pair<std::string, int64_t>> &out, bool imported)
+void sinternal::get_sorted_vars(std::vector<std::pair<std::string, c2i::cint>> &out, bool imported)
 {
-	std::multimap<int64_t, std::string> sorted;
+	std::multimap<c2i::cint, std::string> sorted;
 	
 	for(auto i : registered_vars)
 	{
@@ -137,7 +298,7 @@ void sinternal::get_sorted_vars(std::vector<std::pair<std::string, int64_t>> &ou
 	}
 }
 
-void sinternal::import_vars(std::vector<std::pair<std::string, int64_t>> &in)
+void sinternal::import_vars(std::vector<std::pair<std::string, c2i::cint>> &in)
 {
 	for(auto i : in)
 	{
@@ -150,7 +311,7 @@ void sinternal::import_vars(std::vector<std::pair<std::string, int64_t>> &in)
 	}
 }
 
-bool sinternal::lookup_var(const std::string &in, int64_t &out)
+bool sinternal::lookup_var(const std::string &in, c2i::cint &out)
 {
 	auto i = registered_vars.find(in);
 	if(i != registered_vars.end())
@@ -168,7 +329,7 @@ bool sinternal::lookup_var(const std::string &in, int64_t &out)
 struct c2file_data
 {
 	FILE *fp = nullptr;
-	int64_t size = 0;
+	c2i::cint size = 0;
 };
 
 
@@ -204,7 +365,7 @@ bool c2i::c2_file::open(const char *file)
 		}
 		
 		fseek(p->fp, 0, SEEK_END);
-		p->size = (int64_t)ftell(p->fp);
+		p->size = (cint)ftell(p->fp);
 		fseek(p->fp, 0, SEEK_SET);
 
 		return true;
@@ -224,13 +385,13 @@ void c2i::c2_file::close()
 	}
 }
 
-int64_t c2i::c2_file::size()
+c2i::cint c2i::c2_file::size()
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	return p->size;
 }
 
-int64_t c2i::c2_file::seek(int64_t newpos)
+c2i::cint c2i::c2_file::seek(c2i::cint newpos)
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	if(newpos < 0 || newpos > p->size)
@@ -242,10 +403,10 @@ int64_t c2i::c2_file::seek(int64_t newpos)
 	return newpos;
 }
 
-int64_t c2i::c2_file::pos()
+c2i::cint c2i::c2_file::pos()
 {
 	c2file_data *p = (c2file_data *)pinternal;
-	return (int64_t)ftell(p->fp);
+	return (cint)ftell(p->fp);
 }
 
 bool c2i::c2_file::eof()
@@ -254,7 +415,7 @@ bool c2i::c2_file::eof()
 	return feof(p->fp) != 0;
 }
 
-int64_t c2i::c2_file::pop8()
+c2i::cint c2i::c2_file::pop8()
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	uint8_t d;
@@ -262,7 +423,7 @@ int64_t c2i::c2_file::pop8()
 	return d;
 }
 
-int64_t c2i::c2_file::pop16le()
+c2i::cint c2i::c2_file::pop16le()
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	uint16_t d;
@@ -270,7 +431,7 @@ int64_t c2i::c2_file::pop16le()
 	return d;
 }
 
-int64_t c2i::c2_file::pop16be()
+c2i::cint c2i::c2_file::pop16be()
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	uint16_t d;
@@ -278,7 +439,7 @@ int64_t c2i::c2_file::pop16be()
 	return swap_endian(d);
 }
 
-int64_t c2i::c2_file::pop32le()
+c2i::cint c2i::c2_file::pop32le()
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	uint32_t d;
@@ -286,7 +447,7 @@ int64_t c2i::c2_file::pop32le()
 	return d;
 }
 
-int64_t c2i::c2_file::pop32be()
+c2i::cint c2i::c2_file::pop32be()
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	uint32_t d;
@@ -294,18 +455,18 @@ int64_t c2i::c2_file::pop32be()
 	return swap_endian(d);
 }
 
-int64_t c2i::c2_file::pop64le()
+c2i::cint c2i::c2_file::pop64le()
 {
 	c2file_data *p = (c2file_data *)pinternal;
-	int64_t d;
+	cint d;
 	fread(&d, 1, sizeof(d), p->fp);
 	return d;
 }
 
-int64_t c2i::c2_file::pop64be()
+c2i::cint c2i::c2_file::pop64be()
 {
 	c2file_data *p = (c2file_data *)pinternal;
-	int64_t d;
+	cint d;
 	fread(&d, 1, sizeof(d), p->fp);
 	return swap_endian(d);
 }
@@ -326,7 +487,7 @@ double c2i::c2_file::pop64float()
 	return d;
 }
 
-int64_t c2i::c2_file::read(void *ptr, int64_t size)
+c2i::cint c2i::c2_file::read(void *ptr, c2i::cint size)
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	int rs = fread(ptr, 1, size, p->fp);
@@ -404,7 +565,7 @@ c2i::~c2i()
 	delete [] RAM_use;
 }
 
-void c2i::push8(int64_t b, bool isaddr)
+void c2i::push8(c2i::cint b, bool isaddr)
 {
 	if(!var::inrange(8, b))
 	{
@@ -414,7 +575,7 @@ void c2i::push8(int64_t b, bool isaddr)
 	push(b);
 }
 
-void c2i::push16le(int64_t b, bool isaddr)
+void c2i::push16le(c2i::cint b, bool isaddr)
 {
 	if(!var::inrange(16, b))
 	{
@@ -425,7 +586,7 @@ void c2i::push16le(int64_t b, bool isaddr)
 	push(b>>8);
 }
 
-void c2i::push16be(int64_t b, bool isaddr)
+void c2i::push16be(c2i::cint b, bool isaddr)
 {
 	if(!var::inrange(16, b))
 	{
@@ -436,7 +597,7 @@ void c2i::push16be(int64_t b, bool isaddr)
 	push(b);
 }
 
-void c2i::push32le(int64_t b, bool isaddr)
+void c2i::push32le(c2i::cint b, bool isaddr)
 {
 	if(!var::inrange(32, b))
 	{
@@ -449,7 +610,7 @@ void c2i::push32le(int64_t b, bool isaddr)
 	push(b>>24);
 }
 
-void c2i::push32be(int64_t b, bool isaddr)
+void c2i::push32be(c2i::cint b, bool isaddr)
 {
 	if(!var::inrange(32, b))
 	{
@@ -462,7 +623,7 @@ void c2i::push32be(int64_t b, bool isaddr)
 	push(b);
 }
 
-void c2i::push64le(int64_t b, bool isaddr)
+void c2i::push64le(c2i::cint b, bool isaddr)
 {
 	push(b);
 	push(b>>8);
@@ -474,7 +635,7 @@ void c2i::push64le(int64_t b, bool isaddr)
 	push(b>>56);
 }
 
-void c2i::push64be(int64_t b, bool isaddr)
+void c2i::push64be(c2i::cint b, bool isaddr)
 {
 	push(b>>56);
 	push(b>>48);
@@ -486,18 +647,18 @@ void c2i::push64be(int64_t b, bool isaddr)
 	push(b);
 }
 
-void c2i::push(int64_t b)
+void c2i::push(c2i::cint b)
 {
 	c2_poke(c2_org.orgw, b);
 	c2_org.orga++;
 	c2_org.orgw++;
 }
 
-void c2i::c2_poke(int64_t pos, int64_t data)
+void c2i::c2_poke(c2i::cint pos, c2i::cint data)
 {
 	sinternal *p = (sinternal *)pinternal;
 	
-	int64_t d[2];
+	cint d[2];
 	d[0] = pos;
 	d[1] = uint8_t(data);
 	
@@ -526,7 +687,7 @@ void c2i::c2_poke(int64_t pos, int64_t data)
 	}
 }
 
-uint8_t c2i::c2_peek(int64_t pos)
+uint8_t c2i::c2_peek(c2i::cint pos)
 {
 	if(pos < RAM_base || pos >= RAM_base+RAM_size)
 	{
@@ -563,7 +724,7 @@ void c2i::c2_reset_pass()
 
 	c2_cmd.invoke("--org", [&](int arga, const char *argc[])
 	{
-		int64_t a,w;
+		cint a,w;
 
 		if(!c2_resolve(argc[0], a, false))
 			throw "--org could not resolve address";
@@ -597,7 +758,7 @@ bool c2i::c2_assemble()
 		{
 			std::vector<cmur3::shash> history;
 
-			int64_t org_backup_a, org_backup_w;
+			cint org_backup_a, org_backup_w;
 			c2_org.backup(org_backup_a, org_backup_w);
 
 			for(int pass=1;;pass++)
@@ -698,9 +859,9 @@ bool c2i::c2_assemble()
 	return result;
 }
 
-int64_t c2i::c2_low_bound()
+c2i::cint c2i::c2_low_bound()
 {
-	int64_t low = 0;
+	cint low = 0;
 	for(;low<RAM_size;low++)
 		if(RAM_use[low])
 			return low + RAM_base;
@@ -708,9 +869,9 @@ int64_t c2i::c2_low_bound()
 	return -1;
 }
 
-int64_t c2i::c2_high_bound()
+c2i::cint c2i::c2_high_bound()
 {
-	int64_t high = RAM_size - 1;
+	cint high = RAM_size - 1;
 	for(;high>=0;high--)
 		if(RAM_use[high])
 			return high+1 + RAM_base;
@@ -718,7 +879,7 @@ int64_t c2i::c2_high_bound()
 	return -1;
 }
 
-bool c2i::c2_resolve(const char *addr, int64_t &out, bool allow_labels)
+bool c2i::c2_resolve(const char *addr, c2i::cint &out, bool allow_labels)
 {
 	if(!addr)
 		return 0;
@@ -848,7 +1009,7 @@ void c2i::c2_pre()
 
 	c2_cmd.invoke("--address-range", [&](int arga, const char *argc[])
 	{
-		int64_t from,to;
+		cint from,to;
 
 		if(!c2_resolve(argc[0], from, false))
 			throw "--address-range could not resolve 'from' address";
@@ -875,7 +1036,7 @@ void c2i::c2_pre()
 
 		// Read labels
 		std::string name;
-		int64_t val;
+		cint val;
 
 		for(;;)
 		{
@@ -883,7 +1044,7 @@ void c2i::c2_pre()
 			if(!name.size())
 				break;
 
-			fread(&val, 1, sizeof(int64_t), fp);
+			fread(&val, 1, sizeof(cint), fp);
 			p->imported_vars.push_back({name, val});
 		}
 	});
@@ -895,7 +1056,7 @@ void c2i::c2_post()
 	
 	c2_cmd.invoke("--out", [&](int arga, const char *argc[])
 	{
-		int64_t from,to;
+		cint from,to;
 		
 		if(!c2_resolve(argc[0], from))
 			throw "--out could not resolve 'from' address";
@@ -924,13 +1085,13 @@ void c2i::c2_post()
 	{
 		FILE *fp = stdout;
 
-		std::vector<std::pair<std::string, int64_t>> sorted;
+		std::vector<std::pair<std::string, cint>> sorted;
 		p->get_sorted_vars(sorted, false);
 
 		for(size_t r=0;r<sorted.size();r++)
 		{
 			c2tools::save(fp, sorted[r].first.c_str());
-			fwrite(&sorted[r].second, 1, sizeof(int64_t), fp);
+			fwrite(&sorted[r].second, 1, sizeof(cint), fp);
 		}
 		fputc(0, fp);
 
@@ -942,7 +1103,7 @@ void c2i::c2_post()
 	
 	c2_cmd.invoke("--out-c", [&](int arga, const char *argc[])
 	{
-		int64_t from,to;
+		cint from,to;
 		
 		if(!c2_resolve(argc[0], from))
 			throw "--out-c could not resolve 'from' address";
@@ -963,9 +1124,9 @@ void c2i::c2_post()
 		
 		fprintf(fp,"unsigned char c_%s[]={", p->title.c_str());
 		
-		int64_t size = to - from;
-		const int64_t W = 8;
-		for(int64_t r = 0; r < size; r++)
+		cint size = to - from;
+		const cint W = 8;
+		for(cint r = 0; r < size; r++)
 		{
 			int b = RAM[from-RAM_base+r];
 			if(r % W == 0)
@@ -997,7 +1158,7 @@ void c2i::c2_post()
 				throw "--dump-vars could not open file for writing";
 		}
 
-		std::vector<std::pair<std::string, int64_t>> sorted;
+		std::vector<std::pair<std::string, cint>> sorted;
 		p->get_sorted_vars(sorted);
 		
 		for(size_t r=0;r<sorted.size();r++)
@@ -1019,7 +1180,7 @@ void c2i::c2_post()
 				throw "--dump-enum could not open file for writing";
 		}
 
-		std::vector<std::pair<std::string, int64_t>> sorted;
+		std::vector<std::pair<std::string, cint>> sorted;
 		p->get_sorted_vars(sorted);
 		
 		fprintf(fp, "enum e_%s{\n", p->title.c_str());
@@ -1077,7 +1238,7 @@ void c2i::loadbin(const char *path, size_t offset, size_t length)
 		return;
 	}
 	
-	int64_t size = fp.size();
+	cint size = fp.size();
 	
 	if(offset > size)
 	{
@@ -1087,7 +1248,7 @@ void c2i::loadbin(const char *path, size_t offset, size_t length)
 	
 	fp.seek(offset);
 		
-	int64_t toread;
+	cint toread;
 	
 	if(length == size_t(-1))
 	{
@@ -1119,7 +1280,7 @@ c2i::var c2i::loadvar(const char *path, size_t offset, size_t length)
 		return v;
 	}
 	
-	int64_t size = fp.size();
+	cint size = fp.size();
 	
 	if(offset > size)
 	{
@@ -1129,7 +1290,7 @@ c2i::var c2i::loadvar(const char *path, size_t offset, size_t length)
 	
 	fp.seek(offset);
 		
-	int64_t toread;
+	cint toread;
 	
 	if(length == size_t(-1))
 	{
@@ -1230,7 +1391,7 @@ void c2i::c2_add_arg(const char *format, ...)
 	delete [] buffer;
 }
 
-int64_t c2i::c2_scope_push(uint32_t fileindex, uint32_t line, uint32_t uid)
+c2i::cint c2i::c2_scope_push(uint32_t fileindex, uint32_t line, uint32_t uid)
 {
 	sinternal *p = (sinternal *)pinternal;
 	p->stack_history.push_back(sdebugstack(fileindex, line));
@@ -1461,7 +1622,7 @@ const char *c2i::c2_get_template()
 	return "void";
 }
 
-void c2i::c2_set_ram(int64_t base, int64_t size)
+void c2i::c2_set_ram(c2i::cint base, c2i::cint size)
 {
 	if(RAM)
 	{
@@ -1534,13 +1695,13 @@ void c2i::c2_subassemble(const char *source)
 	}
 
 	// Write labels
-	std::vector<std::pair<std::string, int64_t>> sorted;
+	std::vector<std::pair<std::string, cint>> sorted;
 	p->get_sorted_vars(sorted, false);
 
 	for(size_t r=0;r<sorted.size();r++)
 	{
 		c2tools::save(fp, sorted[r].first.c_str());
-		fwrite(&sorted[r].second, 1, sizeof(int64_t), fp);
+		fwrite(&sorted[r].second, 1, sizeof(cint), fp);
 	}
 	fputc(0, fp);
 
@@ -1607,7 +1768,7 @@ void c2i::c2_subassemble(const char *source)
 
 	// Read exports
 	std::string name;
-	int64_t val;
+	cint val;
 	pos = 0;
 	sorted.clear();
 
@@ -1617,8 +1778,8 @@ void c2i::c2_subassemble(const char *source)
 		if(!name.size())
 			break;
 
-		memcpy(&val, buf.data()+pos, sizeof(int64_t));
-		pos += sizeof(int64_t);
+		memcpy(&val, buf.data()+pos, sizeof(cint));
+		pos += sizeof(cint);
 
 		sorted.push_back({name, val});
 	}
@@ -1647,7 +1808,7 @@ void c2i::c2_subassemble(const char *source)
 	memcpy(use.data(), buf.data()+pos, RAM_size);
 	//pos += RAM_size;
 
-	for(int64_t pos = 0; pos<RAM_size; pos++)
+	for(cint pos = 0; pos<RAM_size; pos++)
 	{
 		if(use[pos])
 			c2_poke(RAM_base + pos, ram[pos]);
