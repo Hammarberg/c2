@@ -62,6 +62,15 @@ public:
 
 	// Label index scopes for c2_lix, unique code point number
 	uint32_t scopelix = 0;
+
+	// Format for scope level index counting
+	struct sslix
+	{
+		sslix(stok *instart=nullptr)	: start(instart)	{}
+		stok *start;
+		bool implemented = false;
+	};
+	std::vector<sslix> scopelix_stack;
 	
 	// Scopes, used for no name label referencing
 	uint32_t scopeindex = 0;

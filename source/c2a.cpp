@@ -1326,8 +1326,44 @@ void c2a::s_parse1(toklink &link)
 								
 								o = nullptr;
 								label_declared = true;
+
+								size_t scopelix_stack_size = scopelix_stack.size();
+								if(!scopelix_stack_size)
+								{
+									error(o, "Label declared outside any scope");
+								}
+
+								sslix &slix=scopelix_stack[scopelix_stack_size-1];
+
+								if(!slix.implemented)
+								{
+									VERBOSE(6, "slix %p\n",slix.start);
+									// Push debug stack and scope label index
+									char ctmp[256];
+									snprintf(ctmp, sizeof(ctmp), "c2_sscope c2_scope(%d,%d,%d);", int(slix.start->fileindex), slix.start->line, int(scopelix));
+									link.link(maketok(slix.start, ctmp), slix.start);
+									slix.implemented = true;
+									scopelix++;
+								}
 							}
 						}
+					}
+					break;
+					case '{':
+					{
+						VERBOSE(7, "Scope start\n");
+						scopelix_stack.push_back(sslix(o));
+					}
+					break;
+					case '}':
+					{
+						VERBOSE(7, "Scope end\n");
+						if(!scopelix_stack.size())
+						{
+							error(o, "Unexpected '}'");
+						}
+
+						scopelix_stack.pop_back();
 					}
 					break;
 					default:
@@ -1476,70 +1512,6 @@ void c2a::s_parse2(toklink &link)
 				}
 			}
 			break;
-			case etype::OP:
-			{
-				if(isclass == false)
-				{
-					if(*o->name == '{')
-					{
-						stok *prev = o->get_prev_nonspace();
-						if(*prev->name == '(' || *prev->name == '=' || *prev->name == ',')
-						{
-							break;
-						}
-						
-						int64_t bc = 0;
-						int backsteps = 0;
-						
-						while(prev)
-						{
-							if(backsteps >= 64)
-								break;
-								
-							if(bc == 0)
-							{
-								if(prev->type == etype::BLOCK || *prev->name == ';' || *prev->name == '}')
-									break;
-								
-								if(!strcmp("struct", prev->name) || !strcmp("class", prev->name) || !strcmp("enum", prev->name) || !strcmp("switch", prev->name))
-								{
-									isclass = true;
-									isclass_bc = bracketcount(isclass_bc, o);
-									break;
-								}
-							}
-							
-							if(prev->type == etype::OP)
-							{
-								bc = rbracketcount(bc, prev);
-							}
-							
-							prev = prev->get_prev_nonspace();
-							backsteps++;
-						};
-						
-						if(isclass == false)
-						{
-							// Push debug stack and label index
-							char ctmp[256];
-							snprintf(ctmp, sizeof(ctmp), "c2_sscope c2_scope(%d,%d,%d)", int(o->fileindex), o->line, int(scopelix));
-							stok *ta = link.link(maketok(o, ctmp), o);
-							link.link(maketok(o, ";", etype::OP), ta);
-							scopelix++;
-						}
-					}
-				}
-				else
-				{
-					isclass_bc = bracketcount(isclass_bc, o);
-					if(!isclass_bc)
-					{
-						isclass = false;
-					}
-				}
-			}
-			break;
-			
 			default:
 			break;
 		};
