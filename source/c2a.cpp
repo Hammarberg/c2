@@ -964,6 +964,33 @@ void c2a::s_parse0(toklink &link)
 
 void c2a::s_parse1(toklink &link)
 {
+	auto insert_slix=[this, &link](stok *o)
+		{
+			size_t scopelix_stack_size = scopelix_stack.size();
+			if(!scopelix_stack_size)
+			{
+				// Should never happen
+				error(o, "Attemped assembly outside any scope");
+			}
+
+			sslix &slix=scopelix_stack[scopelix_stack_size-1];
+
+			if(!slix.implemented)
+			{
+				VERBOSE(6, "slix %p\n",slix.start);
+
+				// Push debug stack and scope label index
+				slix.implemented = true;
+				slix.slix = scopelix;
+
+				char ctmp[256];
+				snprintf(ctmp, sizeof(ctmp), "c2_sscope c2_scope(%d,%d,%d);", int(slix.start->fileindex), slix.start->line, int(scopelix));
+				link.link(maketok(slix.start, ctmp), slix.start);
+
+				scopelix++;
+			}
+		};
+
 	std::string stmp;
 	bool label_declared = false;
 	
@@ -1057,7 +1084,8 @@ void c2a::s_parse1(toklink &link)
 				}
 				else if((o->ord == 0 || label_declared) && match_macro(o, link))
 				{
-					// Macro expanded, nothing to do here
+					// Make sure the scope is set up
+					insert_slix(o);
 					info(6, o, "Expanded macro\n");
 				}
 				else
@@ -1195,6 +1223,9 @@ void c2a::s_parse1(toklink &link)
 							
 							if(plabel)
 							{
+								// Scope
+								insert_slix(plabel);
+
 								// label detected
 								bool local = false;
 								std::string root_mapname, mapname;
@@ -1326,25 +1357,6 @@ void c2a::s_parse1(toklink &link)
 								
 								o = nullptr;
 								label_declared = true;
-
-								size_t scopelix_stack_size = scopelix_stack.size();
-								if(!scopelix_stack_size)
-								{
-									error(o, "Label declared outside any scope");
-								}
-
-								sslix &slix=scopelix_stack[scopelix_stack_size-1];
-
-								if(!slix.implemented)
-								{
-									VERBOSE(6, "slix %p\n",slix.start);
-									// Push debug stack and scope label index
-									char ctmp[256];
-									snprintf(ctmp, sizeof(ctmp), "c2_sscope c2_scope(%d,%d,%d);", int(slix.start->fileindex), slix.start->line, int(scopelix));
-									link.link(maketok(slix.start, ctmp), slix.start);
-									slix.implemented = true;
-									scopelix++;
-								}
 							}
 						}
 					}

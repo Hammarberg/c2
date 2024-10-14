@@ -69,6 +69,7 @@ public:
 		sslix(stok *instart=nullptr)	: start(instart)	{}
 		stok *start;
 		bool implemented = false;
+		uint32_t slix = 0;
 	};
 	std::vector<sslix> scopelix_stack;
 	
