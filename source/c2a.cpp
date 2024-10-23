@@ -1277,6 +1277,9 @@ void c2a::s_parse1(toklink &link)
 
 									std::string s2;
 									const char *pstring = linear_string(mapname);
+
+									char cstrlix[64];
+									snprintf(cstrlix, sizeof(cstrlix), "%d", int(scopelix_stack[scopelix_stack.size()-1].slix));
 									
 									if(local)
 									{
@@ -1288,19 +1291,19 @@ void c2a::s_parse1(toklink &link)
 											cr.sub = init_subspace(link, root_mapname, true);
 										}
 										
-										s2 = "c2i::var " + stmp + "=c2_slabel(\"" + mapname + "\",0);\n";
+										s2 = "c2i::c2_label " + stmp + "=c2_slabel(\"" + mapname + "\"," + std::string(cstrlix) + ");\n";
 										cr.sub = link.link(maketok(cr.sub, s2.c_str()), cr.sub);
 										
 										stok *c;
 										if(o->ord < 2)
 										{
-											s2 = mapname + "[c2_lix]=c2_org;";
+											s2 = mapname + "=c2_org;";
 											link.link(c=maketok(plabel, s2.c_str()), plabel->get_prev());
 										}
 										else
 										{
 											link.link(c=maketok(plabel, mapname.c_str()), plabel->get_prev());
-											link.link(maketok(plabel, "[c2_lix]=c2_org;"), o->prev);
+											link.link(maketok(plabel, "=c2_org;"), o->prev);
 										}
 										
 										labelmap[mapname] = clabel(c, root_labelindex - (numdots - 1));
@@ -1319,7 +1322,7 @@ void c2a::s_parse1(toklink &link)
 
 											std::string subname = "c2_sub_s" + mapname;
 
-											s2 = "c2_basevar<" + subname + "> " + stmp + "=c2_slabel(\"" + mapname + "\",0);\n";
+											s2 = "c2_baselabel<" + subname + "> " + stmp + "=c2_slabel(\"" + mapname + "\"," + std::string(cstrlix) + ");\n";
 											linkinit(maketok(o, s2.c_str()), link);
 											
 											stok *ta;
@@ -1517,7 +1520,6 @@ void c2a::s_parse2(toklink &link)
 					auto i = labelmap.find(stmp);
 					if(i != labelmap.end())
 					{
-						stmp += ".getatlix(c2_lix)";
 						link.link(maketok(o, stmp.c_str()), o);
 						o->mute();
 					}
@@ -1575,7 +1577,6 @@ void c2a::s_parse2(toklink &link)
 		}
 		
 		std::string stmp = scope_labels[first->scopeindex][offset];
-		stmp += ".getatlix(c2_lix)";
 		
 		link.link(maketok(first, stmp.c_str()), first);
 	}

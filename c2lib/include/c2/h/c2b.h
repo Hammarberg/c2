@@ -159,7 +159,7 @@ struct sinternal
 	std::unordered_map<c2i::c2_vardata *, std::string> rregistered_vars;
 	std::vector<std::pair<std::string, int64_t>> imported_vars;
 
-	std::unordered_map<uint32_t, int64_t> scope_label_index_register;
+	std::unordered_map<uint32_t, size_t> scope_label_index_register;
 	
 	std::string title;
 	

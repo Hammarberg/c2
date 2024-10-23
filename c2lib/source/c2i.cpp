@@ -52,170 +52,15 @@ T swap_endian(T u)
     return dest.u;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// Var
-///////////////////////////////////////////////////////////////////////////////
-c2i::c2_vardata::c2_vardata(c2i::cint in, int8_t ib)
-: c2va(0)
-, c2vc(1)
+// throw error
+static void terror(const char *format, ...)
 {
-	c2vv.c2vn = in;
-	c2vb = ib ? ib : calc_bits(in);
-}
-
-c2i::c2_vardata::~c2_vardata()
-{
-	c2_get_single()->c2_unregister_var(this);
-	internal_clear();
-}
-
-void c2i::c2_vardata::reset(c2i::cint in)
-{
-	internal_clear();
-	c2vb = 0;
-	c2vv.c2vn = update_bits(in);
-	c2va = 0;
-	c2vc = 1;
-}
-
-uint8_t c2i::c2_vardata::calc_bits(c2i::cint n)
-{
-	uint8_t b = 1;
-	if(n >= 0)
-	{
-		for(; b < 64; b++)
-		{
-			if(!(n >> b))
-				break;
-		}
-		return b;
-	}
-
-	n = ~n;
-	for(; b < 64; b++)
-	{
-		if(!(n >> b))
-			break;
-	}
-	return b + 1;
-}
-
-c2i::cint c2i::c2_vardata::update_bits(c2i::cint n) const
-{
-	uint8_t bb = calc_bits(n);
-	if(bb > c2vb)
-		c2vb = bb;
-
-	return n;
-}
-
-uint8_t c2i::c2_vardata::bits() const
-{
-	if(!c2vb)
-	{
-		if(c2va)
-		{
-			for(uint32_t r=0; r<c2vc; r++)
-				update_bits(c2vv.c2vp[r]);
-		}
-		else
-			update_bits(c2vv.c2vn);
-	}
-
-	return c2vb;
-}
-
-c2i::cint c2i::c2_vardata::get() const
-{
-	if(!c2va)
-		return c2vv.c2vn;
-
-	return c2vv.c2vp[0];
-}
-
-c2i::cint &c2i::c2_vardata::getat(size_t index)
-{
-	if(!c2va && !index)
-		return c2vv.c2vn;
-
-	ensure(index + 1);
-
-	if(index+1 > c2vc)
-		c2vc = index+1;
-
-	return c2vv.c2vp[index];
-}
-
-c2i::cint c2i::c2_vardata::setat(size_t index, c2i::cint n)
-{
-	if(!index && !c2va)
-	{
-		c2vv.c2vn = update_bits(n);
-	}
-	else
-	{
-		ensure(index+1);
-
-		if(index+1 > c2vc)
-			c2vc = index+1;
-
-		c2vv.c2vp[index] = n;
-	}
-
-	return n;
-}
-
-void c2i::c2_vardata::ensure(size_t n)
-{
-	if(n <= 1 || n < c2vc)
-		return;
-
-	if(n < c2va)
-	{
-		return;
-	}
-
-	if(!c2va)
-	{
-		c2va = n * 2;
-		cint tmp = c2vv.c2vn;
-		c2vv.c2vp = (cint *)c2i::c2_malloc(sizeof(cint)*c2va);
-		c2vv.c2vp[0] = tmp;
-	}
-	else
-	{
-		size_t oa = c2va;
-		c2va = n * 2;
-		c2vv.c2vp = (cint *)c2i::c2_realloc(c2vv.c2vp, sizeof(cint)*c2va);
-		c2i::c2_memset((void *)&c2vv.c2vp[oa], 0, sizeof(cint)*(c2va - oa));
-	}
-}
-
-void c2i::c2_vardata::copy(const c2_vardata &o)
-{
-	internal_clear();
-	if(o.c2vc == 1)
-	{
-		c2va = 0;
-		c2vc = 1;
-		c2vv.c2vn = o.get();
-	}
-	else
-	{
-		c2vc = c2va = o.c2vc;
-		c2vv.c2vp = (cint *)c2i::c2_malloc(sizeof(cint)*c2va);
-		c2i::c2_memcpy(c2vv.c2vp, o.c2vv.c2vp, sizeof(cint)*c2vc);
-	}
-
-	c2vb = o.c2vb;
-}
-
-void c2i::c2_vardata::internal_clear()
-{
-	if(c2va)
-	{
-		c2i::c2_free(c2vv.c2vp);
-	}
+	static char buffer[1024];
+	va_list args;
+	va_start (args, format);
+	vsnprintf (buffer, sizeof(buffer), format, args);
+	va_end (args);
+	throw (char *)buffer;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -246,7 +91,7 @@ c2i::cint c2i::c2_corg::operator=(std::initializer_list<cint> elements)
 	{
 		orga = orgw = *i;
 	}
-	
+
 	return orga;
 }
 
@@ -254,13 +99,6 @@ c2i::c2_corg::operator c2i::cint() const
 {
 	return orga;
 }
-
-/*
-c2i::c2_corg::operator var() const
-{
-	return var(orga);
-}
-*/
 
 void c2i::c2_corg::backup(c2i::cint &a, c2i::cint &w)
 {
@@ -272,6 +110,169 @@ void c2i::c2_corg::restore(c2i::cint a, c2i::cint w)
 {
 	orga = a;
 	orgw = w;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// c2_var
+///////////////////////////////////////////////////////////////////////////////
+
+c2i::c2_var::c2_var()
+{
+}
+
+c2i::c2_var::c2_var(const c2i::c2_var &o)
+{
+	copy(o);
+}
+
+c2i::c2_var::c2_var(cint in, uint8_t ib)
+{
+	c2v_push(in);
+	c2vb = ib;
+}
+
+c2i::c2_var::c2_var(int in)
+{
+	c2v_push(in);
+}
+
+c2i::c2_var::c2_var(const c2_corg &o)
+{
+	c2v_push(o.orga);
+}
+
+c2i::c2_var::c2_var(std::initializer_list<c2i::c2_var> elements)
+{
+	c2v_ensure(elements.size());
+	size_t r = 0;
+	for(auto i = elements.begin(); i != elements.end(); i++, r++)
+		c2v_push(i->c2v_read());
+}
+
+c2i::c2_var::c2_var(const char *pstr)
+{
+	if(pstr)
+	{
+		const size_t count = c2i::c2_strlen(pstr);
+		c2v_ensure(count);
+		for(size_t r=0; r<count; r++)
+			c2v_push(pstr[r]);
+	}
+}
+
+c2i::c2_var::~c2_var()
+{
+	if(c2vs)
+	{
+		c2i::c2_free(c2vs);
+	}
+}
+
+c2i::c2_var &c2i::c2_var::operator=(const c2i::c2_var &o)
+{
+	copy(o);
+	return *this;
+}
+
+c2i::c2_var &c2i::c2_var::operator=(c2i::cint n)
+{
+	invalidate_bits();c2v_size(1);c2v_ref()=n;return *this;
+}
+
+c2i::c2_var &c2i::c2_var::operator=(const c2i::c2_corg &o)
+{
+	c2v_size(1);
+	c2v_ref()=o.orga;
+	return *this;
+}
+
+c2i::cint &c2i::c2_var::operator[](size_t n)
+{
+	invalidate_bits();
+	return c2v_ref(n);
+}
+
+c2i::c2_var::operator c2i::cint&()
+{
+	invalidate_bits();
+	return c2v_ref();
+}
+
+const char *c2i::c2_var::str()const
+{
+	c2vs = (char *)c2i::c2_realloc(c2vs, c2v_size() + 1);
+	char *p = c2vs;
+
+	for(size_t r=0; r<c2v_size(); r++, p++)
+		*p = char(c2v_read(r));
+
+	*p = 0;
+
+	return c2vs;
+}
+
+int c2i::c2_var::value()const
+{
+	return int(c2v_read());
+}
+
+size_t c2i::c2_var::size()const
+{
+	return c2v_size();
+}
+
+uint8_t c2i::c2_var::bits()const
+{
+	return c2vb?c2vb:c2vb=update_bits();
+}
+
+void c2i::c2_var::invalidate_bits()
+{
+	c2vb = 0;
+}
+
+void c2i::c2_var::copy(const c2i::c2_var &o)
+{
+	c2v_copy(o);
+	c2vb = o.c2vb;
+}
+
+bool c2i::c2_var::inrange(int bits, cint n)
+{
+	return n < (1LL<<bits) && n >= 0-(1LL<<(bits-1));
+}
+
+uint8_t c2i::c2_var::update_bits()const
+{
+	uint8_t b = 0, t;
+	for(size_t r=0;r<c2v_size();r++)
+	{
+		t = calc_bits(c2v_read(r));
+		b = t > b ? t : b;
+	}
+	return b;
+}
+
+uint8_t c2i::c2_var::calc_bits(c2i::cint n)
+{
+	uint8_t b = 1;
+	if(n >= 0)
+	{
+		for(; b < 64; b++)
+		{
+			if(!(n >> b))
+				break;
+		}
+		return b;
+	}
+
+	n = ~n;
+	for(; b < 64; b++)
+	{
+		if(!(n >> b))
+			break;
+	}
+	return b + 1;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -288,7 +289,7 @@ void sinternal::get_sorted_vars(std::vector<std::pair<std::string, c2i::cint>> &
 		if(!strstr(i.first.c_str(), "c2_auto_"))
 		{
 			if(imported || (!imported && i.second.second == 0))
-				sorted.insert({i.second.first->get(),i.first});
+				sorted.insert({i.second.first->c2v_read(),i.first});
 		}
 	}
 	
@@ -306,7 +307,7 @@ void sinternal::import_vars(std::vector<std::pair<std::string, c2i::cint>> &in)
 		if(r != registered_vars.end() && r->second.second == 1)
 		{
 			//fprintf(stderr, "importing \"%s\" %ld\n",i.first.c_str(), i.second);
-			r->second.first->set(i.second);
+			r->second.first->c2v_ref()=i.second;
 		}
 	}
 }
@@ -316,7 +317,7 @@ bool sinternal::lookup_var(const std::string &in, c2i::cint &out)
 	auto i = registered_vars.find(in);
 	if(i != registered_vars.end())
 	{
-		out = i->second.first->get();
+		out = i->second.first->c2v_read();
 		return true;
 	}
 	return false;
@@ -501,15 +502,21 @@ c2i::cint c2i::c2_file::read(void *ptr, c2i::cint size)
 c2i::c2_sscope::c2_sscope(uint32_t fileindex, uint32_t line, uint32_t uid)
 {
 	c2i *i = c2i::c2_get_single();
-	lix_backup = i->c2_lix;
-	i->c2_lix = i->c2_scope_push(fileindex, line, uid);
+
+	c2_bak_scope_id = i->c2_scope_id;
+	c2_bak_scope_index = i->c2_scope_index;
+
+	i->c2_scope_id = uid;
+	i->c2_scope_index = i->c2_scope_push(fileindex, line, uid);
 }
 
 c2i::c2_sscope::~c2_sscope()
 {
 	c2i *i = c2i::c2_get_single();
 	i->c2_scope_pop();
-	i->c2_lix = lix_backup;
+
+	i->c2_scope_id = c2_bak_scope_id;
+	i->c2_scope_index = c2_bak_scope_index;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -680,9 +687,9 @@ void c2i::c2_poke(c2i::cint pos, c2i::cint data)
 	if(c2_assembly_step_hash)
 	{
 #if !defined(_MSC_VER) && !defined(__MINGW64__)
-		iinfo("%016lx%016lx", p->hash_state.hash.h1, p->hash_state.hash.h2);
+		iinfo("%02x %016lx%016lx", int(data), p->hash_state.hash.h1, p->hash_state.hash.h2);
 #else
-		iinfo("%016llx%016llx", p->hash_state.hash.h1, p->hash_state.hash.h2);
+		iinfo("%02x %016llx%016llx", int(data), p->hash_state.hash.h1, p->hash_state.hash.h2);
 #endif
 	}
 }
@@ -713,7 +720,11 @@ void c2i::c2_reset_pass()
 	}
 
 	p->hash_state.seed();
+
 	p->scope_label_index_register.clear();
+	c2_scope_id = 0;
+	c2_scope_index = 0;
+
 	p->added_arg.clear();
 	
 	delete [] RAM_last;
@@ -746,7 +757,7 @@ void c2i::c2_reset_pass()
 bool c2i::c2_assemble()
 {
 	sinternal *p = (sinternal *)pinternal;
-	bool result = true;
+	bool result = true, needcrlf = false;
 
 	try
 	{
@@ -775,6 +786,7 @@ bool c2i::c2_assemble()
 				if(!c2_assembly_step_hash && c2_verbose)
 				{
 					fprintf(stderr, "Pass %d", pass);
+					needcrlf = true;
 				}
 				c2_pass();
 				p->hash_state.finalize();
@@ -787,6 +799,7 @@ bool c2i::c2_assemble()
 #else
 					fprintf(stderr, ": %016llx%016llx\n", hash.h1, hash.h2);
 #endif
+					needcrlf = false;
 				}
 
 				if(history.size())
@@ -821,6 +834,9 @@ bool c2i::c2_assemble()
 		result = false;
 		fprintf(stderr, "Unhandled exception\n");
 	}
+
+	if(needcrlf)
+		fprintf(stderr, "\n");
 
 	std::vector<std::pair<c2_eloglevel, std::string>> &log = p->log;
 
@@ -1391,7 +1407,7 @@ void c2i::c2_add_arg(const char *format, ...)
 	delete [] buffer;
 }
 
-c2i::cint c2i::c2_scope_push(uint32_t fileindex, uint32_t line, uint32_t uid)
+size_t c2i::c2_scope_push(uint32_t fileindex, uint32_t line, uint32_t uid)
 {
 	sinternal *p = (sinternal *)pinternal;
 	p->stack_history.push_back(sdebugstack(fileindex, line));
@@ -1399,11 +1415,23 @@ c2i::cint c2i::c2_scope_push(uint32_t fileindex, uint32_t line, uint32_t uid)
 	auto i = p->scope_label_index_register.find(uid);
 	if(i == p->scope_label_index_register.end())
 	{
-		p->scope_label_index_register.insert({uid, c2_lix});
-		return c2_lix;
+		p->scope_label_index_register.insert({uid, 0});
+		return 0;
 	}
 	
 	i->second++;
+	return i->second;
+}
+
+size_t c2i::c2_scope_lix(uint32_t uid)
+{
+	sinternal *p = (sinternal *)pinternal;
+	auto i = p->scope_label_index_register.find(uid);
+	if(i == p->scope_label_index_register.end())
+	{
+		return 0;
+	}
+
 	return i->second;
 }
 
@@ -1535,12 +1563,13 @@ void c2i::c2_log(c2_eloglevel level, const char *file, int line, const char *for
 
 void c2i::c2_register_var(const char *name, const char *from, int mode, c2i::c2_vardata *pv)
 {
+	iverbose("Register %s", name);
 	sinternal *p = (sinternal *)pinternal;
 
 	auto i = p->registered_vars.find(name);
 	if(i != p->registered_vars.end())
 	{
-		throw "Label is already registered";
+		terror("Label \"%s\" is already registered", name);
 	}
 
 	p->registered_vars[name] = {pv, mode};
@@ -1552,8 +1581,7 @@ void c2i::c2_register_var(const char *name, const char *from, int mode, c2i::c2_
 		{
 			if(i.first == name)
 			{
-				//fprintf(stderr, "direct importing \"%s\" %ld\n",i.first.c_str(), i.second);
-				pv->set(i.second);
+				pv->c2v_ref()=i.second;
 				break;
 			}
 		}

@@ -30,154 +30,164 @@ class c2i
 public:
 	typedef int64_t cint;
 
+	template<typename T, typename ST=size_t>
+	class c2_vector
+	{
+	public:
+		c2_vector(){	}
+		c2_vector(const c2_vector &o)
+		{
+			ensure(c2vn=o.c2vn, true);
+			for(ST r=0;r<o.c2vn;r++)
+				new (&c2vp[r]) T(o.c2vp[r]);
+		}
+		virtual ~c2_vector()
+		{
+			c2v_size(0);
+			c2i::c2_free(c2vp);
+		}
+		ST c2v_size()const
+		{
+			return c2vn;
+		}
+		ST c2v_size(ST size)
+		{
+			if(size > c2vn)
+			{
+				c2v_ensure(size);
+				for(ST r = c2vn; r < size; r++)
+					new (&c2vp[r]) T();
+			}
+			else if(size < c2vn)
+			{
+				for(ST r = size; r < c2vn; r++)
+					c2vp[r].~T();
+			}
+
+			return c2vn = size;
+		}
+		T &c2v_ref(ST r = 0)
+		{
+			if(r >= c2vn)
+				c2v_size(r+1);
+			return c2vp[r];
+		}
+		T c2v_read(ST r = 0)const
+		{
+			if(r < c2vn)
+				return c2vp[r];
+
+			return T();
+		}
+		void c2v_push(const T &o)
+		{
+			c2v_ensure(c2vn+1);
+			new (&c2vp[c2vn]) T(o);
+			c2vn++;
+		}
+		void c2v_ensure(ST size, bool trim=false)
+		{
+			if(size > c2va)
+			{
+				ST na = size == 1 ? 1 : (trim ? size : size * 2);
+				c2vp = (T *)c2i::c2_realloc(c2vp, sizeof(T)*na);
+				c2va = na;
+			}
+		}
+		void c2v_copy(const c2_vector &o)
+		{
+			c2v_size(0);
+			c2v_ensure(c2vn=o.c2vn, true);
+			for(ST r=0;r<o.c2vn;r++)
+				new (&c2vp[r]) T(o.c2vp[r]);
+		}
+	private:
+		ST c2vn=0,c2va=0;
+		T *c2vp=nullptr;
+	};
+
 	class c2_corg
 	{
 	public:
 		cint operator=(c2_corg &o);
 		cint operator=(cint n);
 		cint operator=(std::initializer_list<cint> elements);
-		operator cint() const;
+		operator cint()const;
 		void backup(cint &a, cint &w);
 		void restore(cint a, cint w);
 		cint orga = 0, orgw = 0;
 	}c2_org;
 	
-	class c2_vardata
+	typedef c2_vector<cint> c2_vardata;
+
+	class c2_var : private c2_vardata
 	{
+	friend c2i;
 	public:
-		c2_vardata(cint in=0, int8_t ib=0);
-		virtual ~c2_vardata();
-		size_t size() const { return c2vc; }
-		void reset(cint in=0);
-		void set(cint n) { setat(0, n); }
-		cint setat(size_t index, cint n);
-		cint get() const;
-		cint &getat(size_t index);
+		c2_var();
+		c2_var(const c2_var &o);
+		c2_var(cint in, uint8_t ib = 0);
+		c2_var(int in);
+		c2_var(const c2_corg &o);
+		c2_var(std::initializer_list<c2_var> elements);
+		c2_var(const char *pstr);
+		virtual ~c2_var();
 
-		uint8_t bits() const;
-		void ensure(size_t size);
-		void copy(const c2_vardata &o);
-		void invalidate_bits() {	c2vb = 0; }
+		c2_var &operator=(const c2_var &o);
+		c2_var &operator=(cint n);
+		c2_var &operator=(const c2_corg &o);
+		cint &operator[](size_t n);
+		operator cint&();
+
+		const char *str()const;
+		int value()const;
+		size_t size()const;
+		uint8_t bits()const;
 	private:
-		void internal_clear();
-		cint update_bits(cint n) const;
-
+		void invalidate_bits();
+		void copy(const c2_var &o);
+		static bool inrange(int bits, cint n);
+		uint8_t update_bits()const;
 		static uint8_t calc_bits(cint n);
 
-		union
-		{
-			cint c2vn;		//Value
-			cint *c2vp;		//Or pointer to values
-		}c2vv;
-
-		size_t c2va = 0;		//Allocated elements
-		size_t c2vc = 1;		//Number of values, 1 minimum
+		mutable char *c2vs = nullptr;	//Holds temporary string buffer
 		mutable uint8_t c2vb = 0;	//Highest number of bits needed by any value stored
 	};
 
+	typedef c2_var var;
+
 	struct c2_slabel
 	{
-		c2_slabel(const char *inname, int inmode)
-		:name(inname),mode(inmode){}
+		c2_slabel(const char *inname, uint32_t inscid, int inmode = 0)
+		:name(inname),scid(inscid),mode(inmode){}
 		const char *name;
+		uint32_t scid;
 		int mode;
 	};
 
 	template<typename T>
-	class c2_basevar : public T, protected c2_vardata
+	class c2_baselabel : public T, private c2_vardata
 	{
-	template<typename U> friend class c2_basevar;
 	friend c2i;
 	public:
-		c2_basevar() {}
-		c2_basevar(const c2_slabel &o) { c2_get_single()->c2_register_var(o.name, nullptr, o.mode, this); }
-		template<typename I> c2_basevar(const c2_basevar<I> &o) { copy(o); }
-		c2_basevar(const c2_basevar &o) { copy(o); }
-		c2_basevar(cint n, uint8_t ib = 0) : c2_vardata(n, ib) {}
-		c2_basevar(int n) : c2_vardata(n) {}
-		c2_basevar(const c2_corg &o) : c2_vardata(o.orga) {}
+		c2_baselabel(const c2_slabel &o) : c2scid(o.scid) { c2_get_single()->c2_register_var(o.name, nullptr, o.mode, this); }
+		virtual ~c2_baselabel() { c2_get_single()->c2_unregister_var(this); }
 		
-		c2_basevar(std::initializer_list<c2_basevar> elements)
-		{
-			const size_t count = elements.size();
-			ensure(count);
-			size_t r = 0;
-			for(auto i = elements.begin(); i != elements.end(); i++, r++)
-				setat(r, i->get());
-		}
-		
-		c2_basevar(const char *pstr)
-		{
-			if(pstr)
-			{
-				const size_t count = c2i::c2_strlen(pstr);
-				ensure(count);
-				for(size_t r=0; r<count; r++)
-					setat(r, pstr[r]);
-			}
-		}
-		
-		virtual ~c2_basevar(){if(c2vs){ c2i::c2_free(c2vs);}}
-		
-		template<typename I> c2_basevar &operator=(const c2_basevar<I> &o) { copy(o); return *this; }
+		void operator=(const c2_corg &o) { c2v_ref(c2_get_lix())=o.orga; }
+		operator cint() const { return c2v_read(c2_get_lix()); }
+		operator var() const { return c2v_read(c2_get_lix()); };
+		cint &operator[](size_t n) { return c2v_ref(n); }
 
-		c2_basevar& operator=(const c2_basevar &o) { copy(o); return *this; }
-		c2_basevar &operator=(cint n) { set(n); return *this; }
-		c2_basevar &operator=(const c2_corg &o) { set(o.orga); return *this; }
-		
-		cint &operator[](size_t n) { invalidate_bits(); return getat(n); }
-		operator cint&() { invalidate_bits(); return getat(0); }
-		cint getatlix(size_t n) { return getat((n >= 0 && n < size()) ? n : 0); }
-		
-		const char *str()
-		{
-			c2vs = (char *)c2i::c2_realloc(c2vs, size() + 1);
-			char *p = c2vs;
-			
-			for(size_t r=0; r<size(); r++, p++)
-				*p = char(getat(r));
-			
-			*p = 0;
-			
-			return c2vs;
-		}
-		
-		int value() { return get(); }
-		size_t size() const { return c2_vardata::size(); }
-		uint8_t bits() const { return c2_vardata::bits(); }
-
+		int c2_value() { return c2v_read(); }
+		size_t c2_size() const { return c2v_size(); }
 	private:
-		/*
-		template<typename I> void copy(const c2_basevar<I> &o)
-		{
-			if(!o.c2va)
-			{
-				c2va = o.c2va;
-				c2vb = o.c2vb;
-				c2vc = o.c2vc;
-				c2vv.c2vn = o.c2vv.c2vn;
-			}
-			else
-			{
-				c2vc = c2va = o.c2vc;
-				c2vb = o.c2vb;
-				c2vv.c2vp = (cint *)c2i::c2_malloc(sizeof(cint[c2vc]));
-				c2i::c2_memcpy(c2vv.c2vp, o.c2vv.c2vp, sizeof(cint[c2vc]));
-			}
-		}
-		*/
-		
-		static bool inrange(int bits, cint n){return n < (1LL<<bits) && n >= 0-(1LL<<(bits-1));}
-
-		mutable char *c2vs = nullptr;	//Holds temporary string buffer
+		size_t c2_get_lix() const { return c2_get_single()->c2_scope_lix(c2scid); }
+		uint32_t c2scid;
 	};
 	
 	struct c2_void{};
+	typedef c2_baselabel<c2_void> c2_label;
 
-	typedef c2_basevar<c2_void> var;
-
-	template<typename U> friend class c2_basevar;
-	
 	c2i(cmdi *pcmd);
 	virtual ~c2i();
 
@@ -299,17 +309,20 @@ public:
 
 	void c2_set_ram(cint base, cint size);
 	
-	int64_t c2_scope_push(uint32_t fileindex, uint32_t line, uint32_t uid);
+	size_t c2_scope_push(uint32_t fileindex, uint32_t line, uint32_t uid);
+	size_t c2_scope_lix(uint32_t uid);
 	void c2_scope_pop();
 	struct c2_sscope
 	{
 		c2_sscope(uint32_t fileindex, uint32_t line, uint32_t uid);
 		~c2_sscope();
 	private:
-		int64_t lix_backup;
+		uint32_t c2_bak_scope_id = 0;
+		size_t c2_bak_scope_index = 0;
 	};
-	int64_t c2_lix = 0;
-	
+	uint32_t c2_scope_id = 0;
+	size_t c2_scope_index = 0;
+
 	static void *c2_malloc(size_t size);
 	static void c2_free(void *ptr);
 	static void *c2_realloc(void *ptr, size_t size);
