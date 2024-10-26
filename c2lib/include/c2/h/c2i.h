@@ -63,7 +63,6 @@ public:
 				for(ST r = size; r < c2vn; r++)
 					c2vp[r].~T();
 			}
-
 			return c2vn = size;
 		}
 		T &c2v_ref(ST r = 0)
@@ -76,8 +75,7 @@ public:
 		{
 			if(r < c2vn)
 				return c2vp[r];
-
-			return T();
+			return T(0);
 		}
 		void c2v_push(const T &o)
 		{

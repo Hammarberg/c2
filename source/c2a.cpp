@@ -46,10 +46,25 @@ uint16_t c2a::explicit_bitcount(const char *s)
 	return bits;
 }
 
-static std::string &makelower(std::string &s)
+std::string &c2a::makelower(std::string &s)
 {
 	std::transform(s.begin(), s.end(), s.begin(),[](unsigned char c){ return std::tolower(c);});
 	return s;
+}
+
+const char *c2a::linear_string(const std::string &s)
+{
+	char *p = (char *)alloc(s.size() + 1);
+	strcpy(p, s.c_str());
+	return p;
+}
+
+const char *c2a::linear_cstring(const char *s)
+{
+	size_t len = strlen(s) + 1;
+	char *p = (char *)alloc(len);
+	memcpy(p, s, len);
+	return p;
 }
 
 stok *c2a::maketok(const stok *t, const char *name, etype type, int16_t inord)
@@ -78,7 +93,14 @@ stok *c2a::clone(const stok *t)
 	
 	return n;
 }
-	
+
+c2a::c2a(int inverbose)
+: verbose(inverbose)
+{
+	// Create root scope space
+	scope_labels.push_back(std::vector<const char *>());
+}
+
 c2a::~c2a()
 {
 }

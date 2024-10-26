@@ -22,12 +22,7 @@ class c2a : public slinear_alloc<>
 {
 public:
 
-	c2a(int inverbose)
-	: verbose(inverbose)
-	{
-		// Create root scope space
-		scope_labels.push_back(std::vector<const char *>());
-	}
+	c2a(int inverbose);
 	~c2a();
 
 	// Map of discovered macro definitions
@@ -114,22 +109,11 @@ public:
 	stok *linkinit(stok *p, toklink &out);
 private:
 
-	const char *linear_string(const std::string &s)
-	{
-		char *p = (char *)alloc(s.size() + 1);
-		strcpy(p, s.c_str());
-		return p;
-	}
-	
-	const char *linear_cstring(const char *s)
-	{
-		size_t len = strlen(s) + 1;
-		char *p = (char *)alloc(len);
-		memcpy(p, s, len);
-		return p;
-	}
+	const char *linear_string(const std::string &s);
+	const char *linear_cstring(const char *s);
 	
 	static uint16_t explicit_bitcount(const char *s);
+	static std::string &makelower(std::string &s);
 
 	stok *maketok(const stok *t, const char *name, etype type = etype::BLOCK, int16_t inord = -1);
 	
