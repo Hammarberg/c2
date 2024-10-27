@@ -81,216 +81,36 @@ class toklink
 {
 public:
 	
-	toklink()
-	{
-		pchain = new schain;
-	}
+	toklink();
+	toklink(const toklink &o);
+	toklink &operator=(const toklink &o);
+	~toklink();
 	
-	toklink(const toklink &o)
-	: pos(o.pos)
-	, end(o.end)
-	, pchain(o.pchain)
-	{
-		pchain->ref();
-	}
+	void restart(stok *op = nullptr, stok *oe = nullptr);
+	void terminate(stok *o = nullptr);
 	
-	toklink &operator=(const toklink &o)
-	{
-		pchain->deref();
-		pos=o.pos;
-		end=o.end;
-		pchain=o.pchain;
-		pchain->ref();
-		
-		return *this;
-	}
+	stok *get_pos();
+	stok *get_end();
+	stok *pull_tok();
+	void push_tok(stok *p);
+	void unlink(stok *i);
+	stok *link(stok *i, stok *a);
 	
-	~toklink()
-	{
-		pchain->deref();
-	}
-	
-	void restart(stok *op = nullptr, stok *oe = nullptr)
-	{
-		pos = op;
-		end = oe;
-		is_streaming = false;
-	}
-	
-	void terminate(stok *o = nullptr)
-	{
-		end = o;
-	}
-	
-	stok *get_pos()
-	{
-		return pos;
-	}	
-	
-	stok *get_end()
-	{
-		return end;
-	}	
-	
-	stok *pull_tok()
-	{
-		stok *o;
-		
-		if(pos == &TEND)
-		{
-			return nullptr;
-		}
-		
-		if(end && pos == end)
-		{
-			pos = &TEND;
-			return nullptr;
-		}
-		
-		if(!pos)
-		{
-			o = pos = pchain->first;
-		}
-		else
-		{
-			if(is_streaming)
-			{
-				pos = pos->get_next();
-			}
-			
-			o = pos;
-		}
-		
-		is_streaming = true;
-		
-		return o;
-	}
-	
-	void push_tok(stok *p)
-	{
-		if(!pchain->first)
-		{
-			pchain->first = pchain->last = p;
-			p->prev = p->next = nullptr;
-		}
-		else if(pos)
-		{
-			link(p, pos);
-			pos = p;
-		}
-		else
-		{
-			p->prev = pchain->last;
-			p->next = nullptr;
-			pchain->last->next = p;
-			pchain->last = p;
-		}
-	}
-	
-	void unlink(stok *i)
-	{
-		if(i == pos)
-		{
-			if(i->next)
-			{
-				pos = i->next;
-				is_streaming = false;
-			}
-			else
-			{
-				pos = &TEND;
-			}
-		}
-		
-		if(i->prev)i->prev->next=i->next;
-		if(i->next)i->next->prev=i->prev;
-		if(pchain->first==i)pchain->first=i->next;
-		if(pchain->last==i)pchain->last=i->prev;
-	}
+	int count();
 
-	stok *link(stok *i, stok *a)
-	{
-		if(!a)
-		{
-			push_tok(i);
-		}
-		else
-		{
-			if(a->next)
-			{
-				i->next = a->next;
-				a->next = i;
-				i->prev = a;
-				i->next->prev = i;
-			}
-			else
-			{
-				a->next=i;
-				i->next=nullptr;
-				i->prev=a;
-				pchain->last=i;
-			}
-		}
-		
-		return i;
-	}
-	
-	bool operator==(const toklink &o) const
-	{
-		stok *a = pchain->first;
-		stok *b = o.pchain->first;
-		
-		for(;;)
-		{
-			if(a == nullptr && b == nullptr)
-				break;
-				
-			if(a == nullptr || b == nullptr)
-				return false;
-				
-			if(a->type != b->type || strcmp(a->name, b->name))
-				return false;
-				
-			a = a->get_next();
-			b = b->get_next();
-		}
-		
-		return true;
-	}
+	bool operator==(const toklink &o) const;
 	
 	static stok TEND;
 	stok *pos = nullptr, *end = nullptr;
 	bool is_streaming = false;
-	
-	int count()
-	{
-		int n = 0;
-		stok *p = pchain->first;
-		while(p)
-		{
-			n++;
-			p = p->next;
-		}
-		return n;
-	}
 	
 	struct schain
 	{
 		stok *first = nullptr, *last = nullptr;
 		int refcount = 1;
 		
-		void ref()
-		{
-			refcount++;
-		}
-		
-		void deref()
-		{
-			if(!--refcount)
-			{
-				delete this;
-			}
-		}
+		void ref();
+		void deref();
 		
 	}*pchain;
 };
