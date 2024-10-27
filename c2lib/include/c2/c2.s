@@ -62,7 +62,7 @@ macro postarg @arg
 #define rrepeat(TIMES) for(int c2repn=(TIMES)-1;c2repn>=0;c2repn--)
 #define RREPEAT rrepeat
 
-#define import(X) static var X(c2_slabel(#X, 0, 1));
+#define import(X) static c2_label X(c2_slabel(#X, 0, 1));
 #define IMPORT import
 
 macro assemble @src

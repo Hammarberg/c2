@@ -831,6 +831,9 @@ bool c2i::c2_assemble()
 	}
 	catch (...)
 	{
+		if(needcrlf)
+			fprintf(stderr, "\n"), needcrlf = false;
+
 		result = false;
 		fprintf(stderr, "Unhandled exception\n");
 	}
@@ -882,7 +885,7 @@ c2i::cint c2i::c2_low_bound()
 		if(RAM_use[low])
 			return low + RAM_base;
 
-	return -1;
+	return c2_org.orgw + RAM_base;
 }
 
 c2i::cint c2i::c2_high_bound()
@@ -892,7 +895,7 @@ c2i::cint c2i::c2_high_bound()
 		if(RAM_use[high])
 			return high+1 + RAM_base;
 
-	return -1;
+	return c2_org.orgw + 1 + RAM_base;
 }
 
 bool c2i::c2_resolve(const char *addr, c2i::cint &out, bool allow_labels)
