@@ -540,12 +540,11 @@ bool c2a::match_macro(stok *io, toklink &link)
 				m->implementation = autolabel(io->name);
 
 				//Prepare function pointer
-				linkinit(maketok(io, "std::function<void("), link);
+				linkinit(maketok(io, "std::function<void(int,int"), link);
 				for(size_t r=0;r<m->inputs.size();r++)
 				{
+					linkinit(maketok(io, ",", etype::OP), link);
 					linkinit(maketok(io, "var"), link);
-					if(r != m->inputs.size() - 1)
-						linkinit(maketok(io, ",", etype::OP), link);
 				}
 				linkinit(maketok(io, ")> "), link);
 				linkinit(maketok(io, m->implementation.c_str()), link);
@@ -553,13 +552,12 @@ bool c2a::match_macro(stok *io, toklink &link)
 
 				// Generate macro lambda
 				out.push_tok(maketok(io, m->implementation.c_str()));
-				out.push_tok(maketok(io, "=[&]("));
+				out.push_tok(maketok(io, "=[&](int c2if,int c2il"));
 				for(size_t r=0;r<m->inputs.size();r++)
 				{
+					out.push_tok(maketok(io, ",", etype::OP));
 					out.push_tok(maketok(io, "var "));
 					out.push_tok(maketok(io, m->inputs[r].first.c_str(), etype::ALPHA));
-					if(r != m->inputs.size() - 1)
-						out.push_tok(maketok(io, ",", etype::OP));
 				}
 				out.push_tok(maketok(io, ")"));
 
@@ -601,6 +599,8 @@ bool c2a::match_macro(stok *io, toklink &link)
 				out.push_tok(maketok(io, "c2_scope_internal_pop", etype::ALPHA));
 
 				out.push_tok(maketok(io, ";", etype::OP));
+
+				parse1_macro_expanded = true;
 			}
 
 			// Call lambda
@@ -610,13 +610,17 @@ bool c2a::match_macro(stok *io, toklink &link)
 			if(!rpos)
 				rpos = out.get_pos();
 
-			out.push_tok(maketok(io, "(", etype::OP));
+			char ctmp[128];
+			snprintf(ctmp, sizeof(ctmp), "(%d,%d", int(io->fileindex), io->line);
+			out.push_tok(maketok(io, ctmp, etype::OP));
 
 			// Expand arguments into vars or arrays
 			if(outargs.size())
 			{
 				for(size_t t=0; t<outargs.size(); t++)
 				{
+					out.push_tok(maketok(io, ",", etype::OP));
+
 					std::vector<stok *> &args = outargs[t];
 					
 					bool isarray = outisarray[t];
@@ -685,9 +689,6 @@ bool c2a::match_macro(stok *io, toklink &link)
 					
 					if(isarray)
 						out.push_tok(maketok(io, "}", etype::OP, 10));
-						
-					if(t != outargs.size() - 1)
-						out.push_tok(maketok(io, ",", etype::OP));
 				}
 			}
 			
@@ -986,7 +987,7 @@ void c2a::s_parse0(toklink &link)
 
 void c2a::s_parse1(toklink &link)
 {
-	auto insert_slix=[this, &link](stok *o)
+	auto insert_slix=[this, &link](stok *o, bool macro)
 		{
 			size_t scopelix_stack_size = scopelix_stack.size();
 			if(!scopelix_stack_size)
@@ -1006,16 +1007,23 @@ void c2a::s_parse1(toklink &link)
 				slix.slix = scopelix;
 
 				char ctmp[256];
-				snprintf(ctmp, sizeof(ctmp), "c2_sscope c2_scope(%d,%d,%d);", int(slix.start->fileindex), slix.start->line, int(scopelix));
-				link.link(maketok(slix.start, ctmp), slix.start);
+				if(!macro)
+				{
+					snprintf(ctmp, sizeof(ctmp), "c2_scope(%d,%d,%d);", int(slix.start->fileindex), slix.start->line, int(scopelix));
+				}
+				else
+				{
+					snprintf(ctmp, sizeof(ctmp), "c2_scope(c2if,c2il,%d);", int(scopelix));
+				}
 
+				link.link(maketok(slix.start, ctmp), link.link(maketok(slix.start, "c2_sscope "), slix.start));
 				scopelix++;
 			}
 		};
 
 	std::string stmp;
 	bool label_declared = false;
-	
+
 	for(;;)
 	{
 		stok *o = get_next_nonspace(link);
@@ -1106,8 +1114,8 @@ void c2a::s_parse1(toklink &link)
 				}
 				else if((o->ord == 0 || label_declared) && match_macro(o, link))
 				{
-					// Make sure the scope is set up
-					insert_slix(o);
+					// Make sure the right scope is set up
+					//macro_expanded = true;
 					info(6, o, "Expanded macro\n");
 				}
 				else
@@ -1246,7 +1254,7 @@ void c2a::s_parse1(toklink &link)
 							if(plabel)
 							{
 								// Scope
-								insert_slix(plabel);
+								insert_slix(plabel, false);
 
 								// label detected
 								bool local = false;
@@ -1390,6 +1398,12 @@ void c2a::s_parse1(toklink &link)
 					{
 						VERBOSE(7, "Scope start\n");
 						scopelix_stack.push_back(sslix(o));
+						if(parse1_macro_expanded)
+						{
+							VERBOSE(7, "Inserting macro c2_scope\n");
+							insert_slix(o, true);
+							parse1_macro_expanded = false;
+						}
 					}
 					break;
 					case '}':

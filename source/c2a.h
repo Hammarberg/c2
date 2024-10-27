@@ -128,4 +128,6 @@ private:
 	void error(stok *o, const char *format, ...);
 	void warning(stok *o, const char *format, ...);
 	void info(int verboselevel, stok *o, const char *format, ...);
+
+	bool parse1_macro_expanded = false;
 };
