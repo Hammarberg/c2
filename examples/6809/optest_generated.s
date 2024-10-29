@@ -1,7016 +1,7016 @@
 label0:
 	adca #$ff
-	check
+	check();
 
 label1:
 	adca <$ff
-	check
+	check();
 
 label2:
 	adca >$ff
-	check
+	check();
 
 label3:
 	adca $ffff
-	check
+	check();
 
 label4:
 	adca label4,x
-	check
+	check();
 
 label5:
 	adca label5,u
-	check
+	check();
 
 label6:
 	adca [label6,x]
-	check
+	check();
 
 label7:
 	adca [label7,u]
-	check
+	check();
 
 label8:
 	adca ,x
-	check
+	check();
 
 label9:
 	adca ,u
-	check
+	check();
 
 label10:
 	adca [,x]
-	check
+	check();
 
 label11:
 	adca [,u]
-	check
+	check();
 
 label12:
 	adca b,u
-	check
+	check();
 
 label13:
 	adca [b,u]
-	check
+	check();
 
 label14:
 	adca ,x+
-	check
+	check();
 
 label15:
 	adca ,u+
-	check
+	check();
 
 label16:
 	adca ,x++
-	check
+	check();
 
 label17:
 	adca ,u++
-	check
+	check();
 
 label18:
 	adca [,x++]
-	check
+	check();
 
 label19:
 	adca [,u++]
-	check
+	check();
 
 label20:
 	adca ,-x
-	check
+	check();
 
 label21:
 	adca ,-u
-	check
+	check();
 
 label22:
 	adca ,--x
-	check
+	check();
 
 label23:
 	adca ,--u
-	check
+	check();
 
 label24:
 	adca [,--x]
-	check
+	check();
 
 label25:
 	adca [,--u]
-	check
+	check();
 
 label26:
 	adca 0,pc
-	check
+	check();
 
 label27:
 	adca [0,pc]
-	check
+	check();
 
 label28:
 	adca label28,pcr
-	check
+	check();
 
 label29:
 	adca [label29,pcr]
-	check
+	check();
 
 label30:
 	adca [label30]
-	check
+	check();
 
 label31:
 	adcb #$ff
-	check
+	check();
 
 label32:
 	adcb <$ff
-	check
+	check();
 
 label33:
 	adcb >$ff
-	check
+	check();
 
 label34:
 	adcb $ffff
-	check
+	check();
 
 label35:
 	adcb label35,x
-	check
+	check();
 
 label36:
 	adcb label36,u
-	check
+	check();
 
 label37:
 	adcb [label37,x]
-	check
+	check();
 
 label38:
 	adcb [label38,u]
-	check
+	check();
 
 label39:
 	adcb ,x
-	check
+	check();
 
 label40:
 	adcb ,u
-	check
+	check();
 
 label41:
 	adcb [,x]
-	check
+	check();
 
 label42:
 	adcb [,u]
-	check
+	check();
 
 label43:
 	adcb b,u
-	check
+	check();
 
 label44:
 	adcb [b,u]
-	check
+	check();
 
 label45:
 	adcb ,x+
-	check
+	check();
 
 label46:
 	adcb ,u+
-	check
+	check();
 
 label47:
 	adcb ,x++
-	check
+	check();
 
 label48:
 	adcb ,u++
-	check
+	check();
 
 label49:
 	adcb [,x++]
-	check
+	check();
 
 label50:
 	adcb [,u++]
-	check
+	check();
 
 label51:
 	adcb ,-x
-	check
+	check();
 
 label52:
 	adcb ,-u
-	check
+	check();
 
 label53:
 	adcb ,--x
-	check
+	check();
 
 label54:
 	adcb ,--u
-	check
+	check();
 
 label55:
 	adcb [,--x]
-	check
+	check();
 
 label56:
 	adcb [,--u]
-	check
+	check();
 
 label57:
 	adcb 0,pc
-	check
+	check();
 
 label58:
 	adcb [0,pc]
-	check
+	check();
 
 label59:
 	adcb label59,pcr
-	check
+	check();
 
 label60:
 	adcb [label60,pcr]
-	check
+	check();
 
 label61:
 	adcb [label61]
-	check
+	check();
 
 label62:
 	adda #$ff
-	check
+	check();
 
 label63:
 	adda <$ff
-	check
+	check();
 
 label64:
 	adda >$ff
-	check
+	check();
 
 label65:
 	adda $ffff
-	check
+	check();
 
 label66:
 	adda label66,x
-	check
+	check();
 
 label67:
 	adda label67,u
-	check
+	check();
 
 label68:
 	adda [label68,x]
-	check
+	check();
 
 label69:
 	adda [label69,u]
-	check
+	check();
 
 label70:
 	adda ,x
-	check
+	check();
 
 label71:
 	adda ,u
-	check
+	check();
 
 label72:
 	adda [,x]
-	check
+	check();
 
 label73:
 	adda [,u]
-	check
+	check();
 
 label74:
 	adda b,u
-	check
+	check();
 
 label75:
 	adda [b,u]
-	check
+	check();
 
 label76:
 	adda ,x+
-	check
+	check();
 
 label77:
 	adda ,u+
-	check
+	check();
 
 label78:
 	adda ,x++
-	check
+	check();
 
 label79:
 	adda ,u++
-	check
+	check();
 
 label80:
 	adda [,x++]
-	check
+	check();
 
 label81:
 	adda [,u++]
-	check
+	check();
 
 label82:
 	adda ,-x
-	check
+	check();
 
 label83:
 	adda ,-u
-	check
+	check();
 
 label84:
 	adda ,--x
-	check
+	check();
 
 label85:
 	adda ,--u
-	check
+	check();
 
 label86:
 	adda [,--x]
-	check
+	check();
 
 label87:
 	adda [,--u]
-	check
+	check();
 
 label88:
 	adda 0,pc
-	check
+	check();
 
 label89:
 	adda [0,pc]
-	check
+	check();
 
 label90:
 	adda label90,pcr
-	check
+	check();
 
 label91:
 	adda [label91,pcr]
-	check
+	check();
 
 label92:
 	adda [label92]
-	check
+	check();
 
 label93:
 	addb #$ff
-	check
+	check();
 
 label94:
 	addb <$ff
-	check
+	check();
 
 label95:
 	addb >$ff
-	check
+	check();
 
 label96:
 	addb $ffff
-	check
+	check();
 
 label97:
 	addb label97,x
-	check
+	check();
 
 label98:
 	addb label98,u
-	check
+	check();
 
 label99:
 	addb [label99,x]
-	check
+	check();
 
 label100:
 	addb [label100,u]
-	check
+	check();
 
 label101:
 	addb ,x
-	check
+	check();
 
 label102:
 	addb ,u
-	check
+	check();
 
 label103:
 	addb [,x]
-	check
+	check();
 
 label104:
 	addb [,u]
-	check
+	check();
 
 label105:
 	addb b,u
-	check
+	check();
 
 label106:
 	addb [b,u]
-	check
+	check();
 
 label107:
 	addb ,x+
-	check
+	check();
 
 label108:
 	addb ,u+
-	check
+	check();
 
 label109:
 	addb ,x++
-	check
+	check();
 
 label110:
 	addb ,u++
-	check
+	check();
 
 label111:
 	addb [,x++]
-	check
+	check();
 
 label112:
 	addb [,u++]
-	check
+	check();
 
 label113:
 	addb ,-x
-	check
+	check();
 
 label114:
 	addb ,-u
-	check
+	check();
 
 label115:
 	addb ,--x
-	check
+	check();
 
 label116:
 	addb ,--u
-	check
+	check();
 
 label117:
 	addb [,--x]
-	check
+	check();
 
 label118:
 	addb [,--u]
-	check
+	check();
 
 label119:
 	addb 0,pc
-	check
+	check();
 
 label120:
 	addb [0,pc]
-	check
+	check();
 
 label121:
 	addb label121,pcr
-	check
+	check();
 
 label122:
 	addb [label122,pcr]
-	check
+	check();
 
 label123:
 	addb [label123]
-	check
+	check();
 
 label124:
 	addd #$ff
-	check
+	check();
 
 label125:
 	addd <$ff
-	check
+	check();
 
 label126:
 	addd >$ff
-	check
+	check();
 
 label127:
 	addd $ffff
-	check
+	check();
 
 label128:
 	addd label128,x
-	check
+	check();
 
 label129:
 	addd label129,u
-	check
+	check();
 
 label130:
 	addd [label130,x]
-	check
+	check();
 
 label131:
 	addd [label131,u]
-	check
+	check();
 
 label132:
 	addd ,x
-	check
+	check();
 
 label133:
 	addd ,u
-	check
+	check();
 
 label134:
 	addd [,x]
-	check
+	check();
 
 label135:
 	addd [,u]
-	check
+	check();
 
 label136:
 	addd b,u
-	check
+	check();
 
 label137:
 	addd [b,u]
-	check
+	check();
 
 label138:
 	addd ,x+
-	check
+	check();
 
 label139:
 	addd ,u+
-	check
+	check();
 
 label140:
 	addd ,x++
-	check
+	check();
 
 label141:
 	addd ,u++
-	check
+	check();
 
 label142:
 	addd [,x++]
-	check
+	check();
 
 label143:
 	addd [,u++]
-	check
+	check();
 
 label144:
 	addd ,-x
-	check
+	check();
 
 label145:
 	addd ,-u
-	check
+	check();
 
 label146:
 	addd ,--x
-	check
+	check();
 
 label147:
 	addd ,--u
-	check
+	check();
 
 label148:
 	addd [,--x]
-	check
+	check();
 
 label149:
 	addd [,--u]
-	check
+	check();
 
 label150:
 	addd 0,pc
-	check
+	check();
 
 label151:
 	addd [0,pc]
-	check
+	check();
 
 label152:
 	addd label152,pcr
-	check
+	check();
 
 label153:
 	addd [label153,pcr]
-	check
+	check();
 
 label154:
 	addd [label154]
-	check
+	check();
 
 label155:
 	anda #$ff
-	check
+	check();
 
 label156:
 	anda <$ff
-	check
+	check();
 
 label157:
 	anda >$ff
-	check
+	check();
 
 label158:
 	anda $ffff
-	check
+	check();
 
 label159:
 	anda label159,x
-	check
+	check();
 
 label160:
 	anda label160,u
-	check
+	check();
 
 label161:
 	anda [label161,x]
-	check
+	check();
 
 label162:
 	anda [label162,u]
-	check
+	check();
 
 label163:
 	anda ,x
-	check
+	check();
 
 label164:
 	anda ,u
-	check
+	check();
 
 label165:
 	anda [,x]
-	check
+	check();
 
 label166:
 	anda [,u]
-	check
+	check();
 
 label167:
 	anda b,u
-	check
+	check();
 
 label168:
 	anda [b,u]
-	check
+	check();
 
 label169:
 	anda ,x+
-	check
+	check();
 
 label170:
 	anda ,u+
-	check
+	check();
 
 label171:
 	anda ,x++
-	check
+	check();
 
 label172:
 	anda ,u++
-	check
+	check();
 
 label173:
 	anda [,x++]
-	check
+	check();
 
 label174:
 	anda [,u++]
-	check
+	check();
 
 label175:
 	anda ,-x
-	check
+	check();
 
 label176:
 	anda ,-u
-	check
+	check();
 
 label177:
 	anda ,--x
-	check
+	check();
 
 label178:
 	anda ,--u
-	check
+	check();
 
 label179:
 	anda [,--x]
-	check
+	check();
 
 label180:
 	anda [,--u]
-	check
+	check();
 
 label181:
 	anda 0,pc
-	check
+	check();
 
 label182:
 	anda [0,pc]
-	check
+	check();
 
 label183:
 	anda label183,pcr
-	check
+	check();
 
 label184:
 	anda [label184,pcr]
-	check
+	check();
 
 label185:
 	anda [label185]
-	check
+	check();
 
 label186:
 	andb #$ff
-	check
+	check();
 
 label187:
 	andb <$ff
-	check
+	check();
 
 label188:
 	andb >$ff
-	check
+	check();
 
 label189:
 	andb $ffff
-	check
+	check();
 
 label190:
 	andb label190,x
-	check
+	check();
 
 label191:
 	andb label191,u
-	check
+	check();
 
 label192:
 	andb [label192,x]
-	check
+	check();
 
 label193:
 	andb [label193,u]
-	check
+	check();
 
 label194:
 	andb ,x
-	check
+	check();
 
 label195:
 	andb ,u
-	check
+	check();
 
 label196:
 	andb [,x]
-	check
+	check();
 
 label197:
 	andb [,u]
-	check
+	check();
 
 label198:
 	andb b,u
-	check
+	check();
 
 label199:
 	andb [b,u]
-	check
+	check();
 
 label200:
 	andb ,x+
-	check
+	check();
 
 label201:
 	andb ,u+
-	check
+	check();
 
 label202:
 	andb ,x++
-	check
+	check();
 
 label203:
 	andb ,u++
-	check
+	check();
 
 label204:
 	andb [,x++]
-	check
+	check();
 
 label205:
 	andb [,u++]
-	check
+	check();
 
 label206:
 	andb ,-x
-	check
+	check();
 
 label207:
 	andb ,-u
-	check
+	check();
 
 label208:
 	andb ,--x
-	check
+	check();
 
 label209:
 	andb ,--u
-	check
+	check();
 
 label210:
 	andb [,--x]
-	check
+	check();
 
 label211:
 	andb [,--u]
-	check
+	check();
 
 label212:
 	andb 0,pc
-	check
+	check();
 
 label213:
 	andb [0,pc]
-	check
+	check();
 
 label214:
 	andb label214,pcr
-	check
+	check();
 
 label215:
 	andb [label215,pcr]
-	check
+	check();
 
 label216:
 	andb [label216]
-	check
+	check();
 
 label217:
 	andcc #$ff
-	check
+	check();
 
 label218:
 	asr <$ff
-	check
+	check();
 
 label219:
 	asr >$ff
-	check
+	check();
 
 label220:
 	asr $ffff
-	check
+	check();
 
 label221:
 	asr label221,x
-	check
+	check();
 
 label222:
 	asr label222,u
-	check
+	check();
 
 label223:
 	asr [label223,x]
-	check
+	check();
 
 label224:
 	asr [label224,u]
-	check
+	check();
 
 label225:
 	asr ,x
-	check
+	check();
 
 label226:
 	asr ,u
-	check
+	check();
 
 label227:
 	asr [,x]
-	check
+	check();
 
 label228:
 	asr [,u]
-	check
+	check();
 
 label229:
 	asr b,u
-	check
+	check();
 
 label230:
 	asr [b,u]
-	check
+	check();
 
 label231:
 	asr ,x+
-	check
+	check();
 
 label232:
 	asr ,u+
-	check
+	check();
 
 label233:
 	asr ,x++
-	check
+	check();
 
 label234:
 	asr ,u++
-	check
+	check();
 
 label235:
 	asr [,x++]
-	check
+	check();
 
 label236:
 	asr [,u++]
-	check
+	check();
 
 label237:
 	asr ,-x
-	check
+	check();
 
 label238:
 	asr ,-u
-	check
+	check();
 
 label239:
 	asr ,--x
-	check
+	check();
 
 label240:
 	asr ,--u
-	check
+	check();
 
 label241:
 	asr [,--x]
-	check
+	check();
 
 label242:
 	asr [,--u]
-	check
+	check();
 
 label243:
 	asr 0,pc
-	check
+	check();
 
 label244:
 	asr [0,pc]
-	check
+	check();
 
 label245:
 	asr label245,pcr
-	check
+	check();
 
 label246:
 	asr [label246,pcr]
-	check
+	check();
 
 label247:
 	asr [label247]
-	check
+	check();
 
 label248:
 	beq label248
-	check
+	check();
 
 label249:
 	lbeq label249
-	check
+	check();
 
 label250:
 	bge label250
-	check
+	check();
 
 label251:
 	lbge label251
-	check
+	check();
 
 label252:
 	bgt label252
-	check
+	check();
 
 label253:
 	lbgt label253
-	check
+	check();
 
 label254:
 	bhi label254
-	check
+	check();
 
 label255:
 	lbhi label255
-	check
+	check();
 
 label256:
 	bhs label256
-	check
+	check();
 
 label257:
 	lbhs label257
-	check
+	check();
 
 label258:
 	bita #$ff
-	check
+	check();
 
 label259:
 	bita <$ff
-	check
+	check();
 
 label260:
 	bita >$ff
-	check
+	check();
 
 label261:
 	bita $ffff
-	check
+	check();
 
 label262:
 	bita label262,x
-	check
+	check();
 
 label263:
 	bita label263,u
-	check
+	check();
 
 label264:
 	bita [label264,x]
-	check
+	check();
 
 label265:
 	bita [label265,u]
-	check
+	check();
 
 label266:
 	bita ,x
-	check
+	check();
 
 label267:
 	bita ,u
-	check
+	check();
 
 label268:
 	bita [,x]
-	check
+	check();
 
 label269:
 	bita [,u]
-	check
+	check();
 
 label270:
 	bita b,u
-	check
+	check();
 
 label271:
 	bita [b,u]
-	check
+	check();
 
 label272:
 	bita ,x+
-	check
+	check();
 
 label273:
 	bita ,u+
-	check
+	check();
 
 label274:
 	bita ,x++
-	check
+	check();
 
 label275:
 	bita ,u++
-	check
+	check();
 
 label276:
 	bita [,x++]
-	check
+	check();
 
 label277:
 	bita [,u++]
-	check
+	check();
 
 label278:
 	bita ,-x
-	check
+	check();
 
 label279:
 	bita ,-u
-	check
+	check();
 
 label280:
 	bita ,--x
-	check
+	check();
 
 label281:
 	bita ,--u
-	check
+	check();
 
 label282:
 	bita [,--x]
-	check
+	check();
 
 label283:
 	bita [,--u]
-	check
+	check();
 
 label284:
 	bita 0,pc
-	check
+	check();
 
 label285:
 	bita [0,pc]
-	check
+	check();
 
 label286:
 	bita label286,pcr
-	check
+	check();
 
 label287:
 	bita [label287,pcr]
-	check
+	check();
 
 label288:
 	bita [label288]
-	check
+	check();
 
 label289:
 	bitb #$ff
-	check
+	check();
 
 label290:
 	bitb <$ff
-	check
+	check();
 
 label291:
 	bitb >$ff
-	check
+	check();
 
 label292:
 	bitb $ffff
-	check
+	check();
 
 label293:
 	bitb label293,x
-	check
+	check();
 
 label294:
 	bitb label294,u
-	check
+	check();
 
 label295:
 	bitb [label295,x]
-	check
+	check();
 
 label296:
 	bitb [label296,u]
-	check
+	check();
 
 label297:
 	bitb ,x
-	check
+	check();
 
 label298:
 	bitb ,u
-	check
+	check();
 
 label299:
 	bitb [,x]
-	check
+	check();
 
 label300:
 	bitb [,u]
-	check
+	check();
 
 label301:
 	bitb b,u
-	check
+	check();
 
 label302:
 	bitb [b,u]
-	check
+	check();
 
 label303:
 	bitb ,x+
-	check
+	check();
 
 label304:
 	bitb ,u+
-	check
+	check();
 
 label305:
 	bitb ,x++
-	check
+	check();
 
 label306:
 	bitb ,u++
-	check
+	check();
 
 label307:
 	bitb [,x++]
-	check
+	check();
 
 label308:
 	bitb [,u++]
-	check
+	check();
 
 label309:
 	bitb ,-x
-	check
+	check();
 
 label310:
 	bitb ,-u
-	check
+	check();
 
 label311:
 	bitb ,--x
-	check
+	check();
 
 label312:
 	bitb ,--u
-	check
+	check();
 
 label313:
 	bitb [,--x]
-	check
+	check();
 
 label314:
 	bitb [,--u]
-	check
+	check();
 
 label315:
 	bitb 0,pc
-	check
+	check();
 
 label316:
 	bitb [0,pc]
-	check
+	check();
 
 label317:
 	bitb label317,pcr
-	check
+	check();
 
 label318:
 	bitb [label318,pcr]
-	check
+	check();
 
 label319:
 	bitb [label319]
-	check
+	check();
 
 label320:
 	ble label320
-	check
+	check();
 
 label321:
 	lble label321
-	check
+	check();
 
 label322:
 	blo label322
-	check
+	check();
 
 label323:
 	lblo label323
-	check
+	check();
 
 label324:
 	bls label324
-	check
+	check();
 
 label325:
 	lbls label325
-	check
+	check();
 
 label326:
 	blt label326
-	check
+	check();
 
 label327:
 	lblt label327
-	check
+	check();
 
 label328:
 	bmi label328
-	check
+	check();
 
 label329:
 	lbmi label329
-	check
+	check();
 
 label330:
 	bne label330
-	check
+	check();
 
 label331:
 	lbne label331
-	check
+	check();
 
 label332:
 	bpl label332
-	check
+	check();
 
 label333:
 	lbpl label333
-	check
+	check();
 
 label334:
 	bra label334
-	check
+	check();
 
 label335:
 	lbra label335
-	check
+	check();
 
 label336:
 	brn label336
-	check
+	check();
 
 label337:
 	lbrn label337
-	check
+	check();
 
 label338:
 	bsr label338
-	check
+	check();
 
 label339:
 	lbsr label339
-	check
+	check();
 
 label340:
 	bvc label340
-	check
+	check();
 
 label341:
 	lbvc label341
-	check
+	check();
 
 label342:
 	bvs label342
-	check
+	check();
 
 label343:
 	lbvs label343
-	check
+	check();
 
 label344:
 	clr <$ff
-	check
+	check();
 
 label345:
 	clr >$ff
-	check
+	check();
 
 label346:
 	clr $ffff
-	check
+	check();
 
 label347:
 	clr label347,x
-	check
+	check();
 
 label348:
 	clr label348,u
-	check
+	check();
 
 label349:
 	clr [label349,x]
-	check
+	check();
 
 label350:
 	clr [label350,u]
-	check
+	check();
 
 label351:
 	clr ,x
-	check
+	check();
 
 label352:
 	clr ,u
-	check
+	check();
 
 label353:
 	clr [,x]
-	check
+	check();
 
 label354:
 	clr [,u]
-	check
+	check();
 
 label355:
 	clr b,u
-	check
+	check();
 
 label356:
 	clr [b,u]
-	check
+	check();
 
 label357:
 	clr ,x+
-	check
+	check();
 
 label358:
 	clr ,u+
-	check
+	check();
 
 label359:
 	clr ,x++
-	check
+	check();
 
 label360:
 	clr ,u++
-	check
+	check();
 
 label361:
 	clr [,x++]
-	check
+	check();
 
 label362:
 	clr [,u++]
-	check
+	check();
 
 label363:
 	clr ,-x
-	check
+	check();
 
 label364:
 	clr ,-u
-	check
+	check();
 
 label365:
 	clr ,--x
-	check
+	check();
 
 label366:
 	clr ,--u
-	check
+	check();
 
 label367:
 	clr [,--x]
-	check
+	check();
 
 label368:
 	clr [,--u]
-	check
+	check();
 
 label369:
 	clr 0,pc
-	check
+	check();
 
 label370:
 	clr [0,pc]
-	check
+	check();
 
 label371:
 	clr label371,pcr
-	check
+	check();
 
 label372:
 	clr [label372,pcr]
-	check
+	check();
 
 label373:
 	clr [label373]
-	check
+	check();
 
 label374:
 	cmpa #$ff
-	check
+	check();
 
 label375:
 	cmpa <$ff
-	check
+	check();
 
 label376:
 	cmpa >$ff
-	check
+	check();
 
 label377:
 	cmpa $ffff
-	check
+	check();
 
 label378:
 	cmpa label378,x
-	check
+	check();
 
 label379:
 	cmpa label379,u
-	check
+	check();
 
 label380:
 	cmpa [label380,x]
-	check
+	check();
 
 label381:
 	cmpa [label381,u]
-	check
+	check();
 
 label382:
 	cmpa ,x
-	check
+	check();
 
 label383:
 	cmpa ,u
-	check
+	check();
 
 label384:
 	cmpa [,x]
-	check
+	check();
 
 label385:
 	cmpa [,u]
-	check
+	check();
 
 label386:
 	cmpa b,u
-	check
+	check();
 
 label387:
 	cmpa [b,u]
-	check
+	check();
 
 label388:
 	cmpa ,x+
-	check
+	check();
 
 label389:
 	cmpa ,u+
-	check
+	check();
 
 label390:
 	cmpa ,x++
-	check
+	check();
 
 label391:
 	cmpa ,u++
-	check
+	check();
 
 label392:
 	cmpa [,x++]
-	check
+	check();
 
 label393:
 	cmpa [,u++]
-	check
+	check();
 
 label394:
 	cmpa ,-x
-	check
+	check();
 
 label395:
 	cmpa ,-u
-	check
+	check();
 
 label396:
 	cmpa ,--x
-	check
+	check();
 
 label397:
 	cmpa ,--u
-	check
+	check();
 
 label398:
 	cmpa [,--x]
-	check
+	check();
 
 label399:
 	cmpa [,--u]
-	check
+	check();
 
 label400:
 	cmpa 0,pc
-	check
+	check();
 
 label401:
 	cmpa [0,pc]
-	check
+	check();
 
 label402:
 	cmpa label402,pcr
-	check
+	check();
 
 label403:
 	cmpa [label403,pcr]
-	check
+	check();
 
 label404:
 	cmpa [label404]
-	check
+	check();
 
 label405:
 	cmpb #$ff
-	check
+	check();
 
 label406:
 	cmpb <$ff
-	check
+	check();
 
 label407:
 	cmpb >$ff
-	check
+	check();
 
 label408:
 	cmpb $ffff
-	check
+	check();
 
 label409:
 	cmpb label409,x
-	check
+	check();
 
 label410:
 	cmpb label410,u
-	check
+	check();
 
 label411:
 	cmpb [label411,x]
-	check
+	check();
 
 label412:
 	cmpb [label412,u]
-	check
+	check();
 
 label413:
 	cmpb ,x
-	check
+	check();
 
 label414:
 	cmpb ,u
-	check
+	check();
 
 label415:
 	cmpb [,x]
-	check
+	check();
 
 label416:
 	cmpb [,u]
-	check
+	check();
 
 label417:
 	cmpb b,u
-	check
+	check();
 
 label418:
 	cmpb [b,u]
-	check
+	check();
 
 label419:
 	cmpb ,x+
-	check
+	check();
 
 label420:
 	cmpb ,u+
-	check
+	check();
 
 label421:
 	cmpb ,x++
-	check
+	check();
 
 label422:
 	cmpb ,u++
-	check
+	check();
 
 label423:
 	cmpb [,x++]
-	check
+	check();
 
 label424:
 	cmpb [,u++]
-	check
+	check();
 
 label425:
 	cmpb ,-x
-	check
+	check();
 
 label426:
 	cmpb ,-u
-	check
+	check();
 
 label427:
 	cmpb ,--x
-	check
+	check();
 
 label428:
 	cmpb ,--u
-	check
+	check();
 
 label429:
 	cmpb [,--x]
-	check
+	check();
 
 label430:
 	cmpb [,--u]
-	check
+	check();
 
 label431:
 	cmpb 0,pc
-	check
+	check();
 
 label432:
 	cmpb [0,pc]
-	check
+	check();
 
 label433:
 	cmpb label433,pcr
-	check
+	check();
 
 label434:
 	cmpb [label434,pcr]
-	check
+	check();
 
 label435:
 	cmpb [label435]
-	check
+	check();
 
 label436:
 	cmpd #$ff
-	check
+	check();
 
 label437:
 	cmpd <$ff
-	check
+	check();
 
 label438:
 	cmpd >$ff
-	check
+	check();
 
 label439:
 	cmpd $ffff
-	check
+	check();
 
 label440:
 	cmpd label440,x
-	check
+	check();
 
 label441:
 	cmpd label441,u
-	check
+	check();
 
 label442:
 	cmpd [label442,x]
-	check
+	check();
 
 label443:
 	cmpd [label443,u]
-	check
+	check();
 
 label444:
 	cmpd ,x
-	check
+	check();
 
 label445:
 	cmpd ,u
-	check
+	check();
 
 label446:
 	cmpd [,x]
-	check
+	check();
 
 label447:
 	cmpd [,u]
-	check
+	check();
 
 label448:
 	cmpd b,u
-	check
+	check();
 
 label449:
 	cmpd [b,u]
-	check
+	check();
 
 label450:
 	cmpd ,x+
-	check
+	check();
 
 label451:
 	cmpd ,u+
-	check
+	check();
 
 label452:
 	cmpd ,x++
-	check
+	check();
 
 label453:
 	cmpd ,u++
-	check
+	check();
 
 label454:
 	cmpd [,x++]
-	check
+	check();
 
 label455:
 	cmpd [,u++]
-	check
+	check();
 
 label456:
 	cmpd ,-x
-	check
+	check();
 
 label457:
 	cmpd ,-u
-	check
+	check();
 
 label458:
 	cmpd ,--x
-	check
+	check();
 
 label459:
 	cmpd ,--u
-	check
+	check();
 
 label460:
 	cmpd [,--x]
-	check
+	check();
 
 label461:
 	cmpd [,--u]
-	check
+	check();
 
 label462:
 	cmpd 0,pc
-	check
+	check();
 
 label463:
 	cmpd [0,pc]
-	check
+	check();
 
 label464:
 	cmpd label464,pcr
-	check
+	check();
 
 label465:
 	cmpd [label465,pcr]
-	check
+	check();
 
 label466:
 	cmpd [label466]
-	check
+	check();
 
 label467:
 	cmps #$ff
-	check
+	check();
 
 label468:
 	cmps <$ff
-	check
+	check();
 
 label469:
 	cmps >$ff
-	check
+	check();
 
 label470:
 	cmps $ffff
-	check
+	check();
 
 label471:
 	cmps label471,x
-	check
+	check();
 
 label472:
 	cmps label472,u
-	check
+	check();
 
 label473:
 	cmps [label473,x]
-	check
+	check();
 
 label474:
 	cmps [label474,u]
-	check
+	check();
 
 label475:
 	cmps ,x
-	check
+	check();
 
 label476:
 	cmps ,u
-	check
+	check();
 
 label477:
 	cmps [,x]
-	check
+	check();
 
 label478:
 	cmps [,u]
-	check
+	check();
 
 label479:
 	cmps b,u
-	check
+	check();
 
 label480:
 	cmps [b,u]
-	check
+	check();
 
 label481:
 	cmps ,x+
-	check
+	check();
 
 label482:
 	cmps ,u+
-	check
+	check();
 
 label483:
 	cmps ,x++
-	check
+	check();
 
 label484:
 	cmps ,u++
-	check
+	check();
 
 label485:
 	cmps [,x++]
-	check
+	check();
 
 label486:
 	cmps [,u++]
-	check
+	check();
 
 label487:
 	cmps ,-x
-	check
+	check();
 
 label488:
 	cmps ,-u
-	check
+	check();
 
 label489:
 	cmps ,--x
-	check
+	check();
 
 label490:
 	cmps ,--u
-	check
+	check();
 
 label491:
 	cmps [,--x]
-	check
+	check();
 
 label492:
 	cmps [,--u]
-	check
+	check();
 
 label493:
 	cmps 0,pc
-	check
+	check();
 
 label494:
 	cmps [0,pc]
-	check
+	check();
 
 label495:
 	cmps label495,pcr
-	check
+	check();
 
 label496:
 	cmps [label496,pcr]
-	check
+	check();
 
 label497:
 	cmps [label497]
-	check
+	check();
 
 label498:
 	cmpu #$ff
-	check
+	check();
 
 label499:
 	cmpu <$ff
-	check
+	check();
 
 label500:
 	cmpu >$ff
-	check
+	check();
 
 label501:
 	cmpu $ffff
-	check
+	check();
 
 label502:
 	cmpu label502,x
-	check
+	check();
 
 label503:
 	cmpu label503,u
-	check
+	check();
 
 label504:
 	cmpu [label504,x]
-	check
+	check();
 
 label505:
 	cmpu [label505,u]
-	check
+	check();
 
 label506:
 	cmpu ,x
-	check
+	check();
 
 label507:
 	cmpu ,u
-	check
+	check();
 
 label508:
 	cmpu [,x]
-	check
+	check();
 
 label509:
 	cmpu [,u]
-	check
+	check();
 
 label510:
 	cmpu b,u
-	check
+	check();
 
 label511:
 	cmpu [b,u]
-	check
+	check();
 
 label512:
 	cmpu ,x+
-	check
+	check();
 
 label513:
 	cmpu ,u+
-	check
+	check();
 
 label514:
 	cmpu ,x++
-	check
+	check();
 
 label515:
 	cmpu ,u++
-	check
+	check();
 
 label516:
 	cmpu [,x++]
-	check
+	check();
 
 label517:
 	cmpu [,u++]
-	check
+	check();
 
 label518:
 	cmpu ,-x
-	check
+	check();
 
 label519:
 	cmpu ,-u
-	check
+	check();
 
 label520:
 	cmpu ,--x
-	check
+	check();
 
 label521:
 	cmpu ,--u
-	check
+	check();
 
 label522:
 	cmpu [,--x]
-	check
+	check();
 
 label523:
 	cmpu [,--u]
-	check
+	check();
 
 label524:
 	cmpu 0,pc
-	check
+	check();
 
 label525:
 	cmpu [0,pc]
-	check
+	check();
 
 label526:
 	cmpu label526,pcr
-	check
+	check();
 
 label527:
 	cmpu [label527,pcr]
-	check
+	check();
 
 label528:
 	cmpu [label528]
-	check
+	check();
 
 label529:
 	cmpx #$ff
-	check
+	check();
 
 label530:
 	cmpx <$ff
-	check
+	check();
 
 label531:
 	cmpx >$ff
-	check
+	check();
 
 label532:
 	cmpx $ffff
-	check
+	check();
 
 label533:
 	cmpx label533,x
-	check
+	check();
 
 label534:
 	cmpx label534,u
-	check
+	check();
 
 label535:
 	cmpx [label535,x]
-	check
+	check();
 
 label536:
 	cmpx [label536,u]
-	check
+	check();
 
 label537:
 	cmpx ,x
-	check
+	check();
 
 label538:
 	cmpx ,u
-	check
+	check();
 
 label539:
 	cmpx [,x]
-	check
+	check();
 
 label540:
 	cmpx [,u]
-	check
+	check();
 
 label541:
 	cmpx b,u
-	check
+	check();
 
 label542:
 	cmpx [b,u]
-	check
+	check();
 
 label543:
 	cmpx ,x+
-	check
+	check();
 
 label544:
 	cmpx ,u+
-	check
+	check();
 
 label545:
 	cmpx ,x++
-	check
+	check();
 
 label546:
 	cmpx ,u++
-	check
+	check();
 
 label547:
 	cmpx [,x++]
-	check
+	check();
 
 label548:
 	cmpx [,u++]
-	check
+	check();
 
 label549:
 	cmpx ,-x
-	check
+	check();
 
 label550:
 	cmpx ,-u
-	check
+	check();
 
 label551:
 	cmpx ,--x
-	check
+	check();
 
 label552:
 	cmpx ,--u
-	check
+	check();
 
 label553:
 	cmpx [,--x]
-	check
+	check();
 
 label554:
 	cmpx [,--u]
-	check
+	check();
 
 label555:
 	cmpx 0,pc
-	check
+	check();
 
 label556:
 	cmpx [0,pc]
-	check
+	check();
 
 label557:
 	cmpx label557,pcr
-	check
+	check();
 
 label558:
 	cmpx [label558,pcr]
-	check
+	check();
 
 label559:
 	cmpx [label559]
-	check
+	check();
 
 label560:
 	cmpy #$ff
-	check
+	check();
 
 label561:
 	cmpy <$ff
-	check
+	check();
 
 label562:
 	cmpy >$ff
-	check
+	check();
 
 label563:
 	cmpy $ffff
-	check
+	check();
 
 label564:
 	cmpy label564,x
-	check
+	check();
 
 label565:
 	cmpy label565,u
-	check
+	check();
 
 label566:
 	cmpy [label566,x]
-	check
+	check();
 
 label567:
 	cmpy [label567,u]
-	check
+	check();
 
 label568:
 	cmpy ,x
-	check
+	check();
 
 label569:
 	cmpy ,u
-	check
+	check();
 
 label570:
 	cmpy [,x]
-	check
+	check();
 
 label571:
 	cmpy [,u]
-	check
+	check();
 
 label572:
 	cmpy b,u
-	check
+	check();
 
 label573:
 	cmpy [b,u]
-	check
+	check();
 
 label574:
 	cmpy ,x+
-	check
+	check();
 
 label575:
 	cmpy ,u+
-	check
+	check();
 
 label576:
 	cmpy ,x++
-	check
+	check();
 
 label577:
 	cmpy ,u++
-	check
+	check();
 
 label578:
 	cmpy [,x++]
-	check
+	check();
 
 label579:
 	cmpy [,u++]
-	check
+	check();
 
 label580:
 	cmpy ,-x
-	check
+	check();
 
 label581:
 	cmpy ,-u
-	check
+	check();
 
 label582:
 	cmpy ,--x
-	check
+	check();
 
 label583:
 	cmpy ,--u
-	check
+	check();
 
 label584:
 	cmpy [,--x]
-	check
+	check();
 
 label585:
 	cmpy [,--u]
-	check
+	check();
 
 label586:
 	cmpy 0,pc
-	check
+	check();
 
 label587:
 	cmpy [0,pc]
-	check
+	check();
 
 label588:
 	cmpy label588,pcr
-	check
+	check();
 
 label589:
 	cmpy [label589,pcr]
-	check
+	check();
 
 label590:
 	cmpy [label590]
-	check
+	check();
 
 label591:
 	com <$ff
-	check
+	check();
 
 label592:
 	com >$ff
-	check
+	check();
 
 label593:
 	com $ffff
-	check
+	check();
 
 label594:
 	com label594,x
-	check
+	check();
 
 label595:
 	com label595,u
-	check
+	check();
 
 label596:
 	com [label596,x]
-	check
+	check();
 
 label597:
 	com [label597,u]
-	check
+	check();
 
 label598:
 	com ,x
-	check
+	check();
 
 label599:
 	com ,u
-	check
+	check();
 
 label600:
 	com [,x]
-	check
+	check();
 
 label601:
 	com [,u]
-	check
+	check();
 
 label602:
 	com b,u
-	check
+	check();
 
 label603:
 	com [b,u]
-	check
+	check();
 
 label604:
 	com ,x+
-	check
+	check();
 
 label605:
 	com ,u+
-	check
+	check();
 
 label606:
 	com ,x++
-	check
+	check();
 
 label607:
 	com ,u++
-	check
+	check();
 
 label608:
 	com [,x++]
-	check
+	check();
 
 label609:
 	com [,u++]
-	check
+	check();
 
 label610:
 	com ,-x
-	check
+	check();
 
 label611:
 	com ,-u
-	check
+	check();
 
 label612:
 	com ,--x
-	check
+	check();
 
 label613:
 	com ,--u
-	check
+	check();
 
 label614:
 	com [,--x]
-	check
+	check();
 
 label615:
 	com [,--u]
-	check
+	check();
 
 label616:
 	com 0,pc
-	check
+	check();
 
 label617:
 	com [0,pc]
-	check
+	check();
 
 label618:
 	com label618,pcr
-	check
+	check();
 
 label619:
 	com [label619,pcr]
-	check
+	check();
 
 label620:
 	com [label620]
-	check
+	check();
 
 label621:
 	cwai #5
-	check
+	check();
 
 label622:
 	cwai #4
-	check
+	check();
 
 label623:
 	dec <$ff
-	check
+	check();
 
 label624:
 	dec >$ff
-	check
+	check();
 
 label625:
 	dec $ffff
-	check
+	check();
 
 label626:
 	dec label626,x
-	check
+	check();
 
 label627:
 	dec label627,u
-	check
+	check();
 
 label628:
 	dec [label628,x]
-	check
+	check();
 
 label629:
 	dec [label629,u]
-	check
+	check();
 
 label630:
 	dec ,x
-	check
+	check();
 
 label631:
 	dec ,u
-	check
+	check();
 
 label632:
 	dec [,x]
-	check
+	check();
 
 label633:
 	dec [,u]
-	check
+	check();
 
 label634:
 	dec b,u
-	check
+	check();
 
 label635:
 	dec [b,u]
-	check
+	check();
 
 label636:
 	dec ,x+
-	check
+	check();
 
 label637:
 	dec ,u+
-	check
+	check();
 
 label638:
 	dec ,x++
-	check
+	check();
 
 label639:
 	dec ,u++
-	check
+	check();
 
 label640:
 	dec [,x++]
-	check
+	check();
 
 label641:
 	dec [,u++]
-	check
+	check();
 
 label642:
 	dec ,-x
-	check
+	check();
 
 label643:
 	dec ,-u
-	check
+	check();
 
 label644:
 	dec ,--x
-	check
+	check();
 
 label645:
 	dec ,--u
-	check
+	check();
 
 label646:
 	dec [,--x]
-	check
+	check();
 
 label647:
 	dec [,--u]
-	check
+	check();
 
 label648:
 	dec 0,pc
-	check
+	check();
 
 label649:
 	dec [0,pc]
-	check
+	check();
 
 label650:
 	dec label650,pcr
-	check
+	check();
 
 label651:
 	dec [label651,pcr]
-	check
+	check();
 
 label652:
 	dec [label652]
-	check
+	check();
 
 label653:
 	eora #$ff
-	check
+	check();
 
 label654:
 	eora <$ff
-	check
+	check();
 
 label655:
 	eora >$ff
-	check
+	check();
 
 label656:
 	eora $ffff
-	check
+	check();
 
 label657:
 	eora label657,x
-	check
+	check();
 
 label658:
 	eora label658,u
-	check
+	check();
 
 label659:
 	eora [label659,x]
-	check
+	check();
 
 label660:
 	eora [label660,u]
-	check
+	check();
 
 label661:
 	eora ,x
-	check
+	check();
 
 label662:
 	eora ,u
-	check
+	check();
 
 label663:
 	eora [,x]
-	check
+	check();
 
 label664:
 	eora [,u]
-	check
+	check();
 
 label665:
 	eora b,u
-	check
+	check();
 
 label666:
 	eora [b,u]
-	check
+	check();
 
 label667:
 	eora ,x+
-	check
+	check();
 
 label668:
 	eora ,u+
-	check
+	check();
 
 label669:
 	eora ,x++
-	check
+	check();
 
 label670:
 	eora ,u++
-	check
+	check();
 
 label671:
 	eora [,x++]
-	check
+	check();
 
 label672:
 	eora [,u++]
-	check
+	check();
 
 label673:
 	eora ,-x
-	check
+	check();
 
 label674:
 	eora ,-u
-	check
+	check();
 
 label675:
 	eora ,--x
-	check
+	check();
 
 label676:
 	eora ,--u
-	check
+	check();
 
 label677:
 	eora [,--x]
-	check
+	check();
 
 label678:
 	eora [,--u]
-	check
+	check();
 
 label679:
 	eora 0,pc
-	check
+	check();
 
 label680:
 	eora [0,pc]
-	check
+	check();
 
 label681:
 	eora label681,pcr
-	check
+	check();
 
 label682:
 	eora [label682,pcr]
-	check
+	check();
 
 label683:
 	eora [label683]
-	check
+	check();
 
 label684:
 	eorb #$ff
-	check
+	check();
 
 label685:
 	eorb <$ff
-	check
+	check();
 
 label686:
 	eorb >$ff
-	check
+	check();
 
 label687:
 	eorb $ffff
-	check
+	check();
 
 label688:
 	eorb label688,x
-	check
+	check();
 
 label689:
 	eorb label689,u
-	check
+	check();
 
 label690:
 	eorb [label690,x]
-	check
+	check();
 
 label691:
 	eorb [label691,u]
-	check
+	check();
 
 label692:
 	eorb ,x
-	check
+	check();
 
 label693:
 	eorb ,u
-	check
+	check();
 
 label694:
 	eorb [,x]
-	check
+	check();
 
 label695:
 	eorb [,u]
-	check
+	check();
 
 label696:
 	eorb b,u
-	check
+	check();
 
 label697:
 	eorb [b,u]
-	check
+	check();
 
 label698:
 	eorb ,x+
-	check
+	check();
 
 label699:
 	eorb ,u+
-	check
+	check();
 
 label700:
 	eorb ,x++
-	check
+	check();
 
 label701:
 	eorb ,u++
-	check
+	check();
 
 label702:
 	eorb [,x++]
-	check
+	check();
 
 label703:
 	eorb [,u++]
-	check
+	check();
 
 label704:
 	eorb ,-x
-	check
+	check();
 
 label705:
 	eorb ,-u
-	check
+	check();
 
 label706:
 	eorb ,--x
-	check
+	check();
 
 label707:
 	eorb ,--u
-	check
+	check();
 
 label708:
 	eorb [,--x]
-	check
+	check();
 
 label709:
 	eorb [,--u]
-	check
+	check();
 
 label710:
 	eorb 0,pc
-	check
+	check();
 
 label711:
 	eorb [0,pc]
-	check
+	check();
 
 label712:
 	eorb label712,pcr
-	check
+	check();
 
 label713:
 	eorb [label713,pcr]
-	check
+	check();
 
 label714:
 	eorb [label714]
-	check
+	check();
 
 label715:
 	exg x,y
-	check
+	check();
 
 label716:
 	exg a,b
-	check
+	check();
 
 label717:
 	inc <$ff
-	check
+	check();
 
 label718:
 	inc >$ff
-	check
+	check();
 
 label719:
 	inc $ffff
-	check
+	check();
 
 label720:
 	inc label720,x
-	check
+	check();
 
 label721:
 	inc label721,u
-	check
+	check();
 
 label722:
 	inc [label722,x]
-	check
+	check();
 
 label723:
 	inc [label723,u]
-	check
+	check();
 
 label724:
 	inc ,x
-	check
+	check();
 
 label725:
 	inc ,u
-	check
+	check();
 
 label726:
 	inc [,x]
-	check
+	check();
 
 label727:
 	inc [,u]
-	check
+	check();
 
 label728:
 	inc b,u
-	check
+	check();
 
 label729:
 	inc [b,u]
-	check
+	check();
 
 label730:
 	inc ,x+
-	check
+	check();
 
 label731:
 	inc ,u+
-	check
+	check();
 
 label732:
 	inc ,x++
-	check
+	check();
 
 label733:
 	inc ,u++
-	check
+	check();
 
 label734:
 	inc [,x++]
-	check
+	check();
 
 label735:
 	inc [,u++]
-	check
+	check();
 
 label736:
 	inc ,-x
-	check
+	check();
 
 label737:
 	inc ,-u
-	check
+	check();
 
 label738:
 	inc ,--x
-	check
+	check();
 
 label739:
 	inc ,--u
-	check
+	check();
 
 label740:
 	inc [,--x]
-	check
+	check();
 
 label741:
 	inc [,--u]
-	check
+	check();
 
 label742:
 	inc 0,pc
-	check
+	check();
 
 label743:
 	inc [0,pc]
-	check
+	check();
 
 label744:
 	inc label744,pcr
-	check
+	check();
 
 label745:
 	inc [label745,pcr]
-	check
+	check();
 
 label746:
 	inc [label746]
-	check
+	check();
 
 label747:
 	jmp <$ff
-	check
+	check();
 
 label748:
 	jmp >$ff
-	check
+	check();
 
 label749:
 	jmp $ffff
-	check
+	check();
 
 label750:
 	jmp label750,x
-	check
+	check();
 
 label751:
 	jmp label751,u
-	check
+	check();
 
 label752:
 	jmp [label752,x]
-	check
+	check();
 
 label753:
 	jmp [label753,u]
-	check
+	check();
 
 label754:
 	jmp ,x
-	check
+	check();
 
 label755:
 	jmp ,u
-	check
+	check();
 
 label756:
 	jmp [,x]
-	check
+	check();
 
 label757:
 	jmp [,u]
-	check
+	check();
 
 label758:
 	jmp b,u
-	check
+	check();
 
 label759:
 	jmp [b,u]
-	check
+	check();
 
 label760:
 	jmp ,x+
-	check
+	check();
 
 label761:
 	jmp ,u+
-	check
+	check();
 
 label762:
 	jmp ,x++
-	check
+	check();
 
 label763:
 	jmp ,u++
-	check
+	check();
 
 label764:
 	jmp [,x++]
-	check
+	check();
 
 label765:
 	jmp [,u++]
-	check
+	check();
 
 label766:
 	jmp ,-x
-	check
+	check();
 
 label767:
 	jmp ,-u
-	check
+	check();
 
 label768:
 	jmp ,--x
-	check
+	check();
 
 label769:
 	jmp ,--u
-	check
+	check();
 
 label770:
 	jmp [,--x]
-	check
+	check();
 
 label771:
 	jmp [,--u]
-	check
+	check();
 
 label772:
 	jmp 0,pc
-	check
+	check();
 
 label773:
 	jmp [0,pc]
-	check
+	check();
 
 label774:
 	jmp label774,pcr
-	check
+	check();
 
 label775:
 	jmp [label775,pcr]
-	check
+	check();
 
 label776:
 	jmp [label776]
-	check
+	check();
 
 label777:
 	jsr <$ff
-	check
+	check();
 
 label778:
 	jsr >$ff
-	check
+	check();
 
 label779:
 	jsr $ffff
-	check
+	check();
 
 label780:
 	jsr label780,x
-	check
+	check();
 
 label781:
 	jsr label781,u
-	check
+	check();
 
 label782:
 	jsr [label782,x]
-	check
+	check();
 
 label783:
 	jsr [label783,u]
-	check
+	check();
 
 label784:
 	jsr ,x
-	check
+	check();
 
 label785:
 	jsr ,u
-	check
+	check();
 
 label786:
 	jsr [,x]
-	check
+	check();
 
 label787:
 	jsr [,u]
-	check
+	check();
 
 label788:
 	jsr b,u
-	check
+	check();
 
 label789:
 	jsr [b,u]
-	check
+	check();
 
 label790:
 	jsr ,x+
-	check
+	check();
 
 label791:
 	jsr ,u+
-	check
+	check();
 
 label792:
 	jsr ,x++
-	check
+	check();
 
 label793:
 	jsr ,u++
-	check
+	check();
 
 label794:
 	jsr [,x++]
-	check
+	check();
 
 label795:
 	jsr [,u++]
-	check
+	check();
 
 label796:
 	jsr ,-x
-	check
+	check();
 
 label797:
 	jsr ,-u
-	check
+	check();
 
 label798:
 	jsr ,--x
-	check
+	check();
 
 label799:
 	jsr ,--u
-	check
+	check();
 
 label800:
 	jsr [,--x]
-	check
+	check();
 
 label801:
 	jsr [,--u]
-	check
+	check();
 
 label802:
 	jsr 0,pc
-	check
+	check();
 
 label803:
 	jsr [0,pc]
-	check
+	check();
 
 label804:
 	jsr label804,pcr
-	check
+	check();
 
 label805:
 	jsr [label805,pcr]
-	check
+	check();
 
 label806:
 	jsr [label806]
-	check
+	check();
 
 label807:
 	lda #$ff
-	check
+	check();
 
 label808:
 	lda <$ff
-	check
+	check();
 
 label809:
 	lda >$ff
-	check
+	check();
 
 label810:
 	lda $ffff
-	check
+	check();
 
 label811:
 	lda label811,x
-	check
+	check();
 
 label812:
 	lda label812,u
-	check
+	check();
 
 label813:
 	lda [label813,x]
-	check
+	check();
 
 label814:
 	lda [label814,u]
-	check
+	check();
 
 label815:
 	lda ,x
-	check
+	check();
 
 label816:
 	lda ,u
-	check
+	check();
 
 label817:
 	lda [,x]
-	check
+	check();
 
 label818:
 	lda [,u]
-	check
+	check();
 
 label819:
 	lda b,u
-	check
+	check();
 
 label820:
 	lda [b,u]
-	check
+	check();
 
 label821:
 	lda ,x+
-	check
+	check();
 
 label822:
 	lda ,u+
-	check
+	check();
 
 label823:
 	lda ,x++
-	check
+	check();
 
 label824:
 	lda ,u++
-	check
+	check();
 
 label825:
 	lda [,x++]
-	check
+	check();
 
 label826:
 	lda [,u++]
-	check
+	check();
 
 label827:
 	lda ,-x
-	check
+	check();
 
 label828:
 	lda ,-u
-	check
+	check();
 
 label829:
 	lda ,--x
-	check
+	check();
 
 label830:
 	lda ,--u
-	check
+	check();
 
 label831:
 	lda [,--x]
-	check
+	check();
 
 label832:
 	lda [,--u]
-	check
+	check();
 
 label833:
 	lda 0,pc
-	check
+	check();
 
 label834:
 	lda [0,pc]
-	check
+	check();
 
 label835:
 	lda label835,pcr
-	check
+	check();
 
 label836:
 	lda [label836,pcr]
-	check
+	check();
 
 label837:
 	lda [label837]
-	check
+	check();
 
 label838:
 	ldb #$ff
-	check
+	check();
 
 label839:
 	ldb <$ff
-	check
+	check();
 
 label840:
 	ldb >$ff
-	check
+	check();
 
 label841:
 	ldb $ffff
-	check
+	check();
 
 label842:
 	ldb label842,x
-	check
+	check();
 
 label843:
 	ldb label843,u
-	check
+	check();
 
 label844:
 	ldb [label844,x]
-	check
+	check();
 
 label845:
 	ldb [label845,u]
-	check
+	check();
 
 label846:
 	ldb ,x
-	check
+	check();
 
 label847:
 	ldb ,u
-	check
+	check();
 
 label848:
 	ldb [,x]
-	check
+	check();
 
 label849:
 	ldb [,u]
-	check
+	check();
 
 label850:
 	ldb b,u
-	check
+	check();
 
 label851:
 	ldb [b,u]
-	check
+	check();
 
 label852:
 	ldb ,x+
-	check
+	check();
 
 label853:
 	ldb ,u+
-	check
+	check();
 
 label854:
 	ldb ,x++
-	check
+	check();
 
 label855:
 	ldb ,u++
-	check
+	check();
 
 label856:
 	ldb [,x++]
-	check
+	check();
 
 label857:
 	ldb [,u++]
-	check
+	check();
 
 label858:
 	ldb ,-x
-	check
+	check();
 
 label859:
 	ldb ,-u
-	check
+	check();
 
 label860:
 	ldb ,--x
-	check
+	check();
 
 label861:
 	ldb ,--u
-	check
+	check();
 
 label862:
 	ldb [,--x]
-	check
+	check();
 
 label863:
 	ldb [,--u]
-	check
+	check();
 
 label864:
 	ldb 0,pc
-	check
+	check();
 
 label865:
 	ldb [0,pc]
-	check
+	check();
 
 label866:
 	ldb label866,pcr
-	check
+	check();
 
 label867:
 	ldb [label867,pcr]
-	check
+	check();
 
 label868:
 	ldb [label868]
-	check
+	check();
 
 label869:
 	ldd #$ff
-	check
+	check();
 
 label870:
 	ldd <$ff
-	check
+	check();
 
 label871:
 	ldd >$ff
-	check
+	check();
 
 label872:
 	ldd $ffff
-	check
+	check();
 
 label873:
 	ldd label873,x
-	check
+	check();
 
 label874:
 	ldd label874,u
-	check
+	check();
 
 label875:
 	ldd [label875,x]
-	check
+	check();
 
 label876:
 	ldd [label876,u]
-	check
+	check();
 
 label877:
 	ldd ,x
-	check
+	check();
 
 label878:
 	ldd ,u
-	check
+	check();
 
 label879:
 	ldd [,x]
-	check
+	check();
 
 label880:
 	ldd [,u]
-	check
+	check();
 
 label881:
 	ldd b,u
-	check
+	check();
 
 label882:
 	ldd [b,u]
-	check
+	check();
 
 label883:
 	ldd ,x+
-	check
+	check();
 
 label884:
 	ldd ,u+
-	check
+	check();
 
 label885:
 	ldd ,x++
-	check
+	check();
 
 label886:
 	ldd ,u++
-	check
+	check();
 
 label887:
 	ldd [,x++]
-	check
+	check();
 
 label888:
 	ldd [,u++]
-	check
+	check();
 
 label889:
 	ldd ,-x
-	check
+	check();
 
 label890:
 	ldd ,-u
-	check
+	check();
 
 label891:
 	ldd ,--x
-	check
+	check();
 
 label892:
 	ldd ,--u
-	check
+	check();
 
 label893:
 	ldd [,--x]
-	check
+	check();
 
 label894:
 	ldd [,--u]
-	check
+	check();
 
 label895:
 	ldd 0,pc
-	check
+	check();
 
 label896:
 	ldd [0,pc]
-	check
+	check();
 
 label897:
 	ldd label897,pcr
-	check
+	check();
 
 label898:
 	ldd [label898,pcr]
-	check
+	check();
 
 label899:
 	ldd [label899]
-	check
+	check();
 
 label900:
 	lds #$ff
-	check
+	check();
 
 label901:
 	lds <$ff
-	check
+	check();
 
 label902:
 	lds >$ff
-	check
+	check();
 
 label903:
 	lds $ffff
-	check
+	check();
 
 label904:
 	lds label904,x
-	check
+	check();
 
 label905:
 	lds label905,u
-	check
+	check();
 
 label906:
 	lds [label906,x]
-	check
+	check();
 
 label907:
 	lds [label907,u]
-	check
+	check();
 
 label908:
 	lds ,x
-	check
+	check();
 
 label909:
 	lds ,u
-	check
+	check();
 
 label910:
 	lds [,x]
-	check
+	check();
 
 label911:
 	lds [,u]
-	check
+	check();
 
 label912:
 	lds b,u
-	check
+	check();
 
 label913:
 	lds [b,u]
-	check
+	check();
 
 label914:
 	lds ,x+
-	check
+	check();
 
 label915:
 	lds ,u+
-	check
+	check();
 
 label916:
 	lds ,x++
-	check
+	check();
 
 label917:
 	lds ,u++
-	check
+	check();
 
 label918:
 	lds [,x++]
-	check
+	check();
 
 label919:
 	lds [,u++]
-	check
+	check();
 
 label920:
 	lds ,-x
-	check
+	check();
 
 label921:
 	lds ,-u
-	check
+	check();
 
 label922:
 	lds ,--x
-	check
+	check();
 
 label923:
 	lds ,--u
-	check
+	check();
 
 label924:
 	lds [,--x]
-	check
+	check();
 
 label925:
 	lds [,--u]
-	check
+	check();
 
 label926:
 	lds 0,pc
-	check
+	check();
 
 label927:
 	lds [0,pc]
-	check
+	check();
 
 label928:
 	lds label928,pcr
-	check
+	check();
 
 label929:
 	lds [label929,pcr]
-	check
+	check();
 
 label930:
 	lds [label930]
-	check
+	check();
 
 label931:
 	ldu #$ff
-	check
+	check();
 
 label932:
 	ldu <$ff
-	check
+	check();
 
 label933:
 	ldu >$ff
-	check
+	check();
 
 label934:
 	ldu $ffff
-	check
+	check();
 
 label935:
 	ldu label935,x
-	check
+	check();
 
 label936:
 	ldu label936,u
-	check
+	check();
 
 label937:
 	ldu [label937,x]
-	check
+	check();
 
 label938:
 	ldu [label938,u]
-	check
+	check();
 
 label939:
 	ldu ,x
-	check
+	check();
 
 label940:
 	ldu ,u
-	check
+	check();
 
 label941:
 	ldu [,x]
-	check
+	check();
 
 label942:
 	ldu [,u]
-	check
+	check();
 
 label943:
 	ldu b,u
-	check
+	check();
 
 label944:
 	ldu [b,u]
-	check
+	check();
 
 label945:
 	ldu ,x+
-	check
+	check();
 
 label946:
 	ldu ,u+
-	check
+	check();
 
 label947:
 	ldu ,x++
-	check
+	check();
 
 label948:
 	ldu ,u++
-	check
+	check();
 
 label949:
 	ldu [,x++]
-	check
+	check();
 
 label950:
 	ldu [,u++]
-	check
+	check();
 
 label951:
 	ldu ,-x
-	check
+	check();
 
 label952:
 	ldu ,-u
-	check
+	check();
 
 label953:
 	ldu ,--x
-	check
+	check();
 
 label954:
 	ldu ,--u
-	check
+	check();
 
 label955:
 	ldu [,--x]
-	check
+	check();
 
 label956:
 	ldu [,--u]
-	check
+	check();
 
 label957:
 	ldu 0,pc
-	check
+	check();
 
 label958:
 	ldu [0,pc]
-	check
+	check();
 
 label959:
 	ldu label959,pcr
-	check
+	check();
 
 label960:
 	ldu [label960,pcr]
-	check
+	check();
 
 label961:
 	ldu [label961]
-	check
+	check();
 
 label962:
 	ldx #$ff
-	check
+	check();
 
 label963:
 	ldx <$ff
-	check
+	check();
 
 label964:
 	ldx >$ff
-	check
+	check();
 
 label965:
 	ldx $ffff
-	check
+	check();
 
 label966:
 	ldx label966,x
-	check
+	check();
 
 label967:
 	ldx label967,u
-	check
+	check();
 
 label968:
 	ldx [label968,x]
-	check
+	check();
 
 label969:
 	ldx [label969,u]
-	check
+	check();
 
 label970:
 	ldx ,x
-	check
+	check();
 
 label971:
 	ldx ,u
-	check
+	check();
 
 label972:
 	ldx [,x]
-	check
+	check();
 
 label973:
 	ldx [,u]
-	check
+	check();
 
 label974:
 	ldx b,u
-	check
+	check();
 
 label975:
 	ldx [b,u]
-	check
+	check();
 
 label976:
 	ldx ,x+
-	check
+	check();
 
 label977:
 	ldx ,u+
-	check
+	check();
 
 label978:
 	ldx ,x++
-	check
+	check();
 
 label979:
 	ldx ,u++
-	check
+	check();
 
 label980:
 	ldx [,x++]
-	check
+	check();
 
 label981:
 	ldx [,u++]
-	check
+	check();
 
 label982:
 	ldx ,-x
-	check
+	check();
 
 label983:
 	ldx ,-u
-	check
+	check();
 
 label984:
 	ldx ,--x
-	check
+	check();
 
 label985:
 	ldx ,--u
-	check
+	check();
 
 label986:
 	ldx [,--x]
-	check
+	check();
 
 label987:
 	ldx [,--u]
-	check
+	check();
 
 label988:
 	ldx 0,pc
-	check
+	check();
 
 label989:
 	ldx [0,pc]
-	check
+	check();
 
 label990:
 	ldx label990,pcr
-	check
+	check();
 
 label991:
 	ldx [label991,pcr]
-	check
+	check();
 
 label992:
 	ldx [label992]
-	check
+	check();
 
 label993:
 	ldy #$ff
-	check
+	check();
 
 label994:
 	ldy <$ff
-	check
+	check();
 
 label995:
 	ldy >$ff
-	check
+	check();
 
 label996:
 	ldy $ffff
-	check
+	check();
 
 label997:
 	ldy label997,x
-	check
+	check();
 
 label998:
 	ldy label998,u
-	check
+	check();
 
 label999:
 	ldy [label999,x]
-	check
+	check();
 
 label1000:
 	ldy [label1000,u]
-	check
+	check();
 
 label1001:
 	ldy ,x
-	check
+	check();
 
 label1002:
 	ldy ,u
-	check
+	check();
 
 label1003:
 	ldy [,x]
-	check
+	check();
 
 label1004:
 	ldy [,u]
-	check
+	check();
 
 label1005:
 	ldy b,u
-	check
+	check();
 
 label1006:
 	ldy [b,u]
-	check
+	check();
 
 label1007:
 	ldy ,x+
-	check
+	check();
 
 label1008:
 	ldy ,u+
-	check
+	check();
 
 label1009:
 	ldy ,x++
-	check
+	check();
 
 label1010:
 	ldy ,u++
-	check
+	check();
 
 label1011:
 	ldy [,x++]
-	check
+	check();
 
 label1012:
 	ldy [,u++]
-	check
+	check();
 
 label1013:
 	ldy ,-x
-	check
+	check();
 
 label1014:
 	ldy ,-u
-	check
+	check();
 
 label1015:
 	ldy ,--x
-	check
+	check();
 
 label1016:
 	ldy ,--u
-	check
+	check();
 
 label1017:
 	ldy [,--x]
-	check
+	check();
 
 label1018:
 	ldy [,--u]
-	check
+	check();
 
 label1019:
 	ldy 0,pc
-	check
+	check();
 
 label1020:
 	ldy [0,pc]
-	check
+	check();
 
 label1021:
 	ldy label1021,pcr
-	check
+	check();
 
 label1022:
 	ldy [label1022,pcr]
-	check
+	check();
 
 label1023:
 	ldy [label1023]
-	check
+	check();
 
 label1024:
 	leas label1024,x
-	check
+	check();
 
 label1025:
 	leas label1025,u
-	check
+	check();
 
 label1026:
 	leas [label1026,x]
-	check
+	check();
 
 label1027:
 	leas [label1027,u]
-	check
+	check();
 
 label1028:
 	leas ,x
-	check
+	check();
 
 label1029:
 	leas ,u
-	check
+	check();
 
 label1030:
 	leas [,x]
-	check
+	check();
 
 label1031:
 	leas [,u]
-	check
+	check();
 
 label1032:
 	leas b,u
-	check
+	check();
 
 label1033:
 	leas [b,u]
-	check
+	check();
 
 label1034:
 	leas ,x+
-	check
+	check();
 
 label1035:
 	leas ,u+
-	check
+	check();
 
 label1036:
 	leas ,x++
-	check
+	check();
 
 label1037:
 	leas ,u++
-	check
+	check();
 
 label1038:
 	leas [,x++]
-	check
+	check();
 
 label1039:
 	leas [,u++]
-	check
+	check();
 
 label1040:
 	leas ,-x
-	check
+	check();
 
 label1041:
 	leas ,-u
-	check
+	check();
 
 label1042:
 	leas ,--x
-	check
+	check();
 
 label1043:
 	leas ,--u
-	check
+	check();
 
 label1044:
 	leas [,--x]
-	check
+	check();
 
 label1045:
 	leas [,--u]
-	check
+	check();
 
 label1046:
 	leas 0,pc
-	check
+	check();
 
 label1047:
 	leas [0,pc]
-	check
+	check();
 
 label1048:
 	leas label1048,pcr
-	check
+	check();
 
 label1049:
 	leas [label1049,pcr]
-	check
+	check();
 
 label1050:
 	leas [label1050]
-	check
+	check();
 
 label1051:
 	leau label1051,x
-	check
+	check();
 
 label1052:
 	leau label1052,u
-	check
+	check();
 
 label1053:
 	leau [label1053,x]
-	check
+	check();
 
 label1054:
 	leau [label1054,u]
-	check
+	check();
 
 label1055:
 	leau ,x
-	check
+	check();
 
 label1056:
 	leau ,u
-	check
+	check();
 
 label1057:
 	leau [,x]
-	check
+	check();
 
 label1058:
 	leau [,u]
-	check
+	check();
 
 label1059:
 	leau b,u
-	check
+	check();
 
 label1060:
 	leau [b,u]
-	check
+	check();
 
 label1061:
 	leau ,x+
-	check
+	check();
 
 label1062:
 	leau ,u+
-	check
+	check();
 
 label1063:
 	leau ,x++
-	check
+	check();
 
 label1064:
 	leau ,u++
-	check
+	check();
 
 label1065:
 	leau [,x++]
-	check
+	check();
 
 label1066:
 	leau [,u++]
-	check
+	check();
 
 label1067:
 	leau ,-x
-	check
+	check();
 
 label1068:
 	leau ,-u
-	check
+	check();
 
 label1069:
 	leau ,--x
-	check
+	check();
 
 label1070:
 	leau ,--u
-	check
+	check();
 
 label1071:
 	leau [,--x]
-	check
+	check();
 
 label1072:
 	leau [,--u]
-	check
+	check();
 
 label1073:
 	leau 0,pc
-	check
+	check();
 
 label1074:
 	leau [0,pc]
-	check
+	check();
 
 label1075:
 	leau label1075,pcr
-	check
+	check();
 
 label1076:
 	leau [label1076,pcr]
-	check
+	check();
 
 label1077:
 	leau [label1077]
-	check
+	check();
 
 label1078:
 	leax label1078,x
-	check
+	check();
 
 label1079:
 	leax label1079,u
-	check
+	check();
 
 label1080:
 	leax [label1080,x]
-	check
+	check();
 
 label1081:
 	leax [label1081,u]
-	check
+	check();
 
 label1082:
 	leax ,x
-	check
+	check();
 
 label1083:
 	leax ,u
-	check
+	check();
 
 label1084:
 	leax [,x]
-	check
+	check();
 
 label1085:
 	leax [,u]
-	check
+	check();
 
 label1086:
 	leax b,u
-	check
+	check();
 
 label1087:
 	leax [b,u]
-	check
+	check();
 
 label1088:
 	leax ,x+
-	check
+	check();
 
 label1089:
 	leax ,u+
-	check
+	check();
 
 label1090:
 	leax ,x++
-	check
+	check();
 
 label1091:
 	leax ,u++
-	check
+	check();
 
 label1092:
 	leax [,x++]
-	check
+	check();
 
 label1093:
 	leax [,u++]
-	check
+	check();
 
 label1094:
 	leax ,-x
-	check
+	check();
 
 label1095:
 	leax ,-u
-	check
+	check();
 
 label1096:
 	leax ,--x
-	check
+	check();
 
 label1097:
 	leax ,--u
-	check
+	check();
 
 label1098:
 	leax [,--x]
-	check
+	check();
 
 label1099:
 	leax [,--u]
-	check
+	check();
 
 label1100:
 	leax 0,pc
-	check
+	check();
 
 label1101:
 	leax [0,pc]
-	check
+	check();
 
 label1102:
 	leax label1102,pcr
-	check
+	check();
 
 label1103:
 	leax [label1103,pcr]
-	check
+	check();
 
 label1104:
 	leax [label1104]
-	check
+	check();
 
 label1105:
 	leay label1105,x
-	check
+	check();
 
 label1106:
 	leay label1106,u
-	check
+	check();
 
 label1107:
 	leay [label1107,x]
-	check
+	check();
 
 label1108:
 	leay [label1108,u]
-	check
+	check();
 
 label1109:
 	leay ,x
-	check
+	check();
 
 label1110:
 	leay ,u
-	check
+	check();
 
 label1111:
 	leay [,x]
-	check
+	check();
 
 label1112:
 	leay [,u]
-	check
+	check();
 
 label1113:
 	leay b,u
-	check
+	check();
 
 label1114:
 	leay [b,u]
-	check
+	check();
 
 label1115:
 	leay ,x+
-	check
+	check();
 
 label1116:
 	leay ,u+
-	check
+	check();
 
 label1117:
 	leay ,x++
-	check
+	check();
 
 label1118:
 	leay ,u++
-	check
+	check();
 
 label1119:
 	leay [,x++]
-	check
+	check();
 
 label1120:
 	leay [,u++]
-	check
+	check();
 
 label1121:
 	leay ,-x
-	check
+	check();
 
 label1122:
 	leay ,-u
-	check
+	check();
 
 label1123:
 	leay ,--x
-	check
+	check();
 
 label1124:
 	leay ,--u
-	check
+	check();
 
 label1125:
 	leay [,--x]
-	check
+	check();
 
 label1126:
 	leay [,--u]
-	check
+	check();
 
 label1127:
 	leay 0,pc
-	check
+	check();
 
 label1128:
 	leay [0,pc]
-	check
+	check();
 
 label1129:
 	leay label1129,pcr
-	check
+	check();
 
 label1130:
 	leay [label1130,pcr]
-	check
+	check();
 
 label1131:
 	leay [label1131]
-	check
+	check();
 
 label1132:
 	lsl <$ff
-	check
+	check();
 
 label1133:
 	lsl >$ff
-	check
+	check();
 
 label1134:
 	lsl $ffff
-	check
+	check();
 
 label1135:
 	lsl label1135,x
-	check
+	check();
 
 label1136:
 	lsl label1136,u
-	check
+	check();
 
 label1137:
 	lsl [label1137,x]
-	check
+	check();
 
 label1138:
 	lsl [label1138,u]
-	check
+	check();
 
 label1139:
 	lsl ,x
-	check
+	check();
 
 label1140:
 	lsl ,u
-	check
+	check();
 
 label1141:
 	lsl [,x]
-	check
+	check();
 
 label1142:
 	lsl [,u]
-	check
+	check();
 
 label1143:
 	lsl b,u
-	check
+	check();
 
 label1144:
 	lsl [b,u]
-	check
+	check();
 
 label1145:
 	lsl ,x+
-	check
+	check();
 
 label1146:
 	lsl ,u+
-	check
+	check();
 
 label1147:
 	lsl ,x++
-	check
+	check();
 
 label1148:
 	lsl ,u++
-	check
+	check();
 
 label1149:
 	lsl [,x++]
-	check
+	check();
 
 label1150:
 	lsl [,u++]
-	check
+	check();
 
 label1151:
 	lsl ,-x
-	check
+	check();
 
 label1152:
 	lsl ,-u
-	check
+	check();
 
 label1153:
 	lsl ,--x
-	check
+	check();
 
 label1154:
 	lsl ,--u
-	check
+	check();
 
 label1155:
 	lsl [,--x]
-	check
+	check();
 
 label1156:
 	lsl [,--u]
-	check
+	check();
 
 label1157:
 	lsl 0,pc
-	check
+	check();
 
 label1158:
 	lsl [0,pc]
-	check
+	check();
 
 label1159:
 	lsl label1159,pcr
-	check
+	check();
 
 label1160:
 	lsl [label1160,pcr]
-	check
+	check();
 
 label1161:
 	lsl [label1161]
-	check
+	check();
 
 label1162:
 	lsr <$ff
-	check
+	check();
 
 label1163:
 	lsr >$ff
-	check
+	check();
 
 label1164:
 	lsr $ffff
-	check
+	check();
 
 label1165:
 	lsr label1165,x
-	check
+	check();
 
 label1166:
 	lsr label1166,u
-	check
+	check();
 
 label1167:
 	lsr [label1167,x]
-	check
+	check();
 
 label1168:
 	lsr [label1168,u]
-	check
+	check();
 
 label1169:
 	lsr ,x
-	check
+	check();
 
 label1170:
 	lsr ,u
-	check
+	check();
 
 label1171:
 	lsr [,x]
-	check
+	check();
 
 label1172:
 	lsr [,u]
-	check
+	check();
 
 label1173:
 	lsr b,u
-	check
+	check();
 
 label1174:
 	lsr [b,u]
-	check
+	check();
 
 label1175:
 	lsr ,x+
-	check
+	check();
 
 label1176:
 	lsr ,u+
-	check
+	check();
 
 label1177:
 	lsr ,x++
-	check
+	check();
 
 label1178:
 	lsr ,u++
-	check
+	check();
 
 label1179:
 	lsr [,x++]
-	check
+	check();
 
 label1180:
 	lsr [,u++]
-	check
+	check();
 
 label1181:
 	lsr ,-x
-	check
+	check();
 
 label1182:
 	lsr ,-u
-	check
+	check();
 
 label1183:
 	lsr ,--x
-	check
+	check();
 
 label1184:
 	lsr ,--u
-	check
+	check();
 
 label1185:
 	lsr [,--x]
-	check
+	check();
 
 label1186:
 	lsr [,--u]
-	check
+	check();
 
 label1187:
 	lsr 0,pc
-	check
+	check();
 
 label1188:
 	lsr [0,pc]
-	check
+	check();
 
 label1189:
 	lsr label1189,pcr
-	check
+	check();
 
 label1190:
 	lsr [label1190,pcr]
-	check
+	check();
 
 label1191:
 	lsr [label1191]
-	check
+	check();
 
 label1192:
 	neg <$ff
-	check
+	check();
 
 label1193:
 	neg >$ff
-	check
+	check();
 
 label1194:
 	neg $ffff
-	check
+	check();
 
 label1195:
 	neg label1195,x
-	check
+	check();
 
 label1196:
 	neg label1196,u
-	check
+	check();
 
 label1197:
 	neg [label1197,x]
-	check
+	check();
 
 label1198:
 	neg [label1198,u]
-	check
+	check();
 
 label1199:
 	neg ,x
-	check
+	check();
 
 label1200:
 	neg ,u
-	check
+	check();
 
 label1201:
 	neg [,x]
-	check
+	check();
 
 label1202:
 	neg [,u]
-	check
+	check();
 
 label1203:
 	neg b,u
-	check
+	check();
 
 label1204:
 	neg [b,u]
-	check
+	check();
 
 label1205:
 	neg ,x+
-	check
+	check();
 
 label1206:
 	neg ,u+
-	check
+	check();
 
 label1207:
 	neg ,x++
-	check
+	check();
 
 label1208:
 	neg ,u++
-	check
+	check();
 
 label1209:
 	neg [,x++]
-	check
+	check();
 
 label1210:
 	neg [,u++]
-	check
+	check();
 
 label1211:
 	neg ,-x
-	check
+	check();
 
 label1212:
 	neg ,-u
-	check
+	check();
 
 label1213:
 	neg ,--x
-	check
+	check();
 
 label1214:
 	neg ,--u
-	check
+	check();
 
 label1215:
 	neg [,--x]
-	check
+	check();
 
 label1216:
 	neg [,--u]
-	check
+	check();
 
 label1217:
 	neg 0,pc
-	check
+	check();
 
 label1218:
 	neg [0,pc]
-	check
+	check();
 
 label1219:
 	neg label1219,pcr
-	check
+	check();
 
 label1220:
 	neg [label1220,pcr]
-	check
+	check();
 
 label1221:
 	neg [label1221]
-	check
+	check();
 
 label1222:
 	ora #$ff
-	check
+	check();
 
 label1223:
 	ora <$ff
-	check
+	check();
 
 label1224:
 	ora >$ff
-	check
+	check();
 
 label1225:
 	ora $ffff
-	check
+	check();
 
 label1226:
 	ora label1226,x
-	check
+	check();
 
 label1227:
 	ora label1227,u
-	check
+	check();
 
 label1228:
 	ora [label1228,x]
-	check
+	check();
 
 label1229:
 	ora [label1229,u]
-	check
+	check();
 
 label1230:
 	ora ,x
-	check
+	check();
 
 label1231:
 	ora ,u
-	check
+	check();
 
 label1232:
 	ora [,x]
-	check
+	check();
 
 label1233:
 	ora [,u]
-	check
+	check();
 
 label1234:
 	ora b,u
-	check
+	check();
 
 label1235:
 	ora [b,u]
-	check
+	check();
 
 label1236:
 	ora ,x+
-	check
+	check();
 
 label1237:
 	ora ,u+
-	check
+	check();
 
 label1238:
 	ora ,x++
-	check
+	check();
 
 label1239:
 	ora ,u++
-	check
+	check();
 
 label1240:
 	ora [,x++]
-	check
+	check();
 
 label1241:
 	ora [,u++]
-	check
+	check();
 
 label1242:
 	ora ,-x
-	check
+	check();
 
 label1243:
 	ora ,-u
-	check
+	check();
 
 label1244:
 	ora ,--x
-	check
+	check();
 
 label1245:
 	ora ,--u
-	check
+	check();
 
 label1246:
 	ora [,--x]
-	check
+	check();
 
 label1247:
 	ora [,--u]
-	check
+	check();
 
 label1248:
 	ora 0,pc
-	check
+	check();
 
 label1249:
 	ora [0,pc]
-	check
+	check();
 
 label1250:
 	ora label1250,pcr
-	check
+	check();
 
 label1251:
 	ora [label1251,pcr]
-	check
+	check();
 
 label1252:
 	ora [label1252]
-	check
+	check();
 
 label1253:
 	orb #$ff
-	check
+	check();
 
 label1254:
 	orb <$ff
-	check
+	check();
 
 label1255:
 	orb >$ff
-	check
+	check();
 
 label1256:
 	orb $ffff
-	check
+	check();
 
 label1257:
 	orb label1257,x
-	check
+	check();
 
 label1258:
 	orb label1258,u
-	check
+	check();
 
 label1259:
 	orb [label1259,x]
-	check
+	check();
 
 label1260:
 	orb [label1260,u]
-	check
+	check();
 
 label1261:
 	orb ,x
-	check
+	check();
 
 label1262:
 	orb ,u
-	check
+	check();
 
 label1263:
 	orb [,x]
-	check
+	check();
 
 label1264:
 	orb [,u]
-	check
+	check();
 
 label1265:
 	orb b,u
-	check
+	check();
 
 label1266:
 	orb [b,u]
-	check
+	check();
 
 label1267:
 	orb ,x+
-	check
+	check();
 
 label1268:
 	orb ,u+
-	check
+	check();
 
 label1269:
 	orb ,x++
-	check
+	check();
 
 label1270:
 	orb ,u++
-	check
+	check();
 
 label1271:
 	orb [,x++]
-	check
+	check();
 
 label1272:
 	orb [,u++]
-	check
+	check();
 
 label1273:
 	orb ,-x
-	check
+	check();
 
 label1274:
 	orb ,-u
-	check
+	check();
 
 label1275:
 	orb ,--x
-	check
+	check();
 
 label1276:
 	orb ,--u
-	check
+	check();
 
 label1277:
 	orb [,--x]
-	check
+	check();
 
 label1278:
 	orb [,--u]
-	check
+	check();
 
 label1279:
 	orb 0,pc
-	check
+	check();
 
 label1280:
 	orb [0,pc]
-	check
+	check();
 
 label1281:
 	orb label1281,pcr
-	check
+	check();
 
 label1282:
 	orb [label1282,pcr]
-	check
+	check();
 
 label1283:
 	orb [label1283]
-	check
+	check();
 
 label1284:
 	orcc #$ff
-	check
+	check();
 
 label1285:
 	pshs cc,dp,x,u
-	check
+	check();
 
 label1286:
 	pshs x
-	check
+	check();
 
 label1287:
 	pshs #4
-	check
+	check();
 
 label1288:
 	pshu cc,dp,x,s
-	check
+	check();
 
 label1289:
 	pshu x
-	check
+	check();
 
 label1290:
 	pshu #4
-	check
+	check();
 
 label1291:
 	puls cc,dp,x,u
-	check
+	check();
 
 label1292:
 	puls x
-	check
+	check();
 
 label1293:
 	puls #4
-	check
+	check();
 
 label1294:
 	pulu cc,dp,x,s
-	check
+	check();
 
 label1295:
 	pulu x
-	check
+	check();
 
 label1296:
 	pulu #4
-	check
+	check();
 
 label1297:
 	rol <$ff
-	check
+	check();
 
 label1298:
 	rol >$ff
-	check
+	check();
 
 label1299:
 	rol $ffff
-	check
+	check();
 
 label1300:
 	rol label1300,x
-	check
+	check();
 
 label1301:
 	rol label1301,u
-	check
+	check();
 
 label1302:
 	rol [label1302,x]
-	check
+	check();
 
 label1303:
 	rol [label1303,u]
-	check
+	check();
 
 label1304:
 	rol ,x
-	check
+	check();
 
 label1305:
 	rol ,u
-	check
+	check();
 
 label1306:
 	rol [,x]
-	check
+	check();
 
 label1307:
 	rol [,u]
-	check
+	check();
 
 label1308:
 	rol b,u
-	check
+	check();
 
 label1309:
 	rol [b,u]
-	check
+	check();
 
 label1310:
 	rol ,x+
-	check
+	check();
 
 label1311:
 	rol ,u+
-	check
+	check();
 
 label1312:
 	rol ,x++
-	check
+	check();
 
 label1313:
 	rol ,u++
-	check
+	check();
 
 label1314:
 	rol [,x++]
-	check
+	check();
 
 label1315:
 	rol [,u++]
-	check
+	check();
 
 label1316:
 	rol ,-x
-	check
+	check();
 
 label1317:
 	rol ,-u
-	check
+	check();
 
 label1318:
 	rol ,--x
-	check
+	check();
 
 label1319:
 	rol ,--u
-	check
+	check();
 
 label1320:
 	rol [,--x]
-	check
+	check();
 
 label1321:
 	rol [,--u]
-	check
+	check();
 
 label1322:
 	rol 0,pc
-	check
+	check();
 
 label1323:
 	rol [0,pc]
-	check
+	check();
 
 label1324:
 	rol label1324,pcr
-	check
+	check();
 
 label1325:
 	rol [label1325,pcr]
-	check
+	check();
 
 label1326:
 	rol [label1326]
-	check
+	check();
 
 label1327:
 	ror <$ff
-	check
+	check();
 
 label1328:
 	ror >$ff
-	check
+	check();
 
 label1329:
 	ror $ffff
-	check
+	check();
 
 label1330:
 	ror label1330,x
-	check
+	check();
 
 label1331:
 	ror label1331,u
-	check
+	check();
 
 label1332:
 	ror [label1332,x]
-	check
+	check();
 
 label1333:
 	ror [label1333,u]
-	check
+	check();
 
 label1334:
 	ror ,x
-	check
+	check();
 
 label1335:
 	ror ,u
-	check
+	check();
 
 label1336:
 	ror [,x]
-	check
+	check();
 
 label1337:
 	ror [,u]
-	check
+	check();
 
 label1338:
 	ror b,u
-	check
+	check();
 
 label1339:
 	ror [b,u]
-	check
+	check();
 
 label1340:
 	ror ,x+
-	check
+	check();
 
 label1341:
 	ror ,u+
-	check
+	check();
 
 label1342:
 	ror ,x++
-	check
+	check();
 
 label1343:
 	ror ,u++
-	check
+	check();
 
 label1344:
 	ror [,x++]
-	check
+	check();
 
 label1345:
 	ror [,u++]
-	check
+	check();
 
 label1346:
 	ror ,-x
-	check
+	check();
 
 label1347:
 	ror ,-u
-	check
+	check();
 
 label1348:
 	ror ,--x
-	check
+	check();
 
 label1349:
 	ror ,--u
-	check
+	check();
 
 label1350:
 	ror [,--x]
-	check
+	check();
 
 label1351:
 	ror [,--u]
-	check
+	check();
 
 label1352:
 	ror 0,pc
-	check
+	check();
 
 label1353:
 	ror [0,pc]
-	check
+	check();
 
 label1354:
 	ror label1354,pcr
-	check
+	check();
 
 label1355:
 	ror [label1355,pcr]
-	check
+	check();
 
 label1356:
 	ror [label1356]
-	check
+	check();
 
 label1357:
 	sbca #$ff
-	check
+	check();
 
 label1358:
 	sbca <$ff
-	check
+	check();
 
 label1359:
 	sbca >$ff
-	check
+	check();
 
 label1360:
 	sbca $ffff
-	check
+	check();
 
 label1361:
 	sbca label1361,x
-	check
+	check();
 
 label1362:
 	sbca label1362,u
-	check
+	check();
 
 label1363:
 	sbca [label1363,x]
-	check
+	check();
 
 label1364:
 	sbca [label1364,u]
-	check
+	check();
 
 label1365:
 	sbca ,x
-	check
+	check();
 
 label1366:
 	sbca ,u
-	check
+	check();
 
 label1367:
 	sbca [,x]
-	check
+	check();
 
 label1368:
 	sbca [,u]
-	check
+	check();
 
 label1369:
 	sbca b,u
-	check
+	check();
 
 label1370:
 	sbca [b,u]
-	check
+	check();
 
 label1371:
 	sbca ,x+
-	check
+	check();
 
 label1372:
 	sbca ,u+
-	check
+	check();
 
 label1373:
 	sbca ,x++
-	check
+	check();
 
 label1374:
 	sbca ,u++
-	check
+	check();
 
 label1375:
 	sbca [,x++]
-	check
+	check();
 
 label1376:
 	sbca [,u++]
-	check
+	check();
 
 label1377:
 	sbca ,-x
-	check
+	check();
 
 label1378:
 	sbca ,-u
-	check
+	check();
 
 label1379:
 	sbca ,--x
-	check
+	check();
 
 label1380:
 	sbca ,--u
-	check
+	check();
 
 label1381:
 	sbca [,--x]
-	check
+	check();
 
 label1382:
 	sbca [,--u]
-	check
+	check();
 
 label1383:
 	sbca 0,pc
-	check
+	check();
 
 label1384:
 	sbca [0,pc]
-	check
+	check();
 
 label1385:
 	sbca label1385,pcr
-	check
+	check();
 
 label1386:
 	sbca [label1386,pcr]
-	check
+	check();
 
 label1387:
 	sbca [label1387]
-	check
+	check();
 
 label1388:
 	sbcb #$ff
-	check
+	check();
 
 label1389:
 	sbcb <$ff
-	check
+	check();
 
 label1390:
 	sbcb >$ff
-	check
+	check();
 
 label1391:
 	sbcb $ffff
-	check
+	check();
 
 label1392:
 	sbcb label1392,x
-	check
+	check();
 
 label1393:
 	sbcb label1393,u
-	check
+	check();
 
 label1394:
 	sbcb [label1394,x]
-	check
+	check();
 
 label1395:
 	sbcb [label1395,u]
-	check
+	check();
 
 label1396:
 	sbcb ,x
-	check
+	check();
 
 label1397:
 	sbcb ,u
-	check
+	check();
 
 label1398:
 	sbcb [,x]
-	check
+	check();
 
 label1399:
 	sbcb [,u]
-	check
+	check();
 
 label1400:
 	sbcb b,u
-	check
+	check();
 
 label1401:
 	sbcb [b,u]
-	check
+	check();
 
 label1402:
 	sbcb ,x+
-	check
+	check();
 
 label1403:
 	sbcb ,u+
-	check
+	check();
 
 label1404:
 	sbcb ,x++
-	check
+	check();
 
 label1405:
 	sbcb ,u++
-	check
+	check();
 
 label1406:
 	sbcb [,x++]
-	check
+	check();
 
 label1407:
 	sbcb [,u++]
-	check
+	check();
 
 label1408:
 	sbcb ,-x
-	check
+	check();
 
 label1409:
 	sbcb ,-u
-	check
+	check();
 
 label1410:
 	sbcb ,--x
-	check
+	check();
 
 label1411:
 	sbcb ,--u
-	check
+	check();
 
 label1412:
 	sbcb [,--x]
-	check
+	check();
 
 label1413:
 	sbcb [,--u]
-	check
+	check();
 
 label1414:
 	sbcb 0,pc
-	check
+	check();
 
 label1415:
 	sbcb [0,pc]
-	check
+	check();
 
 label1416:
 	sbcb label1416,pcr
-	check
+	check();
 
 label1417:
 	sbcb [label1417,pcr]
-	check
+	check();
 
 label1418:
 	sbcb [label1418]
-	check
+	check();
 
 label1419:
 	sta <$ff
-	check
+	check();
 
 label1420:
 	sta >$ff
-	check
+	check();
 
 label1421:
 	sta $ffff
-	check
+	check();
 
 label1422:
 	sta label1422,x
-	check
+	check();
 
 label1423:
 	sta label1423,u
-	check
+	check();
 
 label1424:
 	sta [label1424,x]
-	check
+	check();
 
 label1425:
 	sta [label1425,u]
-	check
+	check();
 
 label1426:
 	sta ,x
-	check
+	check();
 
 label1427:
 	sta ,u
-	check
+	check();
 
 label1428:
 	sta [,x]
-	check
+	check();
 
 label1429:
 	sta [,u]
-	check
+	check();
 
 label1430:
 	sta b,u
-	check
+	check();
 
 label1431:
 	sta [b,u]
-	check
+	check();
 
 label1432:
 	sta ,x+
-	check
+	check();
 
 label1433:
 	sta ,u+
-	check
+	check();
 
 label1434:
 	sta ,x++
-	check
+	check();
 
 label1435:
 	sta ,u++
-	check
+	check();
 
 label1436:
 	sta [,x++]
-	check
+	check();
 
 label1437:
 	sta [,u++]
-	check
+	check();
 
 label1438:
 	sta ,-x
-	check
+	check();
 
 label1439:
 	sta ,-u
-	check
+	check();
 
 label1440:
 	sta ,--x
-	check
+	check();
 
 label1441:
 	sta ,--u
-	check
+	check();
 
 label1442:
 	sta [,--x]
-	check
+	check();
 
 label1443:
 	sta [,--u]
-	check
+	check();
 
 label1444:
 	sta 0,pc
-	check
+	check();
 
 label1445:
 	sta [0,pc]
-	check
+	check();
 
 label1446:
 	sta label1446,pcr
-	check
+	check();
 
 label1447:
 	sta [label1447,pcr]
-	check
+	check();
 
 label1448:
 	sta [label1448]
-	check
+	check();
 
 label1449:
 	stb <$ff
-	check
+	check();
 
 label1450:
 	stb >$ff
-	check
+	check();
 
 label1451:
 	stb $ffff
-	check
+	check();
 
 label1452:
 	stb label1452,x
-	check
+	check();
 
 label1453:
 	stb label1453,u
-	check
+	check();
 
 label1454:
 	stb [label1454,x]
-	check
+	check();
 
 label1455:
 	stb [label1455,u]
-	check
+	check();
 
 label1456:
 	stb ,x
-	check
+	check();
 
 label1457:
 	stb ,u
-	check
+	check();
 
 label1458:
 	stb [,x]
-	check
+	check();
 
 label1459:
 	stb [,u]
-	check
+	check();
 
 label1460:
 	stb b,u
-	check
+	check();
 
 label1461:
 	stb [b,u]
-	check
+	check();
 
 label1462:
 	stb ,x+
-	check
+	check();
 
 label1463:
 	stb ,u+
-	check
+	check();
 
 label1464:
 	stb ,x++
-	check
+	check();
 
 label1465:
 	stb ,u++
-	check
+	check();
 
 label1466:
 	stb [,x++]
-	check
+	check();
 
 label1467:
 	stb [,u++]
-	check
+	check();
 
 label1468:
 	stb ,-x
-	check
+	check();
 
 label1469:
 	stb ,-u
-	check
+	check();
 
 label1470:
 	stb ,--x
-	check
+	check();
 
 label1471:
 	stb ,--u
-	check
+	check();
 
 label1472:
 	stb [,--x]
-	check
+	check();
 
 label1473:
 	stb [,--u]
-	check
+	check();
 
 label1474:
 	stb 0,pc
-	check
+	check();
 
 label1475:
 	stb [0,pc]
-	check
+	check();
 
 label1476:
 	stb label1476,pcr
-	check
+	check();
 
 label1477:
 	stb [label1477,pcr]
-	check
+	check();
 
 label1478:
 	stb [label1478]
-	check
+	check();
 
 label1479:
 	std <$ff
-	check
+	check();
 
 label1480:
 	std >$ff
-	check
+	check();
 
 label1481:
 	std $ffff
-	check
+	check();
 
 label1482:
 	std label1482,x
-	check
+	check();
 
 label1483:
 	std label1483,u
-	check
+	check();
 
 label1484:
 	std [label1484,x]
-	check
+	check();
 
 label1485:
 	std [label1485,u]
-	check
+	check();
 
 label1486:
 	std ,x
-	check
+	check();
 
 label1487:
 	std ,u
-	check
+	check();
 
 label1488:
 	std [,x]
-	check
+	check();
 
 label1489:
 	std [,u]
-	check
+	check();
 
 label1490:
 	std b,u
-	check
+	check();
 
 label1491:
 	std [b,u]
-	check
+	check();
 
 label1492:
 	std ,x+
-	check
+	check();
 
 label1493:
 	std ,u+
-	check
+	check();
 
 label1494:
 	std ,x++
-	check
+	check();
 
 label1495:
 	std ,u++
-	check
+	check();
 
 label1496:
 	std [,x++]
-	check
+	check();
 
 label1497:
 	std [,u++]
-	check
+	check();
 
 label1498:
 	std ,-x
-	check
+	check();
 
 label1499:
 	std ,-u
-	check
+	check();
 
 label1500:
 	std ,--x
-	check
+	check();
 
 label1501:
 	std ,--u
-	check
+	check();
 
 label1502:
 	std [,--x]
-	check
+	check();
 
 label1503:
 	std [,--u]
-	check
+	check();
 
 label1504:
 	std 0,pc
-	check
+	check();
 
 label1505:
 	std [0,pc]
-	check
+	check();
 
 label1506:
 	std label1506,pcr
-	check
+	check();
 
 label1507:
 	std [label1507,pcr]
-	check
+	check();
 
 label1508:
 	std [label1508]
-	check
+	check();
 
 label1509:
 	sts <$ff
-	check
+	check();
 
 label1510:
 	sts >$ff
-	check
+	check();
 
 label1511:
 	sts $ffff
-	check
+	check();
 
 label1512:
 	sts label1512,x
-	check
+	check();
 
 label1513:
 	sts label1513,u
-	check
+	check();
 
 label1514:
 	sts [label1514,x]
-	check
+	check();
 
 label1515:
 	sts [label1515,u]
-	check
+	check();
 
 label1516:
 	sts ,x
-	check
+	check();
 
 label1517:
 	sts ,u
-	check
+	check();
 
 label1518:
 	sts [,x]
-	check
+	check();
 
 label1519:
 	sts [,u]
-	check
+	check();
 
 label1520:
 	sts b,u
-	check
+	check();
 
 label1521:
 	sts [b,u]
-	check
+	check();
 
 label1522:
 	sts ,x+
-	check
+	check();
 
 label1523:
 	sts ,u+
-	check
+	check();
 
 label1524:
 	sts ,x++
-	check
+	check();
 
 label1525:
 	sts ,u++
-	check
+	check();
 
 label1526:
 	sts [,x++]
-	check
+	check();
 
 label1527:
 	sts [,u++]
-	check
+	check();
 
 label1528:
 	sts ,-x
-	check
+	check();
 
 label1529:
 	sts ,-u
-	check
+	check();
 
 label1530:
 	sts ,--x
-	check
+	check();
 
 label1531:
 	sts ,--u
-	check
+	check();
 
 label1532:
 	sts [,--x]
-	check
+	check();
 
 label1533:
 	sts [,--u]
-	check
+	check();
 
 label1534:
 	sts 0,pc
-	check
+	check();
 
 label1535:
 	sts [0,pc]
-	check
+	check();
 
 label1536:
 	sts label1536,pcr
-	check
+	check();
 
 label1537:
 	sts [label1537,pcr]
-	check
+	check();
 
 label1538:
 	sts [label1538]
-	check
+	check();
 
 label1539:
 	stu <$ff
-	check
+	check();
 
 label1540:
 	stu >$ff
-	check
+	check();
 
 label1541:
 	stu $ffff
-	check
+	check();
 
 label1542:
 	stu label1542,x
-	check
+	check();
 
 label1543:
 	stu label1543,u
-	check
+	check();
 
 label1544:
 	stu [label1544,x]
-	check
+	check();
 
 label1545:
 	stu [label1545,u]
-	check
+	check();
 
 label1546:
 	stu ,x
-	check
+	check();
 
 label1547:
 	stu ,u
-	check
+	check();
 
 label1548:
 	stu [,x]
-	check
+	check();
 
 label1549:
 	stu [,u]
-	check
+	check();
 
 label1550:
 	stu b,u
-	check
+	check();
 
 label1551:
 	stu [b,u]
-	check
+	check();
 
 label1552:
 	stu ,x+
-	check
+	check();
 
 label1553:
 	stu ,u+
-	check
+	check();
 
 label1554:
 	stu ,x++
-	check
+	check();
 
 label1555:
 	stu ,u++
-	check
+	check();
 
 label1556:
 	stu [,x++]
-	check
+	check();
 
 label1557:
 	stu [,u++]
-	check
+	check();
 
 label1558:
 	stu ,-x
-	check
+	check();
 
 label1559:
 	stu ,-u
-	check
+	check();
 
 label1560:
 	stu ,--x
-	check
+	check();
 
 label1561:
 	stu ,--u
-	check
+	check();
 
 label1562:
 	stu [,--x]
-	check
+	check();
 
 label1563:
 	stu [,--u]
-	check
+	check();
 
 label1564:
 	stu 0,pc
-	check
+	check();
 
 label1565:
 	stu [0,pc]
-	check
+	check();
 
 label1566:
 	stu label1566,pcr
-	check
+	check();
 
 label1567:
 	stu [label1567,pcr]
-	check
+	check();
 
 label1568:
 	stu [label1568]
-	check
+	check();
 
 label1569:
 	stx <$ff
-	check
+	check();
 
 label1570:
 	stx >$ff
-	check
+	check();
 
 label1571:
 	stx $ffff
-	check
+	check();
 
 label1572:
 	stx label1572,x
-	check
+	check();
 
 label1573:
 	stx label1573,u
-	check
+	check();
 
 label1574:
 	stx [label1574,x]
-	check
+	check();
 
 label1575:
 	stx [label1575,u]
-	check
+	check();
 
 label1576:
 	stx ,x
-	check
+	check();
 
 label1577:
 	stx ,u
-	check
+	check();
 
 label1578:
 	stx [,x]
-	check
+	check();
 
 label1579:
 	stx [,u]
-	check
+	check();
 
 label1580:
 	stx b,u
-	check
+	check();
 
 label1581:
 	stx [b,u]
-	check
+	check();
 
 label1582:
 	stx ,x+
-	check
+	check();
 
 label1583:
 	stx ,u+
-	check
+	check();
 
 label1584:
 	stx ,x++
-	check
+	check();
 
 label1585:
 	stx ,u++
-	check
+	check();
 
 label1586:
 	stx [,x++]
-	check
+	check();
 
 label1587:
 	stx [,u++]
-	check
+	check();
 
 label1588:
 	stx ,-x
-	check
+	check();
 
 label1589:
 	stx ,-u
-	check
+	check();
 
 label1590:
 	stx ,--x
-	check
+	check();
 
 label1591:
 	stx ,--u
-	check
+	check();
 
 label1592:
 	stx [,--x]
-	check
+	check();
 
 label1593:
 	stx [,--u]
-	check
+	check();
 
 label1594:
 	stx 0,pc
-	check
+	check();
 
 label1595:
 	stx [0,pc]
-	check
+	check();
 
 label1596:
 	stx label1596,pcr
-	check
+	check();
 
 label1597:
 	stx [label1597,pcr]
-	check
+	check();
 
 label1598:
 	stx [label1598]
-	check
+	check();
 
 label1599:
 	sty <$ff
-	check
+	check();
 
 label1600:
 	sty >$ff
-	check
+	check();
 
 label1601:
 	sty $ffff
-	check
+	check();
 
 label1602:
 	sty label1602,x
-	check
+	check();
 
 label1603:
 	sty label1603,u
-	check
+	check();
 
 label1604:
 	sty [label1604,x]
-	check
+	check();
 
 label1605:
 	sty [label1605,u]
-	check
+	check();
 
 label1606:
 	sty ,x
-	check
+	check();
 
 label1607:
 	sty ,u
-	check
+	check();
 
 label1608:
 	sty [,x]
-	check
+	check();
 
 label1609:
 	sty [,u]
-	check
+	check();
 
 label1610:
 	sty b,u
-	check
+	check();
 
 label1611:
 	sty [b,u]
-	check
+	check();
 
 label1612:
 	sty ,x+
-	check
+	check();
 
 label1613:
 	sty ,u+
-	check
+	check();
 
 label1614:
 	sty ,x++
-	check
+	check();
 
 label1615:
 	sty ,u++
-	check
+	check();
 
 label1616:
 	sty [,x++]
-	check
+	check();
 
 label1617:
 	sty [,u++]
-	check
+	check();
 
 label1618:
 	sty ,-x
-	check
+	check();
 
 label1619:
 	sty ,-u
-	check
+	check();
 
 label1620:
 	sty ,--x
-	check
+	check();
 
 label1621:
 	sty ,--u
-	check
+	check();
 
 label1622:
 	sty [,--x]
-	check
+	check();
 
 label1623:
 	sty [,--u]
-	check
+	check();
 
 label1624:
 	sty 0,pc
-	check
+	check();
 
 label1625:
 	sty [0,pc]
-	check
+	check();
 
 label1626:
 	sty label1626,pcr
-	check
+	check();
 
 label1627:
 	sty [label1627,pcr]
-	check
+	check();
 
 label1628:
 	sty [label1628]
-	check
+	check();
 
 label1629:
 	suba #$ff
-	check
+	check();
 
 label1630:
 	suba <$ff
-	check
+	check();
 
 label1631:
 	suba >$ff
-	check
+	check();
 
 label1632:
 	suba $ffff
-	check
+	check();
 
 label1633:
 	suba label1633,x
-	check
+	check();
 
 label1634:
 	suba label1634,u
-	check
+	check();
 
 label1635:
 	suba [label1635,x]
-	check
+	check();
 
 label1636:
 	suba [label1636,u]
-	check
+	check();
 
 label1637:
 	suba ,x
-	check
+	check();
 
 label1638:
 	suba ,u
-	check
+	check();
 
 label1639:
 	suba [,x]
-	check
+	check();
 
 label1640:
 	suba [,u]
-	check
+	check();
 
 label1641:
 	suba b,u
-	check
+	check();
 
 label1642:
 	suba [b,u]
-	check
+	check();
 
 label1643:
 	suba ,x+
-	check
+	check();
 
 label1644:
 	suba ,u+
-	check
+	check();
 
 label1645:
 	suba ,x++
-	check
+	check();
 
 label1646:
 	suba ,u++
-	check
+	check();
 
 label1647:
 	suba [,x++]
-	check
+	check();
 
 label1648:
 	suba [,u++]
-	check
+	check();
 
 label1649:
 	suba ,-x
-	check
+	check();
 
 label1650:
 	suba ,-u
-	check
+	check();
 
 label1651:
 	suba ,--x
-	check
+	check();
 
 label1652:
 	suba ,--u
-	check
+	check();
 
 label1653:
 	suba [,--x]
-	check
+	check();
 
 label1654:
 	suba [,--u]
-	check
+	check();
 
 label1655:
 	suba 0,pc
-	check
+	check();
 
 label1656:
 	suba [0,pc]
-	check
+	check();
 
 label1657:
 	suba label1657,pcr
-	check
+	check();
 
 label1658:
 	suba [label1658,pcr]
-	check
+	check();
 
 label1659:
 	suba [label1659]
-	check
+	check();
 
 label1660:
 	subb #$ff
-	check
+	check();
 
 label1661:
 	subb <$ff
-	check
+	check();
 
 label1662:
 	subb >$ff
-	check
+	check();
 
 label1663:
 	subb $ffff
-	check
+	check();
 
 label1664:
 	subb label1664,x
-	check
+	check();
 
 label1665:
 	subb label1665,u
-	check
+	check();
 
 label1666:
 	subb [label1666,x]
-	check
+	check();
 
 label1667:
 	subb [label1667,u]
-	check
+	check();
 
 label1668:
 	subb ,x
-	check
+	check();
 
 label1669:
 	subb ,u
-	check
+	check();
 
 label1670:
 	subb [,x]
-	check
+	check();
 
 label1671:
 	subb [,u]
-	check
+	check();
 
 label1672:
 	subb b,u
-	check
+	check();
 
 label1673:
 	subb [b,u]
-	check
+	check();
 
 label1674:
 	subb ,x+
-	check
+	check();
 
 label1675:
 	subb ,u+
-	check
+	check();
 
 label1676:
 	subb ,x++
-	check
+	check();
 
 label1677:
 	subb ,u++
-	check
+	check();
 
 label1678:
 	subb [,x++]
-	check
+	check();
 
 label1679:
 	subb [,u++]
-	check
+	check();
 
 label1680:
 	subb ,-x
-	check
+	check();
 
 label1681:
 	subb ,-u
-	check
+	check();
 
 label1682:
 	subb ,--x
-	check
+	check();
 
 label1683:
 	subb ,--u
-	check
+	check();
 
 label1684:
 	subb [,--x]
-	check
+	check();
 
 label1685:
 	subb [,--u]
-	check
+	check();
 
 label1686:
 	subb 0,pc
-	check
+	check();
 
 label1687:
 	subb [0,pc]
-	check
+	check();
 
 label1688:
 	subb label1688,pcr
-	check
+	check();
 
 label1689:
 	subb [label1689,pcr]
-	check
+	check();
 
 label1690:
 	subb [label1690]
-	check
+	check();
 
 label1691:
 	subd #$ff
-	check
+	check();
 
 label1692:
 	subd <$ff
-	check
+	check();
 
 label1693:
 	subd >$ff
-	check
+	check();
 
 label1694:
 	subd $ffff
-	check
+	check();
 
 label1695:
 	subd label1695,x
-	check
+	check();
 
 label1696:
 	subd label1696,u
-	check
+	check();
 
 label1697:
 	subd [label1697,x]
-	check
+	check();
 
 label1698:
 	subd [label1698,u]
-	check
+	check();
 
 label1699:
 	subd ,x
-	check
+	check();
 
 label1700:
 	subd ,u
-	check
+	check();
 
 label1701:
 	subd [,x]
-	check
+	check();
 
 label1702:
 	subd [,u]
-	check
+	check();
 
 label1703:
 	subd b,u
-	check
+	check();
 
 label1704:
 	subd [b,u]
-	check
+	check();
 
 label1705:
 	subd ,x+
-	check
+	check();
 
 label1706:
 	subd ,u+
-	check
+	check();
 
 label1707:
 	subd ,x++
-	check
+	check();
 
 label1708:
 	subd ,u++
-	check
+	check();
 
 label1709:
 	subd [,x++]
-	check
+	check();
 
 label1710:
 	subd [,u++]
-	check
+	check();
 
 label1711:
 	subd ,-x
-	check
+	check();
 
 label1712:
 	subd ,-u
-	check
+	check();
 
 label1713:
 	subd ,--x
-	check
+	check();
 
 label1714:
 	subd ,--u
-	check
+	check();
 
 label1715:
 	subd [,--x]
-	check
+	check();
 
 label1716:
 	subd [,--u]
-	check
+	check();
 
 label1717:
 	subd 0,pc
-	check
+	check();
 
 label1718:
 	subd [0,pc]
-	check
+	check();
 
 label1719:
 	subd label1719,pcr
-	check
+	check();
 
 label1720:
 	subd [label1720,pcr]
-	check
+	check();
 
 label1721:
 	subd [label1721]
-	check
+	check();
 
 label1722:
 	tfr x,y
-	check
+	check();
 
 label1723:
 	tfr a,b
-	check
+	check();
 
 label1724:
 	tst <$ff
-	check
+	check();
 
 label1725:
 	tst >$ff
-	check
+	check();
 
 label1726:
 	tst $ffff
-	check
+	check();
 
 label1727:
 	tst label1727,x
-	check
+	check();
 
 label1728:
 	tst label1728,u
-	check
+	check();
 
 label1729:
 	tst [label1729,x]
-	check
+	check();
 
 label1730:
 	tst [label1730,u]
-	check
+	check();
 
 label1731:
 	tst ,x
-	check
+	check();
 
 label1732:
 	tst ,u
-	check
+	check();
 
 label1733:
 	tst [,x]
-	check
+	check();
 
 label1734:
 	tst [,u]
-	check
+	check();
 
 label1735:
 	tst b,u
-	check
+	check();
 
 label1736:
 	tst [b,u]
-	check
+	check();
 
 label1737:
 	tst ,x+
-	check
+	check();
 
 label1738:
 	tst ,u+
-	check
+	check();
 
 label1739:
 	tst ,x++
-	check
+	check();
 
 label1740:
 	tst ,u++
-	check
+	check();
 
 label1741:
 	tst [,x++]
-	check
+	check();
 
 label1742:
 	tst [,u++]
-	check
+	check();
 
 label1743:
 	tst ,-x
-	check
+	check();
 
 label1744:
 	tst ,-u
-	check
+	check();
 
 label1745:
 	tst ,--x
-	check
+	check();
 
 label1746:
 	tst ,--u
-	check
+	check();
 
 label1747:
 	tst [,--x]
-	check
+	check();
 
 label1748:
 	tst [,--u]
-	check
+	check();
 
 label1749:
 	tst 0,pc
-	check
+	check();
 
 label1750:
 	tst [0,pc]
-	check
+	check();
 
 label1751:
 	tst label1751,pcr
-	check
+	check();
 
 label1752:
 	tst [label1752,pcr]
-	check
+	check();
 
 label1753:
 	tst [label1753]
-	check
+	check();
 

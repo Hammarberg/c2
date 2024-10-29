@@ -9,11 +9,10 @@
 
 	@ = $1000
 	var opstart = @;
-
 	c2_file reference("a.out");
 
-	macro check
-	{
+	// C++ lambda function
+	auto check = [this, &reference, &opstart](){
 		var size = @ - opstart;
 		repeat(size)
 		{
@@ -33,6 +32,6 @@
 			}
 		}
 		opstart = @;
-	}
+	};
 
 	#include "optest_generated.s"
