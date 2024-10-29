@@ -96,7 +96,7 @@ public:
 	void unlink(stok *i);
 	stok *link(stok *i, stok *a);
 	
-	int count();
+	int count() const;
 
 	bool operator==(const toklink &o) const;
 	

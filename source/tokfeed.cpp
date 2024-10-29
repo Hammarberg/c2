@@ -13,6 +13,10 @@
 
 #include "tokfeed.h"
 
+///////////////////////////////////////////////////////////////////////////////
+// tokline
+///////////////////////////////////////////////////////////////////////////////
+
 stok *tokline::pull_tok()
 {
 	if(!psstr)
@@ -107,6 +111,10 @@ stok *tokline::pull_tok()
 	return tok;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// tokoutfile
+///////////////////////////////////////////////////////////////////////////////
+
 void tokoutfile::push_tok(stok *o)
 {
 	assert(o);
@@ -135,9 +143,9 @@ toklink::toklink(const toklink &o)
 toklink &toklink::operator=(const toklink &o)
 {
 	pchain->deref();
-	pos=o.pos;
-	end=o.end;
-	pchain=o.pchain;
+	pos = o.pos;
+	end = o.end;
+	pchain = o.pchain;
 	pchain->ref();
 
 	return *this;
@@ -296,7 +304,7 @@ bool toklink::operator==(const toklink &o) const
 	return true;
 }
 
-int toklink::count()
+int toklink::count() const
 {
 	int n = 0;
 	stok *p = pchain->first;
