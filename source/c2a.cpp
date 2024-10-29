@@ -1112,6 +1112,33 @@ void c2a::s_parse1(toklink &link)
 						link.link(maketok(o, ";", etype::OP), n->get_prev_nonspace());
 					}
 				}
+				else if(!strcasecmp("global", o->name))
+				{
+					//Force lowercase or name
+					strcpy(o->name, "global");
+
+					if(o->ord != 0 && !label_declared)
+					{
+						error(o, "Unexpected global location");
+					}
+
+					//Slap on ;
+					stok *n = o;
+					while(o->is_same_line(n))
+					{
+						n = n->get_next();
+						if(!n)
+							error(o, "Unexpected end of file");
+					}
+
+					link.link(maketok(o, ";", etype::OP), n->get_prev_nonspace());
+
+					linkinit(maketok(o, "var "), link);
+					linkinit(clone(op[2]), link);
+					linkinit(maketok(o, ";\n"), link);
+
+					o->mute();
+				}
 				else if((o->ord == 0 || label_declared) && match_macro(o, link))
 				{
 					// Make sure the right scope is set up
