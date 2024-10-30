@@ -98,9 +98,10 @@ public:
 	void c_parse(toklink &link);
 	void process(const char *infile, const char *outfile);
 	
-	stok *c2_top = nullptr;
-	stok *c2_asm = nullptr;
-	stok *c2_end = nullptr;
+	stok *c2_top = nullptr;	//Header position for declarations
+	stok *c2_asm = nullptr;	//Asm start position
+	stok *c2_imp = nullptr;	//Global macro implementation pos within asm space (to be scoped in the near future)
+	stok *c2_end = nullptr;	//End of asm section
 	
 	int verbose = 0;
 	
@@ -130,4 +131,5 @@ private:
 	void info(int verboselevel, stok *o, const char *format, ...);
 
 	bool parse1_macro_expanded = false;
+	void s_parse1_insert_slix(stok *o, bool macro, toklink &link);
 };

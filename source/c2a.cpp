@@ -512,10 +512,14 @@ bool c2a::match_macro(stok *io, toklink &link)
 	{
 		cmacro *m = mi->second.get();
 		//m->print();
-		m->signature.restart();
-		
+
+		if(m->disablecount)
+		{
+			error(io, "Recursive macro");
+		}
+
 		std::vector<stok *> def;  // Macro header definition
-		
+		m->signature.restart();
 		stok *t = m->signature.pull_tok();
 		while(t)
 		{
@@ -523,20 +527,16 @@ bool c2a::match_macro(stok *io, toklink &link)
 			t = t->get_next();
 		}
 
-		if(m->disablecount)
-		{
-			disabled_detected = true;
-		}
-		else if(match_macro_parameters(def, par, m->inputs, outargs, outisarray))
+		if(match_macro_parameters(def, par, m->inputs, outargs, outisarray))
 		{
 			assert(outargs.size() == m->inputs.size());
 
-			stok *rpos = nullptr;
-			toklink out = link;
-			out.restart(io->get_prev());
 
 			if(m->implementation.empty())
 			{
+				toklink out = link;
+				out.restart(c2_imp);
+
 				m->implementation = autolabel(io->name);
 
 				//Prepare function pointer
@@ -567,6 +567,7 @@ bool c2a::match_macro(stok *io, toklink &link)
 				// The first op from the macro should be '{', push it
 				o = m->pull_tok();
 				assert(o && *o->name == '{');
+				stok *rpos;
 				out.push_tok(rpos = clone(o));
 
 				//Avoid some preprocessor directions
@@ -600,15 +601,24 @@ bool c2a::match_macro(stok *io, toklink &link)
 
 				out.push_tok(maketok(io, ";", etype::OP));
 
+				c2_imp = out.get_pos();
+
 				parse1_macro_expanded = true;
+
+				// Recursively run parse1 over the expanded macro body
+				toklink sub = link;
+				sub.restart(rpos, out.get_pos());
+				s_parse1(sub);
 			}
+
+			toklink out = link;
+			out.restart(io->get_prev());
 
 			// Call lambda
 			out.push_tok(maketok(io, m->implementation.c_str()));
 
 			// Set restart pos if not already set
-			if(!rpos)
-				rpos = out.get_pos();
+			stok *rpos = out.get_pos();
 
 			char ctmp[128];
 			snprintf(ctmp, sizeof(ctmp), "(%d,%d", int(io->fileindex), io->line);
@@ -711,11 +721,6 @@ bool c2a::match_macro(stok *io, toklink &link)
 			return true;
 		}
 	}
-
-	if(disabled_detected)
-	{
-		error(io, "Recursive macro");
-	}
 	
 	//Warn about nearly matched macro here
 	warning(io, "\"%s\" looks like a macro but could not match any parameters\n", io->name);
@@ -730,7 +735,7 @@ void c2a::parse_macro_body(toklink &in, toklink &out)
 		stok *o = in.pull_tok();
 		
 		if(!o)
-			error(o, "Unexpected end");
+			error(o->get_prev(), "Unexpected end of macro");
 			
 		out.push_tok(clone(o));
 		
@@ -984,43 +989,42 @@ void c2a::s_parse0(toklink &link)
 	}
 }
 
+void c2a::s_parse1_insert_slix(stok *o, bool macro, toklink &link)
+{
+	size_t scopelix_stack_size = scopelix_stack.size();
+	if(!scopelix_stack_size)
+	{
+		// Should never happen
+		error(o, "Attemped assembly outside any scope");
+	}
+
+	sslix &slix=scopelix_stack[scopelix_stack_size-1];
+
+	if(!slix.implemented)
+	{
+		VERBOSE(6, "slix %p\n",slix.start);
+
+		// Push debug stack and scope label index
+		slix.implemented = true;
+		slix.slix = scopelix;
+
+		char ctmp[256];
+		if(!macro)
+		{
+			snprintf(ctmp, sizeof(ctmp), "c2_scope(%d,%d,%d);", int(slix.start->fileindex), slix.start->line, int(scopelix));
+		}
+		else
+		{
+			snprintf(ctmp, sizeof(ctmp), "c2_scope(c2if,c2il,%d);", int(scopelix));
+		}
+
+		link.link(maketok(slix.start, ctmp), link.link(maketok(slix.start, "c2_sscope "), slix.start));
+		scopelix++;
+	}
+}
 
 void c2a::s_parse1(toklink &link)
 {
-	auto insert_slix=[this, &link](stok *o, bool macro)
-		{
-			size_t scopelix_stack_size = scopelix_stack.size();
-			if(!scopelix_stack_size)
-			{
-				// Should never happen
-				error(o, "Attemped assembly outside any scope");
-			}
-
-			sslix &slix=scopelix_stack[scopelix_stack_size-1];
-
-			if(!slix.implemented)
-			{
-				VERBOSE(6, "slix %p\n",slix.start);
-
-				// Push debug stack and scope label index
-				slix.implemented = true;
-				slix.slix = scopelix;
-
-				char ctmp[256];
-				if(!macro)
-				{
-					snprintf(ctmp, sizeof(ctmp), "c2_scope(%d,%d,%d);", int(slix.start->fileindex), slix.start->line, int(scopelix));
-				}
-				else
-				{
-					snprintf(ctmp, sizeof(ctmp), "c2_scope(c2if,c2il,%d);", int(scopelix));
-				}
-
-				link.link(maketok(slix.start, ctmp), link.link(maketok(slix.start, "c2_sscope "), slix.start));
-				scopelix++;
-			}
-		};
-
 	std::string stmp;
 	bool label_declared = false;
 
@@ -1086,7 +1090,6 @@ void c2a::s_parse1(toklink &link)
 					cmacro *m = macro_stack.back();
 					macro_stack.pop_back();
 					m->disablecount--;
-
 				}
 				else if(!strcasecmp("macro", o->name))
 				{
@@ -1281,7 +1284,7 @@ void c2a::s_parse1(toklink &link)
 							if(plabel)
 							{
 								// Scope
-								insert_slix(plabel, false);
+								s_parse1_insert_slix(plabel, false, link);
 
 								// label detected
 								bool local = false;
@@ -1428,7 +1431,7 @@ void c2a::s_parse1(toklink &link)
 						if(parse1_macro_expanded)
 						{
 							VERBOSE(7, "Inserting macro c2_scope\n");
-							insert_slix(o, true);
+							s_parse1_insert_slix(o, true, link);
 							parse1_macro_expanded = false;
 						}
 					}
@@ -1542,7 +1545,7 @@ void c2a::s_parse2(toklink &link)
 		}
 		
 		//label_declared = o->label_declared == 1;
-		
+
 		switch(o->type)
 		{
 			case etype::ALPHA:
@@ -1579,7 +1582,7 @@ void c2a::s_parse2(toklink &link)
 					
 					stmp = root_labels[o->root_labelindex].first;
 					stmp += o->name;
-					
+
 					auto i = labelmap.find(stmp);
 					if(i != labelmap.end())
 					{
@@ -1690,9 +1693,10 @@ void c2a::c_parse(toklink &link)
 
 	if(!c2_asm)
 		error(nullptr, "Missing C2_SECTION_ASM");
-		
+
+	stok *after = c2_imp = c2_asm;
+
 	//Insert a default root label
-	stok *after = c2_asm;
 	after = link.link(maketok(c2_asm, "\n", etype::SPACE, -1), after);
 	after = link.link(maketok(c2_asm, autolabel("root").c_str(), etype::ALPHA, 0), after);
 	after = link.link(maketok(c2_asm, ":", etype::OP, 1), after);
