@@ -20,10 +20,10 @@
 #include <functional>
 #include <cmath>
 
-#define c2_verbose(...) c2_log(c2_eloglevel::verbose, __FILE__, __LINE__, __VA_ARGS__);
-#define c2_info(...) c2_log(c2_eloglevel::info, __FILE__, __LINE__, __VA_ARGS__);
-#define c2_warning(...) c2_log(c2_eloglevel::warning, __FILE__, __LINE__, __VA_ARGS__);
-#define c2_error(...) c2_log(c2_eloglevel::error, __FILE__, __LINE__, __VA_ARGS__);
+#define c2_verbose(...) c2_get_single()->c2_log(1,c2_eloggroup::verbose,__FILE__,__LINE__,__VA_ARGS__);
+#define c2_info(...)    c2_get_single()->c2_log(0,c2_eloggroup::info,__FILE__, __LINE__, __VA_ARGS__);
+#define c2_warning(...) c2_get_single()->c2_log(0,c2_eloggroup::warning,__FILE__,__LINE__,__VA_ARGS__);
+#define c2_error(...)   c2_get_single()->c2_log(0,c2_eloggroup::error,__FILE__,__LINE__,__VA_ARGS__);
 
 class c2i
 {
@@ -264,7 +264,7 @@ public:
 		return c2sr<BITS>(n);
 	}
 	
-	enum c2_eloglevel : uint8_t
+	enum c2_eloggroup : uint8_t
 	{
 		verbose,
 		info,
@@ -272,8 +272,8 @@ public:
 		error
 	};
 	
-	void c2_log(c2_eloglevel level, const char *file, int line, const char *format, ...);
-	
+	void c2_log(int level, c2_eloggroup group, const char *file, int line, const char *format, ...);
+
 	class c2_file
 	{
 	public:
@@ -300,7 +300,7 @@ public:
 	};
 	
 	void loadbin(const char *file, size_t offset = 0, size_t length = -1);
-	static var loadvar(const char *file, size_t offset = 0, size_t length = -1);
+	var loadvar(const char *file, size_t offset = 0, size_t length = -1);
 	void loadstream(const char *cmd, size_t offset = 0, size_t length = -1);
 	
 	void c2_add_arg(const char *format, ...);
@@ -334,12 +334,12 @@ public:
 	void c2_poke(cint pos, cint data);
 	uint8_t c2_peek(cint pos);
 
-	virtual void c2_config_setup_info(const char *title, bool verbose);
+	virtual void c2_config_setup_info(const char *title, int verbose);
 	virtual void c2_config_setup_file(const char *file);
 	virtual void c2_config_setup_include(const char *file);
 	
 	bool c2_allow_overwrite = false;
-	bool c2_verbose = false;
+	int c2_loglevel = 0;
 	bool c2_assembly_step_hash = false;
 
 	cmdi &c2_cmd;

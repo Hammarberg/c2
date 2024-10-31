@@ -151,7 +151,7 @@ struct sinternal
 {
 	cmur3 hash_state;
 	std::vector<sdebugstack> stack_history;
-	std::vector<std::pair<c2i::c2_eloglevel, std::string>> log;
+	std::vector<std::pair<c2i::c2_eloggroup, std::string>> log;
 	size_t pre_log_count = 0;
 	std::vector<std::string> files;
 	std::vector<std::string> include_paths;
@@ -194,5 +194,6 @@ struct sinternal
 		
 		return nullptr;
 	}
-	
+
+	bool silent_info = false;
 };

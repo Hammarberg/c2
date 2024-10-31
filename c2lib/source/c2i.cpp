@@ -19,6 +19,8 @@
 #define strcasecmp _stricmp
 #endif
 
+#define C2I_NOLOG
+
 #include "c2/h/c2i.h"
 #include "c2/h/c2b.h"
 #include "c2/h/c2t.h"
@@ -30,10 +32,15 @@
 #include <memory>
 #include <algorithm>
 
-#define ierror(...) c2_get_single()->c2_log(c2_eloglevel::error, nullptr, 0, __VA_ARGS__)
-#define iwarning(...) c2_get_single()->c2_log(c2_eloglevel::warning, nullptr, 0, __VA_ARGS__)
-#define iverbose(...) c2_get_single()->c2_log(c2_eloglevel::verbose, nullptr, 0, __VA_ARGS__)
-#define iinfo(...) c2_get_single()->c2_log(c2_eloglevel::info, nullptr, 0, __VA_ARGS__)
+#undef c2_verbose
+#undef c2_info
+#undef c2_warning
+#undef c2_error
+#define c2_verbose(...) c2i::c2_log(1,c2_eloggroup::verbose,__FILE__,__LINE__,__VA_ARGS__)
+#define c2_info(...)    c2i::c2_log(0,c2_eloggroup::info, __FILE__, __LINE__, __VA_ARGS__)
+#define c2_warning(...) c2i::c2_log(0,c2_eloggroup::warning,__FILE__,__LINE__,__VA_ARGS__)
+#define c2_error(...)   c2i::c2_log(0,c2_eloggroup::error,__FILE__,__LINE__,__VA_ARGS__)
+#define c2_vlog(LEVEL,...) c2i::c2_log(LEVEL,c2_eloggroup::verbose,__FILE__,__LINE__,__VA_ARGS__)
 
 template <typename T>
 T swap_endian(T u)
@@ -361,7 +368,7 @@ bool c2i::c2_file::open(const char *file)
 		
 		if(!p->fp)
 		{
-			ierror("File not found: %s", file);
+			c2_get_single()->c2_error("File not found: %s", file);
 			return false;
 		}
 		
@@ -397,7 +404,7 @@ c2i::cint c2i::c2_file::seek(c2i::cint newpos)
 	c2file_data *p = (c2file_data *)pinternal;
 	if(newpos < 0 || newpos > p->size)
 	{
-		ierror("Offset %d is beyond file size", int(newpos));
+		c2_get_single()->c2_error("Offset %d is beyond file size", int(newpos));
 		return pos();
 	}
 	fseek(p->fp, long(newpos), SEEK_SET);
@@ -560,6 +567,7 @@ c2i::c2i(cmdi *pcmd)
 	c2_cmd.declare("--address-range", "-m", "<start> <end>: Set the valid memory address range available for the assembly to target. Addresses must be numerical", 2);
 	c2_cmd.declare("--hash", nullptr, "[expected]: Compare the final assembly hash with the expected hash. If no expected hash is given, output final hash", 0, 1);
 	c2_cmd.declare("--org", "-O", "<address> [reloc address]: Set ORG. Addresses must be numerical", 1, 2);
+	c2_cmd.declare("--silent-info", nullptr, "Prevent c2_info() printouts");
 }
 
 c2i::~c2i()
@@ -576,7 +584,7 @@ void c2i::push8(c2i::cint b, bool isaddr)
 {
 	if(!var::inrange(8, b))
 	{
-		ierror("Byte overflow storing value %lld", b);
+		c2_error("Byte overflow storing value %lld", b);
 	}
 	
 	push(b);
@@ -586,7 +594,7 @@ void c2i::push16le(c2i::cint b, bool isaddr)
 {
 	if(!var::inrange(16, b))
 	{
-		ierror("Word overflow storing value %lld", b);
+		c2_error("Word overflow storing value %lld", b);
 	}
 	
 	push(b&255);
@@ -597,7 +605,7 @@ void c2i::push16be(c2i::cint b, bool isaddr)
 {
 	if(!var::inrange(16, b))
 	{
-		ierror("Word overflow");
+		c2_error("Word overflow");
 	}
 	
 	push(b>>8);
@@ -608,7 +616,7 @@ void c2i::push32le(c2i::cint b, bool isaddr)
 {
 	if(!var::inrange(32, b))
 	{
-		ierror("Dword overflow");
+		c2_error("Dword overflow");
 	}
 	
 	push(b);
@@ -621,7 +629,7 @@ void c2i::push32be(c2i::cint b, bool isaddr)
 {
 	if(!var::inrange(32, b))
 	{
-		ierror("Dword overflow");
+		c2_error("Dword overflow");
 	}
 	
 	push(b>>24);
@@ -673,12 +681,12 @@ void c2i::c2_poke(c2i::cint pos, c2i::cint data)
 
 	if(pos < RAM_base || pos >= RAM_base+RAM_size)
 	{
-		ierror("Out of range writing to address 0x%x", int(c2_org.orgw));
+		c2_error("Out of range writing to address 0x%x", int(c2_org.orgw));
 	}
 	else
 	{
 		if(c2_allow_overwrite == false && RAM_use[pos - RAM_base])
-			ierror("Overwriting already assembled data at address 0x%x", int(pos));
+			c2_error("Overwriting already assembled data at address 0x%x", int(pos));
 		
 		RAM[pos - RAM_base] = uint8_t(data);
 		RAM_use[pos - RAM_base] = 1;
@@ -687,9 +695,9 @@ void c2i::c2_poke(c2i::cint pos, c2i::cint data)
 	if(c2_assembly_step_hash)
 	{
 #if !defined(_MSC_VER) && !defined(__MINGW64__)
-		iinfo("%02x %016lx%016lx", int(data), p->hash_state.hash.h1, p->hash_state.hash.h2);
+		c2_info("%02x %016lx%016lx", int(data), p->hash_state.hash.h1, p->hash_state.hash.h2);
 #else
-		iinfo("%02x %016llx%016llx", int(data), p->hash_state.hash.h1, p->hash_state.hash.h2);
+		c2_info("%02x %016llx%016llx", int(data), p->hash_state.hash.h1, p->hash_state.hash.h2);
 #endif
 	}
 }
@@ -698,7 +706,7 @@ uint8_t c2i::c2_peek(c2i::cint pos)
 {
 	if(pos < RAM_base || pos >= RAM_base+RAM_size)
 	{
-		ierror("Out of range reading from address 0x%x", int(c2_org.orgw));
+		c2_error("Out of range reading from address 0x%x", int(c2_org.orgw));
 		return 0;
 	}
 	return RAM_last[pos - RAM_base];
@@ -761,6 +769,11 @@ bool c2i::c2_assemble()
 
 	try
 	{
+		c2_cmd.invoke("--silent-info", [&](int arga, const char *argc[])
+		{
+			p->silent_info = true;
+		});
+
 		c2_pre();
 
 		c2_reset_pass();
@@ -783,16 +796,17 @@ bool c2i::c2_assemble()
 				c2_org.restore(org_backup_a, org_backup_w);
 				c2_reset_pass();
 
-				if(!c2_assembly_step_hash && c2_verbose)
+				if(!c2_assembly_step_hash && c2_loglevel >= 1)
 				{
 					fprintf(stderr, "Pass %d", pass);
 					needcrlf = true;
 				}
+
 				c2_pass();
 				p->hash_state.finalize();
 				cmur3::shash hash = p->hash_state.hash;
 
-				if(!c2_assembly_step_hash && c2_verbose)
+				if(!c2_assembly_step_hash && c2_loglevel >= 1)
 				{
 #if !defined(_MSC_VER) && !defined(__MINGW64__)
 					fprintf(stderr, ": %016lx%016lx\n", hash.h1, hash.h2);
@@ -827,7 +841,7 @@ bool c2i::c2_assemble()
 		result = false;
 		std::string out = "error: ";
 		out += str;
-		p->log.push_back(std::pair<c2_eloglevel, std::string>(c2_eloglevel::error, out));
+		p->log.push_back(std::pair<c2_eloggroup, std::string>(c2_eloggroup::error, out));
 	}
 	catch (...)
 	{
@@ -841,18 +855,15 @@ bool c2i::c2_assemble()
 	if(needcrlf)
 		fprintf(stderr, "\n");
 
-	std::vector<std::pair<c2_eloglevel, std::string>> &log = p->log;
+	std::vector<std::pair<c2_eloggroup, std::string>> &log = p->log;
 
 	for(size_t r=0; r<log.size();r++)
 	{
-		c2_eloglevel level = log[r].first;
-		
-		if(level == c2_eloglevel::verbose && c2_verbose == false)
-			continue;
+		c2_eloggroup level = log[r].first;
 		
 		fprintf(stderr, "%s\n", log[r].second.c_str());
 
-		if(level == c2_eloglevel::error)
+		if(level == c2_eloggroup::error)
 		{
 			result = false;
 			break;
@@ -1261,7 +1272,7 @@ void c2i::loadbin(const char *path, size_t offset, size_t length)
 	
 	if(offset > size)
 	{
-		ierror("Requested offset (%d) to is beyond the file size for: %s", int(offset), path);
+		c2_error("Requested offset (%d) to is beyond the file size for: %s", int(offset), path);
 		return;
 	}
 	
@@ -1275,7 +1286,7 @@ void c2i::loadbin(const char *path, size_t offset, size_t length)
 	}
 	else if(length > size - offset)
 	{
-		iwarning("Requested size (%d) to read goes beyond end of file: %s", int(length), path);
+		c2_warning("Requested size (%d) to read goes beyond end of file: %s", int(length), path);
 		toread = size - offset;
 	}
 	else
@@ -1303,7 +1314,7 @@ c2i::var c2i::loadvar(const char *path, size_t offset, size_t length)
 	
 	if(offset > size)
 	{
-		ierror("Requested offset (%d) is beyond the file size for: %s", int(offset), path);
+		c2_error("Requested offset (%d) is beyond the file size for: %s", int(offset), path);
 		return v;
 	}
 	
@@ -1317,7 +1328,7 @@ c2i::var c2i::loadvar(const char *path, size_t offset, size_t length)
 	}
 	else if(length > size - offset)
 	{
-		iwarning("Requested read size (%d) is goes beyond end of file: %s", int(length), path);
+		c2_warning("Requested read size (%d) is goes beyond end of file: %s", int(length), path);
 		toread = size - offset;
 	}
 	else
@@ -1340,6 +1351,8 @@ c2i::var c2i::loadvar(const char *path, size_t offset, size_t length)
 
 void c2i::loadstream(const char *cmd, size_t offset, size_t length)
 {
+	c2_verbose("Executing: %s", cmd);
+
 #ifdef _WIN32
 	std::string command = cmd;
 	command = "\"" + command + "\"";
@@ -1350,7 +1363,7 @@ void c2i::loadstream(const char *cmd, size_t offset, size_t length)
 
 	if(!ep)
 	{
-		ierror("Error executing stream command: %s", cmd);
+		c2_error("Error executing stream command: %s", cmd);
 		return;
 	}
 
@@ -1363,7 +1376,7 @@ void c2i::loadstream(const char *cmd, size_t offset, size_t length)
 		n = fread(&b, 1, sizeof(b), ep);
 		if(!n)
 		{
-			ierror("Requested offset (%d) is beyond the stream size for: %s", int(offset), cmd);
+			c2_error("Requested offset (%d) is beyond the stream size for: %s", int(offset), cmd);
 			pclose(ep);
 			return;
 		}
@@ -1444,11 +1457,11 @@ void c2i::c2_scope_pop()
 	p->stack_history.pop_back();
 }
 
-void c2i::c2_config_setup_info(const char *title, bool verbose)
+void c2i::c2_config_setup_info(const char *title, int verbose)
 {
 	sinternal *p = (sinternal *)pinternal;
 	p->title = title;
-	c2_verbose = verbose;
+	c2_loglevel = verbose;
 }
 
 void c2i::c2_config_setup_file(const char *file)
@@ -1463,44 +1476,46 @@ void c2i::c2_config_setup_include(const char *include)
 	p->include_paths.push_back(include);
 }
 
-void c2i::c2_log(c2_eloglevel level, const char *file, int line, const char *format, ...)
+void c2i::c2_log(int level, c2_eloggroup group, const char *file, int line, const char *format, ...)
 {
+	sinternal *p = (sinternal *)pinternal;
+
 	// Not logging anything on first pass
 	if(c2_pass_count == 1)
-		return;
-		
-	switch(level)
 	{
-	case c2_eloglevel::warning:
-		if(warning_count >= 10)
-			return;
-		break;
-	case c2_eloglevel::error:
+		return;
+	}
+	else if(group == c2_eloggroup::error)
+	{
 		if(error_count >= 10)
 			return;
-		break;
-	default:
-		break;
-	};
-		
-	
-	sinternal *p = (sinternal *)pinternal;
-	
-	std::string out;
-	std::vector<sdebugstack> &stack_history = p->stack_history;
-	
-	size_t shs = stack_history.size();
-	if(shs)
+	}
+	else
 	{
-		for(size_t r = 0 ; r < shs; r++)
+		if(c2_loglevel < level && group || c2_eloggroup::info && p->silent_info)
+			return;
+	}
+
+	std::vector<sdebugstack> &stack_history = p->stack_history;
+	size_t shs = 0;
+	std::string out;
+
+	if(group != c2_eloggroup::info)
+	{
+		shs = stack_history.size();
+
+		if(shs)
 		{
-			if(file || (!file && r != shs - 1))
-				out += " expanded from ";
-			
-			out += p->files[stack_history[r].fileindex] + ":" + std::to_string(stack_history[r].line) + ": ";
-			
-			if(r != shs - 1)
-				out += "\n";
+			for(size_t r = 0 ; r < shs; r++)
+			{
+				if(file || (!file && r != shs - 1))
+					out += " expanded from ";
+
+				out += p->files[stack_history[r].fileindex] + ":" + std::to_string(stack_history[r].line) + ": ";
+
+				if(r != shs - 1)
+					out += "\n";
+			}
 		}
 	}
 
@@ -1509,7 +1524,6 @@ void c2i::c2_log(c2_eloglevel level, const char *file, int line, const char *for
 	bool alloc = false;
 	
 	va_list args;
-	
 	va_start (args, format);
 	int n = vsnprintf (pstr, sizeof(buffer), format, args);
 	va_end (args);
@@ -1532,19 +1546,19 @@ void c2i::c2_log(c2_eloglevel level, const char *file, int line, const char *for
 		out += ":" + std::to_string(line) + ": ";
 	}
 	
-	switch(level)
+	switch(group)
 	{
-		case c2_eloglevel::verbose:
+		case c2_eloggroup::verbose:
 			out += "verbose: ";
 		break;
-		case c2_eloglevel::info:
+		case c2_eloggroup::info:
 			out += "info: ";
 		break;
-		case c2_eloglevel::warning:
+		case c2_eloggroup::warning:
 			out += "warning: ";
 			warning_count++;
 		break;
-		case c2_eloglevel::error:
+		case c2_eloggroup::error:
 			out += "error: ";
 			error_count++;
 		break;
@@ -1559,14 +1573,14 @@ void c2i::c2_log(c2_eloglevel level, const char *file, int line, const char *for
 		delete [] pstr;
 	}
 	
-	p->log.push_back(std::pair<c2i::c2_eloglevel, std::string>(level, out));
-
-	//std::cerr << out.c_str();
+	p->log.push_back(std::pair<c2i::c2_eloggroup, std::string>(group, out));
 }
 
 void c2i::c2_register_var(const char *name, const char *from, int mode, c2i::c2_vardata *pv)
 {
-	iverbose("Register %s", name);
+	if(c2_loglevel >= 2)
+		fprintf(stderr, "Label: %s\n", name);
+
 	sinternal *p = (sinternal *)pinternal;
 
 	auto i = p->registered_vars.find(name);
@@ -1721,7 +1735,7 @@ void c2i::c2_subassemble(const char *source)
 	FILE *fp = fopen(in.c_str(), "wb");
 	if(!fp)
 	{
-		ierror("Intermediate file error executing sub assembly: %s", command.c_str());
+		c2_error("Intermediate file error executing sub assembly: %s", command.c_str());
 		return;
 	}
 
@@ -1738,7 +1752,7 @@ void c2i::c2_subassemble(const char *source)
 
 	fclose(fp);
 
-	iverbose("Executing: %s\n", command.c_str());
+	c2_verbose("Executing: %s", command.c_str());
 
 #ifdef _WIN32
 	command = "\"" + command + "\"";
@@ -1749,7 +1763,7 @@ void c2i::c2_subassemble(const char *source)
 
 	if(!ep)
 	{
-		ierror("Error executing sub assembly: %s", command.c_str());
+		c2_error("Error executing sub assembly: %s", command.c_str());
 		return;
 	}
 
@@ -1766,7 +1780,7 @@ void c2i::c2_subassemble(const char *source)
 
 		if(n < 0)
 		{
-			ierror("Error reading sub assembly data: %s", command.c_str());
+			c2_error("Error reading sub assembly data: %s", command.c_str());
 			return;
 		}
 
@@ -1787,13 +1801,13 @@ void c2i::c2_subassemble(const char *source)
 		fp = fopen(err.c_str(),"r");
 		if(!fp)
 		{
-			ierror("Intermediate file error executing sub assembly: %s", command.c_str());
+			c2_error("Intermediate file error executing sub assembly: %s", command.c_str());
 			return;
 		}
 
 		c2tools::load(fp, error);
 		fclose(fp);
-		ierror("\"%s\"", error.c_str());
+		c2_error("\"%s\"", error.c_str());
 		return;
 	}
 
@@ -1823,7 +1837,7 @@ void c2i::c2_subassemble(const char *source)
 
 	if(buf.size()-pos != RAM_size * 2)
 	{
-		ierror("Wrong sub assembly RAM map size: %d", int(buf.size()-pos));
+		c2_error("Wrong sub assembly RAM map size: %d", int(buf.size()-pos));
 		return;
 	}
 
