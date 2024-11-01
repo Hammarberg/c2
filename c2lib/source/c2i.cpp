@@ -36,11 +36,19 @@
 #undef c2_info
 #undef c2_warning
 #undef c2_error
+<<<<<<< HEAD
 #define c2_verbose(...) c2i::c2_log(1,c2_eloggroup::verbose,__FILE__,__LINE__,__VA_ARGS__)
 #define c2_info(...)    c2i::c2_log(0,c2_eloggroup::info, __FILE__, __LINE__, __VA_ARGS__)
 #define c2_warning(...) c2i::c2_log(0,c2_eloggroup::warning,__FILE__,__LINE__,__VA_ARGS__)
 #define c2_error(...)   c2i::c2_log(0,c2_eloggroup::error,__FILE__,__LINE__,__VA_ARGS__)
 #define c2_vlog(LEVEL,...) c2i::c2_log(LEVEL,c2_eloggroup::verbose,__FILE__,__LINE__,__VA_ARGS__)
+=======
+#define c2_verbose(...) c2i::c2_log(1,c2_eloggroup::verbose,nullptr,0,__VA_ARGS__)
+#define c2_info(...)    c2i::c2_log(0,c2_eloggroup::info,nullptr,0,__VA_ARGS__)
+#define c2_warning(...) c2i::c2_log(0,c2_eloggroup::warning,nullptr,0,__VA_ARGS__)
+#define c2_error(...)   c2i::c2_log(0,c2_eloggroup::error,nullptr,0,__VA_ARGS__)
+#define c2_vlog(LEVEL,...) c2i::c2_log(LEVEL,c2_eloggroup::verbose,nullptr,0,__VA_ARGS__)
+>>>>>>> development
 
 template <typename T>
 T swap_endian(T u)
@@ -1272,7 +1280,7 @@ void c2i::loadbin(const char *path, size_t offset, size_t length)
 	
 	if(offset > size)
 	{
-		c2_error("Requested offset (%d) to is beyond the file size for: %s", int(offset), path);
+		c2_error("Requested offset (%d) is beyond end of file: %s", int(offset), path);
 		return;
 	}
 	
@@ -1286,7 +1294,7 @@ void c2i::loadbin(const char *path, size_t offset, size_t length)
 	}
 	else if(length > size - offset)
 	{
-		c2_warning("Requested size (%d) to read goes beyond end of file: %s", int(length), path);
+		c2_warning("Requested read size (%d) goes beyond end of file: %s", int(length), path);
 		toread = size - offset;
 	}
 	else
@@ -1314,7 +1322,7 @@ c2i::var c2i::loadvar(const char *path, size_t offset, size_t length)
 	
 	if(offset > size)
 	{
-		c2_error("Requested offset (%d) is beyond the file size for: %s", int(offset), path);
+		c2_error("Requested offset (%d) is beyond end of file: %s", int(offset), path);
 		return v;
 	}
 	
@@ -1328,7 +1336,7 @@ c2i::var c2i::loadvar(const char *path, size_t offset, size_t length)
 	}
 	else if(length > size - offset)
 	{
-		c2_warning("Requested read size (%d) is goes beyond end of file: %s", int(length), path);
+		c2_warning("Requested read size (%d) goes beyond end of file: %s", int(length), path);
 		toread = size - offset;
 	}
 	else

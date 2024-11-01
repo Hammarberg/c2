@@ -15,13 +15,12 @@
 #include "cmdi.h"
 
 #include <cstdint>
-#include <cstddef>
 #include <initializer_list>
-#include <functional>
+#include <new>
 #include <cmath>
 
 #define c2_verbose(...) c2_get_single()->c2_log(1,c2_eloggroup::verbose,__FILE__,__LINE__,__VA_ARGS__);
-#define c2_info(...)    c2_get_single()->c2_log(0,c2_eloggroup::info,__FILE__, __LINE__, __VA_ARGS__);
+#define c2_info(...)    c2_get_single()->c2_log(0,c2_eloggroup::info,__FILE__,__LINE__,__VA_ARGS__);
 #define c2_warning(...) c2_get_single()->c2_log(0,c2_eloggroup::warning,__FILE__,__LINE__,__VA_ARGS__);
 #define c2_error(...)   c2_get_single()->c2_log(0,c2_eloggroup::error,__FILE__,__LINE__,__VA_ARGS__);
 
