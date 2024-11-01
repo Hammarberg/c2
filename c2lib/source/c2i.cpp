@@ -36,19 +36,11 @@
 #undef c2_info
 #undef c2_warning
 #undef c2_error
-<<<<<<< HEAD
-#define c2_verbose(...) c2i::c2_log(1,c2_eloggroup::verbose,__FILE__,__LINE__,__VA_ARGS__)
-#define c2_info(...)    c2i::c2_log(0,c2_eloggroup::info, __FILE__, __LINE__, __VA_ARGS__)
-#define c2_warning(...) c2i::c2_log(0,c2_eloggroup::warning,__FILE__,__LINE__,__VA_ARGS__)
-#define c2_error(...)   c2i::c2_log(0,c2_eloggroup::error,__FILE__,__LINE__,__VA_ARGS__)
-#define c2_vlog(LEVEL,...) c2i::c2_log(LEVEL,c2_eloggroup::verbose,__FILE__,__LINE__,__VA_ARGS__)
-=======
 #define c2_verbose(...) c2i::c2_log(1,c2_eloggroup::verbose,nullptr,0,__VA_ARGS__)
 #define c2_info(...)    c2i::c2_log(0,c2_eloggroup::info,nullptr,0,__VA_ARGS__)
 #define c2_warning(...) c2i::c2_log(0,c2_eloggroup::warning,nullptr,0,__VA_ARGS__)
 #define c2_error(...)   c2i::c2_log(0,c2_eloggroup::error,nullptr,0,__VA_ARGS__)
 #define c2_vlog(LEVEL,...) c2i::c2_log(LEVEL,c2_eloggroup::verbose,nullptr,0,__VA_ARGS__)
->>>>>>> development
 
 template <typename T>
 T swap_endian(T u)
