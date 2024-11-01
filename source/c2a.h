@@ -100,7 +100,7 @@ public:
 	
 	stok *c2_top = nullptr;	//Header position for declarations
 	stok *c2_asm = nullptr;	//Asm start position
-	stok *c2_imp = nullptr;	//Global macro implementation pos within asm space (to be scoped in the near future)
+	stok *c2_imp = nullptr;	//Global macro implementation pos within asm space
 	stok *c2_end = nullptr;	//End of asm section
 	
 	int verbose = 0;

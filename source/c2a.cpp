@@ -515,7 +515,7 @@ bool c2a::match_macro(stok *io, toklink &link)
 
 		if(m->disablecount)
 		{
-			error(io, "Recursive macro");
+			error(io, "Recursive macro reference");
 		}
 
 		std::vector<stok *> def;  // Macro header definition
@@ -539,18 +539,8 @@ bool c2a::match_macro(stok *io, toklink &link)
 
 				m->implementation = autolabel(io->name);
 
-				//Prepare function pointer
-				linkinit(maketok(io, "std::function<void(int,int"), link);
-				for(size_t r=0;r<m->inputs.size();r++)
-				{
-					linkinit(maketok(io, ",", etype::OP), link);
-					linkinit(maketok(io, "var"), link);
-				}
-				linkinit(maketok(io, ")> "), link);
-				linkinit(maketok(io, m->implementation.c_str()), link);
-				linkinit(maketok(io, ";\n"), link);
-
 				// Generate macro lambda
+				out.push_tok(maketok(io, "auto "));
 				out.push_tok(maketok(io, m->implementation.c_str()));
 				out.push_tok(maketok(io, "=[&](int c2if,int c2il"));
 				for(size_t r=0;r<m->inputs.size();r++)
@@ -589,6 +579,7 @@ bool c2a::match_macro(stok *io, toklink &link)
 				{
 					out.push_tok(clone(o));
 				}
+				out.push_tok(maketok(out.get_pos(), ";", etype::OP));
 
 				// Restore namespace
 				out.push_tok(maketok(io, "c2_namespace", etype::ALPHA));
@@ -599,16 +590,13 @@ bool c2a::match_macro(stok *io, toklink &link)
 				out.push_tok(maketok(io, " ", etype::SPACE));
 				out.push_tok(maketok(io, "c2_scope_internal_pop", etype::ALPHA));
 
-				out.push_tok(maketok(io, ";", etype::OP));
-
-				c2_imp = out.get_pos();
-
-				parse1_macro_expanded = true;
-
 				// Recursively run parse1 over the expanded macro body
+				parse1_macro_expanded = true;
 				toklink sub = link;
 				sub.restart(rpos, out.get_pos());
 				s_parse1(sub);
+
+				c2_imp = out.get_pos();
 			}
 
 			toklink out = link;
