@@ -1,0 +1,20 @@
+{
+	"title": "showimg",
+	"basedir": ".",
+	"arguments": "--vice-cmd showimg.sym --out-prg - + showimg.prg",
+	"execute": "x64sc -silent -moncommands showimg.sym showimg.prg",
+	"files": [
+		"showimg.cpp": {
+			"c2": true,
+			"flags": "-O0"
+		},
+		"source/c2i.cpp": {
+			"flags": "-O2",
+			"external": true
+		},
+		"source/c64.cpp": {
+			"flags": "-O2",
+			"external": true
+		}
+	]
+}
