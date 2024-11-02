@@ -1105,9 +1105,6 @@ void c2a::s_parse1(toklink &link)
 				}
 				else if(!strcasecmp("global", o->name))
 				{
-					//Force lowercase or name
-					strcpy(o->name, "global");
-
 					if(o->ord != 0 && !label_declared)
 					{
 						error(o, "Unexpected global location");
@@ -1129,6 +1126,28 @@ void c2a::s_parse1(toklink &link)
 					linkinit(maketok(o, ";\n"), link);
 
 					o->mute();
+				}
+				else if(!strcasecmp("import", o->name))
+				{
+					if(o->ord != 0 && !label_declared)
+					{
+						error(o, "Unexpected import location");
+					}
+
+					linkinit(maketok(o, "c2_label "), link);
+					linkinit(clone(op[2]), link);
+					linkinit(maketok(o, "=c2_slabel(\""), link);
+					linkinit(clone(op[2]), link);
+					linkinit(maketok(o, "\", 0, 1);"), link);
+
+					stok *n = o;
+					while(o->is_same_line(n))
+					{
+						n->mute();
+						n = n->get_next();
+						if(!n)
+							error(o, "Unexpected end of file");
+					}
 				}
 				else if((o->ord == 0 || label_declared) && match_macro(o, link))
 				{
