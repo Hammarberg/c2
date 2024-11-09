@@ -70,6 +70,29 @@ static void terror(const char *format, ...)
 	throw (char *)buffer;
 }
 
+// helper to close on scope
+struct csfp
+{
+	csfp(FILE *ifp)
+	:fp(ifp)
+	{}
+
+	csfp(const char *file, const char *mode)
+	{
+		fp = fopen(file, mode);
+	}
+
+	~csfp()
+	{
+		if(fp && fp != stdin && fp != stderr)
+			fclose(fp);
+	}
+
+	operator FILE*(){return fp;}
+private:
+	FILE *fp;
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 // corg
 ///////////////////////////////////////////////////////////////////////////////
@@ -1060,9 +1083,12 @@ void c2i::c2_pre()
 		c2_assembly_step_hash = true;
 	});
 
-	c2_cmd.invoke("--c2-link-mode", [&](int arga, const char *argc[])
+	c2_cmd.invoke("--c2-link-in", [&](int arga, const char *argc[])
 	{
-		FILE *fp = stdin;
+		csfp fp(argc[0],"rb");
+
+		if(!fp)
+			throw("--c2-link-in could not open input file");
 
 		// Read labels
 		std::string name;
@@ -1077,7 +1103,7 @@ void c2i::c2_pre()
 			fread(&val, 1, sizeof(cint), fp);
 			p->imported_vars.push_back({name, val});
 		}
-	});
+	},1,1);
 }
 
 void c2i::c2_post()
@@ -1111,9 +1137,12 @@ void c2i::c2_post()
 			fclose(fp);
 	});
 
-	c2_cmd.invoke("--c2-link-mode", [&](int arga, const char *argc[])
+	c2_cmd.invoke("--c2-link-out", [&](int arga, const char *argc[])
 	{
-		FILE *fp = stdout;
+		csfp fp(argc[0],"wb");
+
+		if(!fp)
+			throw("--c2-link-out could not open output file");
 
 		std::vector<std::pair<std::string, cint>> sorted;
 		p->get_sorted_vars(sorted, false);
@@ -1129,7 +1158,7 @@ void c2i::c2_post()
 
 		fwrite(RAM, 1, RAM_size, fp);
 		fwrite(RAM_use, 1, RAM_size, fp);
-	});
+	},1,1);
 	
 	c2_cmd.invoke("--out-c", [&](int arga, const char *argc[])
 	{
@@ -1492,7 +1521,7 @@ void c2i::c2_log(int level, c2_eloggroup group, const char *file, int line, cons
 	}
 	else
 	{
-		if(c2_loglevel < level && group || c2_eloggroup::info && p->silent_info)
+		if(c2_loglevel < level || (c2_eloggroup::info && p->silent_info))
 			return;
 	}
 
@@ -1698,6 +1727,10 @@ void c2i::c2_subassemble(const char *source)
 	c2_cmd.get_sub_assemply_tmp(source, ".in",buf.data(), int(buf.size()));
 	std::string in = buf.data();
 
+	buf.resize(c2_cmd.get_sub_assemply_tmp(source, ".out", nullptr, 0));
+	c2_cmd.get_sub_assemply_tmp(source, ".out",buf.data(), int(buf.size()));
+	std::string out = buf.data();
+
 	buf.resize(c2_cmd.get_sub_assemply_tmp(source, ".err", nullptr, 0));
 	c2_cmd.get_sub_assemply_tmp(source, ".err",buf.data(), int(buf.size()));
 	std::string err = buf.data();
@@ -1710,17 +1743,18 @@ void c2i::c2_subassemble(const char *source)
 	for(;;)
 	{
 #if !defined(_MSC_VER) && !defined(__MINGW64__)
-		int n = snprintf(buf.data(), int(buf.size()), " --c2-link-mode -m %ld %ld -O %ld %ld -Xd %s %s <%s 2>%s",
+		int n = snprintf(buf.data(), int(buf.size()), " --c2-link-in %s --c2-link-out %s -m %ld %ld -O %ld %ld -Xd %s %s 2>%s",
 #else
-		int n = snprintf(buf.data(), int(buf.size()), " --c2-link-mode -m %lld %lld -O %lld %lld -Xd %s %s <%s 2>%s",
+		int n = snprintf(buf.data(), int(buf.size()), " --c2-link-in %s --c2-link-out %s -m %lld %lld -O %lld %lld -Xd %s %s 2>%s",
 #endif
+				in.c_str(),
+				out.c_str(),
 				RAM_base,
 				RAM_base+RAM_size,
 				c2_org.orga,
 				c2_org.orgw,
 				c2_get_template(),
 				source,
-				in.c_str(),
 				err.c_str()
 				);
 
@@ -1732,25 +1766,26 @@ void c2i::c2_subassemble(const char *source)
 
 	command += buf.data();
 
-	FILE *fp = fopen(in.c_str(), "wb");
-	if(!fp)
-	{
-		c2_error("Intermediate file error executing sub assembly: %s", command.c_str());
-		return;
-	}
-
-	// Write labels
 	std::vector<std::pair<std::string, cint>> sorted;
-	p->get_sorted_vars(sorted, false);
-
-	for(size_t r=0;r<sorted.size();r++)
 	{
-		c2tools::save(fp, sorted[r].first.c_str());
-		fwrite(&sorted[r].second, 1, sizeof(cint), fp);
-	}
-	fputc(0, fp);
+		csfp fp(in.c_str(), "wb");
+		if(!fp)
+		{
+			c2_error("Error writing sub assembly input: %s", in.c_str());
+			return;
+		}
 
-	fclose(fp);
+		// Write labels
+		p->get_sorted_vars(sorted, false);
+
+		for(size_t r=0;r<sorted.size();r++)
+		{
+			c2tools::save(fp, sorted[r].first.c_str());
+			fwrite(&sorted[r].second, 1, sizeof(cint), fp);
+		}
+		fputc(0, fp);
+	}
+
 
 	c2_verbose("Executing: %s", command.c_str());
 
@@ -1767,41 +1802,15 @@ void c2i::c2_subassemble(const char *source)
 		return;
 	}
 
-	size_t pos = 0;
-	const size_t RSIZE = 1024;
-
-	buf.resize(0);
-	buf.reserve(256*1024);
-
-	for(;;)
-	{
-		buf.resize(pos + RSIZE);
-		int n = fread(buf.data()+pos, 1, RSIZE, ep);
-
-		if(n < 0)
-		{
-			c2_error("Error reading sub assembly data: %s", command.c_str());
-			return;
-		}
-
-		pos += n;
-
-		if(n < int(RSIZE))
-		{
-			buf.resize(pos);
-			break;
-		}
-	}
-
 	int result = pclose(ep);
 
 	if(result)
 	{
 		std::string error;
-		fp = fopen(err.c_str(),"r");
+		csfp fp(err.c_str(), "r");
 		if(!fp)
 		{
-			c2_error("Intermediate file error executing sub assembly: %s", command.c_str());
+			c2_error("Error opening sub assembly output: %s", err.c_str());
 			return;
 		}
 
@@ -1809,6 +1818,41 @@ void c2i::c2_subassemble(const char *source)
 		fclose(fp);
 		c2_error("\"%s\"", error.c_str());
 		return;
+	}
+
+	size_t pos = 0;
+	const size_t RSIZE = 1024;
+
+	buf.resize(0);
+	buf.reserve(256*1024);
+
+	{
+		csfp fp(out.c_str(), "rb");
+		if(!fp)
+		{
+			c2_error("Error opening sub assembly output: %s", out.c_str());
+			return;
+		}
+
+		for(;;)
+		{
+			buf.resize(pos + RSIZE);
+			int n = fread(buf.data()+pos, 1, RSIZE, fp);
+
+			if(n < 0)
+			{
+				c2_error("Error reading sub assembly output: %s", out.c_str());
+				return;
+			}
+
+			pos += n;
+
+			if(n < int(RSIZE))
+			{
+				buf.resize(pos);
+				break;
+			}
+		}
 	}
 
 	// Read exports
