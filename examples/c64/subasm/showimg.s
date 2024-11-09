@@ -16,7 +16,7 @@
 			}
 
 			@ = $0900
-			basic_startup
+start:
 			
 			sei
 

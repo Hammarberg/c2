@@ -1,7 +1,7 @@
 {
 	"title": "showimg",
 	"basedir": ".",
-	"arguments": "--vice-cmd showimg.sym --out-prg - + showimg.prg",
+	"arguments": "--vice-cmd showimg.sym --out-rle - + start showimg.prg",
 	"execute": "x64sc -silent -moncommands showimg.sym showimg.prg",
 	"files": [
 		"showimg.cpp": {
