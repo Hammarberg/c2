@@ -62,6 +62,12 @@ macro postarg @arg
 #define rrepeat(TIMES) for(int c2repn=(TIMES)-1;c2repn>=0;c2repn--)
 #define RREPEAT rrepeat
 
+#define repeatv(TIMES, ...) for(int __VA_ARGS__=0;__VA_ARGS__<(TIMES);__VA_ARGS__++)
+#define REPEATV repeatv
+
+#define rrepeatv(TIMES, ...) for(int __VA_ARGS__=(TIMES)-1;__VA_ARGS__>=0;__VA_ARGS__--)
+#define RREPEATV rrepeatv
+
 macro assemble @src
 {
 	c2_subassemble(src.str());
