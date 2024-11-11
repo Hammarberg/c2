@@ -174,7 +174,7 @@ for(int index=0; index<10; index++)
 }
 .exit:
 ```
-This mode works automatically when a scope is repeated. The label `.small` is in this case duplicated 10 times and automatically indexed. Beware this can break or cause bugs when scopes and repeats are too complicated for c2 to resolve. For a more explicit control over the labels see see indexed labels.
+This mode works automatically when a scope is repeated. The label `.small` is in this case duplicated 10 times and automatically indexed. For a more explicit control over the labels see see indexed labels.
 ### Anonymous labels
 Anonymous labels are declared with a single colon at the beginning of a line and can only be referenced with relative addressing.
 
@@ -201,7 +201,7 @@ data[index]:
 }
 ```
 ## c2 variables
-c2 provides a variable type.
+c2 provides a built-in variable type.
 
 Syntax: `var <name> [= expression]`
 ```
@@ -216,7 +216,7 @@ Currently, variables doesn't support label namespaces (design decisions yet to b
         var x = 5
         //Other code here
 }
-// x is not more
+// x is no more
 ```
 Variables remembers explicit bit counts and this is supported by some target.
 ```
@@ -224,6 +224,11 @@ Variables remembers explicit bit counts and this is supported by some target.
         lda src //16 bit absolute rather than zero page addressing mode on 6502
 ```
 Variables declared inside macros are automatically scoped to the macro.
+### Global variable
+A global variable works much like a regular variable except it can be referenced from inside macros or before it is even declared in the source.
+```
+    global myvalue = 128
+```
 ### Indexed, array & string variables
 A variable can be used as an array or string.
 ```
@@ -248,6 +253,8 @@ Example:
         int y = $1234 + offset;
         move.b y, d0
 ```
+#### cint type
+Internally c2 uses `cint` as the default signed 64 bit integer type. Variables and most calls are based upon cint.
 ## Macros
 In its simplest form, macros are pieces of declared information that can be recalled by a reference at any point. They are expanded inline at the point of reference. When c2 encounters an alphanumerical, declared macros are searched for a match.
 
@@ -395,31 +402,40 @@ lda #LIMIT8BIT(258)
 sta SCREEN
 ```
 ## Inline C++
-All C/C++ loops, variables, if/else, case switches are available. As the assembly source resides inside the C++ method `c2_pass()` there are some logical restrictions. If you want to declare your own function, that's normally done as a member method in the .cpp-file. A way to get around this is to declare a struct:
+All C/C++ loops, variables, if/else, case switches are available. As the assembly source resides inside the C++ method `c2_pass()` there are some logical restrictions. If you want to declare your own function, that's normally done as a member method in the .cpp-file. A way to get around this is to declare a lambda:
 ```
-        // Your assemblerfile.s
-struct
-{
-        var mydata = loadvar("data.bin");
+			auto storestring = [&](var string)
+			{
+				byte string
+				byte 0	//zero terminate
+			};
 
-        size_t pos = 0;
-        int get_next_byte()
-        {
-                if(pos == mydata.size())
-                {
-                        return -1;
-                }
+text:		storestring("hello world from assembly ");
 
-                int val = mydata[pos];
-                pos++;
-                return val;
-        }
-}mydata;
-
-        lda #mydata.get_next_byte()
 ```
 ## Logging, warnings & errors
-`c2_error(const char *format, ...)`, `c2_info(const char *format, ...)`, `c2_verbose(const char *format, ...)`
+The following fuctions works much like printf() from C and other languages.
+
+`c2_error(const char *format, ...)`
+
+Will print and abort assembly.
+
+`c2_info(const char *format, ...)`
+
+Always print information, unless silenced with `--silent-info`.
+
+ `c2_verbose(const char *format, ...)`
+
+Verbosely print where no-one printed before. Only visible with `-v`.
+
+Example:
+```
+if(x != 10)
+{
+    c2_error("Expected x to be 10 but it was %d", int(x));
+}
+
+```
 ## c2 C++ interface
 ### Custom C++ extensions
 ## c2lib directory
@@ -483,20 +499,19 @@ Example:
         repeat(10)
                 byte offset + c2repn*7
 ```
-
 `assemble "<source>"`
 Externally assemble the source and include the results at the current ORG. Unlike the C pre-processor `#include` statement that merge at the source level, `assemble` will assemble the source separately and then merge at the binary level. This creates isolation between the including and included source and can improve build times on large projects.
 
 Sharing of labels between the two source files must be set explicitly with `import`.
 
-`import(<label>)`
+`import <label>`
 Import a global label from an externally assembled source.
 
 Example:
 ```
         // Import labels before use
-        import(data)
-        import(routine)
+        import data
+        import routine
 
         move data, d0
         jmp routine
