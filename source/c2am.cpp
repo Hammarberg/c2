@@ -301,6 +301,7 @@ bool c2a::match_macro(stok *io, toklink &link)
 	std::vector<bool> outisarray;
 
 	bool disabled_detected = false;
+	bool recursion = false;
 
 	for(auto mi = v.rbegin(); mi != v.rend(); mi++)
 	{
@@ -309,7 +310,8 @@ bool c2a::match_macro(stok *io, toklink &link)
 
 		if(m->disablecount)
 		{
-			error(io, "Recursive macro reference");
+			recursion = true;
+			continue;
 		}
 
 		std::vector<stok *> def;  // Macro header definition
@@ -504,6 +506,9 @@ bool c2a::match_macro(stok *io, toklink &link)
 		}
 	}
 
+	if(recursion)
+		error(io, "Recursive macro reference");
+
 	//Warn about nearly matched macro here
 	warning(io, "\"%s\" looks like a macro but could not match any parameters\n", io->name);
 
@@ -576,6 +581,8 @@ void c2a::parse_macro(toklink &link)
 		o->mute();
 		o = o->get_next();
 	}
+
+	info(5, title, "Parsing macro %s\n", names[0].c_str());
 
 	toklink signature;
 	std::string stmp,stmp2;
@@ -683,22 +690,27 @@ void c2a::parse_macro(toklink &link)
 		name = makelower(names[r]);
 		auto i = macros.find(name);
 
+		int priority = int(signature.count()+signature_offset);
+
 		if(i == macros.end())
 		{
-			macros[name].insert({signature.count()+signature_offset, m});
+			macros[name].insert({priority, m});
 		}
 		else
 		{
 			auto &v = i->second;
 
-			for(auto mi = v.begin(); mi != v.end(); mi++)
+			for(auto mi = v.rbegin(); mi != v.rend(); mi++)
 			{
 				if(mi->second->cmp(*m.get()))
 				{
-					error(title, "Macro already defined");
+					info(6, title, "Overriding macro %s\n", name.c_str());
+					priority = mi->first + 1;
+					break;
 				}
 			}
 
+			info(6, title, "Overloading macro %s\n", name.c_str());
 			i->second.insert({signature.count()+signature_offset, m});
 		}
 	}

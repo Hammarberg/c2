@@ -114,8 +114,6 @@ stok *c2a::get_next_nonspace(toklink &link, bool unlink)
 		if(!o)
 			break;
 			
-		//printf("%s",o->format().c_str());
-			
 		if(unlink)
 			link.unlink(o);
 			
@@ -229,11 +227,6 @@ void c2a::s_parse0(toklink &link)
 		if(!o)
 			error(o, "Unexpected end of file");
 			
-		//stok *op[3] = {o->get_prev_nonspace(), o, o->get_next_nonspace()};
-		
-		//printf("%s",o->name);
-		//fflush(stdout);
-		
 		if(o->type == etype::OP)
 		{
 			switch(*o->name)
@@ -327,8 +320,6 @@ void c2a::s_parse1(toklink &link)
 			return;
 			
 		stok *op[3] = {o->get_prev_nonspace(), o, o->get_next_nonspace()};
-		//printf("%s", o->format().c_str());
-		//fflush(stdout);
 		
 		if(o->ord == 0)
 			label_declared = false;
@@ -455,7 +446,6 @@ void c2a::s_parse1(toklink &link)
 				else if((o->ord == 0 || label_declared) && match_macro(o, link))
 				{
 					// Make sure the right scope is set up
-					//macro_expanded = true;
 					info(6, o, "Expanded macro\n");
 				}
 				else
@@ -776,8 +766,6 @@ void c2a::s_parse1(toklink &link)
 					o = n;
 				}
 				
-				//printf("num %s\n", o->name);
-				
 				uint16_t bits = explicit_bitcount(o->name);
 				
 				if(bits)
@@ -799,7 +787,6 @@ void c2a::s_parse1(toklink &link)
 void c2a::s_parse2(toklink &link)
 {
 	std::string stmp;
-	//bool label_declared;
 	
 	uint16_t fileindex = 0;
 	uint32_t line = 0;
@@ -854,8 +841,6 @@ void c2a::s_parse2(toklink &link)
 			preprocessprefix(o, link);
 		}
 		
-		//label_declared = o->label_declared == 1;
-
 		switch(o->type)
 		{
 			case etype::ALPHA:

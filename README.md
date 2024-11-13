@@ -333,6 +333,22 @@ A referenced macro is matched against declared macros with the most parameter/op
         lda (variable+2),y      //lda (@n),y indirect zero page is matched
         lda 2+(variable),y      //lda @n,y is matched
 ```
+#### Macro overriding
+Macros can be overridden with an identical macro declaration to a previously declared macro.
+```
+macro set_marker @dst
+{
+		lda #$00
+		sta dst
+}
+// override/replace macro
+macro set_marker @dst
+{
+		lda #$ff
+		sta dst
+		set_marker dst+1 		//expand the original macro as part of this macro
+}
+```
 ### String input
 As input is handled in c2 variables, strings are valid expressions.
 ### Variadic input
