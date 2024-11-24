@@ -620,7 +620,7 @@ void c2i::push16le(c2i::cint b, bool isaddr)
 		c2_error("Word overflow storing value %lld", b);
 	}
 	
-	push(b&255);
+	push(b);
 	push(b>>8);
 }
 
@@ -631,6 +631,30 @@ void c2i::push16be(c2i::cint b, bool isaddr)
 		c2_error("Word overflow");
 	}
 	
+	push(b>>8);
+	push(b);
+}
+
+void c2i::push24le(c2i::cint b, bool isaddr)
+{
+	if(!var::inrange(24, b))
+	{
+		c2_error("SWord overflow storing value %lld", b);
+	}
+
+	push(b);
+	push(b>>8);
+	push(b>>16);
+}
+
+void c2i::push24be(c2i::cint b, bool isaddr)
+{
+	if(!var::inrange(24, b))
+	{
+		c2_error("SWord overflow");
+	}
+
+	push(b>>168);
 	push(b>>8);
 	push(b);
 }

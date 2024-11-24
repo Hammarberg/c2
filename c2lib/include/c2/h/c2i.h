@@ -205,6 +205,8 @@ public:
 	virtual void push8(cint b, bool isaddr = false);
 	virtual void push16le(cint b, bool isaddr = false);
 	virtual void push16be(cint b, bool isaddr = false);
+	virtual void push24le(cint b, bool isaddr = false);
+	virtual void push24be(cint b, bool isaddr = false);
 	virtual void push32le(cint b, bool isaddr = false);
 	virtual void push32be(cint b, bool isaddr = false);
 	virtual void push64le(cint b, bool isaddr = false);
