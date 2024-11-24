@@ -1,4 +1,4 @@
-﻿/*
+/*
 	c2 - cross assembler
 	Copyright (C) 2022-2023  John Hammarberg (crt@nospam.binarybone.com)
 
@@ -20,9 +20,8 @@
 
 macro lbpl @n
 {
-	static int longb = 0;
-	static int rel = 0;
-	rel = int(n) > int(@);
+	c2static longb;
+	int rel = int(n) > int(@);
 	if(c2st<8>(@+1-n + longb*3*rel))
 	{
 		longb = 0;
@@ -39,9 +38,8 @@ macro lbpl @n
 
 macro lbmi @n
 {
-	static int longb = 0;
-	static int rel = 0;
-	rel = int(n) > int(@);
+	c2static longb;
+	int rel = int(n) > int(@);
 	if(c2st<8>(@+1-n + longb*3*rel))
 	{
 		longb = 0;
@@ -58,9 +56,8 @@ macro lbmi @n
 
 macro lbvc @n
 {
-	static int longb = 0;
-	static int rel = 0;
-	rel = int(n) > int(@);
+	c2static longb;
+	int rel = int(n) > int(@);
 	if(c2st<8>(@+1-n + longb*3*rel))
 	{
 		longb = 0;
@@ -77,9 +74,8 @@ macro lbvc @n
 
 macro lbvs @n
 {
-	static int longb = 0;
-	static int rel = 0;
-	rel = int(n) > int(@);
+	c2static longb;
+	int rel = int(n) > int(@);
 	if(c2st<8>(@+1-n + longb*3*rel))
 	{
 		longb = 0;
@@ -96,9 +92,8 @@ macro lbvs @n
 
 macro lbcc @n
 {
-	static int longb = 0;
-	static int rel = 0;
-	rel = int(n) > int(@);
+	c2static longb;
+	int rel = int(n) > int(@);
 	if(c2st<8>(@+1-n + longb*3*rel))
 	{
 		longb = 0;
@@ -115,9 +110,8 @@ macro lbcc @n
 
 macro lbcs @n
 {
-	static int longb = 0;
-	static int rel = 0;
-	rel = int(n) > int(@);
+	c2static longb;
+	int rel = int(n) > int(@);
 	if(c2st<8>(@+1-n + longb*3*rel))
 	{
 		longb = 0;
@@ -134,9 +128,8 @@ macro lbcs @n
 
 macro lbeq @n
 {
-	static int longb = 0;
-	static int rel = 0;
-	rel = int(n) > int(@);
+	c2static longb;
+	int rel = int(n) > int(@);
 	if(c2st<8>(@+1-n + longb*3*rel))
 	{
 		longb = 0;
@@ -153,9 +146,8 @@ macro lbeq @n
 
 macro lbne @n
 {
-	static int longb = 0;
-	static int rel = 0;
-	rel = int(n) > int(@);
+	c2static longb;
+	int rel = int(n) > int(@);
 	if(c2st<8>(@+1-n + longb*3*rel))
 	{
 		longb = 0;

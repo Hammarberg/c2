@@ -24,6 +24,8 @@
 #define c2_warning(...) c2_get_single()->c2_log(0,c2_eloggroup::warning,__FILE__,__LINE__,__VA_ARGS__);
 #define c2_error(...)   c2_get_single()->c2_log(0,c2_eloggroup::error,__FILE__,__LINE__,__VA_ARGS__);
 
+#define c2static static c2_static_impl
+
 class c2i
 {
 public:
@@ -191,6 +193,15 @@ public:
 	
 	struct c2_void{};
 	typedef c2_baselabel<c2_void> c2_label;
+
+	class c2_static_impl : private c2_vardata
+	{
+	public:
+		c2_static_impl() {}
+		virtual ~c2_static_impl() {}
+		cint &operator=(cint in) { return c2v_ref(c2_get_single()->c2_scope_index)=in; }
+		operator cint() { return c2v_ref(c2_get_single()->c2_scope_index); }
+	};
 
 	c2i(cmdi *pcmd);
 	virtual ~c2i();

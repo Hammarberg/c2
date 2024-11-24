@@ -1072,13 +1072,13 @@ macro asrb
 
 macro beq @addr
 {
-	static bool lb=false;
+	c2static lb;
 	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
-		lb=false;
+		lb=0;
 		push8($27);
 		push8(c2sr<8>(addr-@-1));
 	}else{
-		lb=true;
+		lb=1;
 		push16be($1027);
 		push16be(c2sr<16>(addr-@-2));
 	}
@@ -1092,13 +1092,13 @@ macro lbeq @addr
 
 macro bge @addr
 {
-	static bool lb=false;
+	c2static lb;
 	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
-		lb=false;
+		lb=0;
 		push8($2c);
 		push8(c2sr<8>(addr-@-1));
 	}else{
-		lb=true;
+		lb=1;
 		push16be($102c);
 		push16be(c2sr<16>(addr-@-2));
 	}
@@ -1112,13 +1112,13 @@ macro lbge @addr
 
 macro bgt @addr
 {
-	static bool lb=false;
+	c2static lb;
 	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
-		lb=false;
+		lb=0;
 		push8($2e);
 		push8(c2sr<8>(addr-@-1));
 	}else{
-		lb=true;
+		lb=1;
 		push16be($102e);
 		push16be(c2sr<16>(addr-@-2));
 	}
@@ -1132,13 +1132,13 @@ macro lbgt @addr
 
 macro bhi @addr
 {
-	static bool lb=false;
+	c2static lb;
 	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
-		lb=false;
+		lb=0;
 		push8($22);
 		push8(c2sr<8>(addr-@-1));
 	}else{
-		lb=true;
+		lb=1;
 		push16be($1022);
 		push16be(c2sr<16>(addr-@-2));
 	}
@@ -1152,13 +1152,13 @@ macro lbhi @addr
 
 macro bhs,bcc @addr
 {
-	static bool lb=false;
+	c2static lb;
 	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
-		lb=false;
+		lb=0;
 		push8($24);
 		push8(c2sr<8>(addr-@-1));
 	}else{
-		lb=true;
+		lb=1;
 		push16be($1024);
 		push16be(c2sr<16>(addr-@-2));
 	}
@@ -1430,13 +1430,13 @@ macro bitb [@addr]
 
 macro ble @addr
 {
-	static bool lb=false;
+	c2static lb;
 	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
-		lb=false;
+		lb=0;
 		push8($2f);
 		push8(c2sr<8>(addr-@-1));
 	}else{
-		lb=true;
+		lb=1;
 		push16be($102f);
 		push16be(c2sr<16>(addr-@-2));
 	}
@@ -1450,13 +1450,13 @@ macro lble @addr
 
 macro blo,bcs @addr
 {
-	static bool lb=false;
+	c2static lb;
 	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
-		lb=false;
+		lb=0;
 		push8($25);
 		push8(c2sr<8>(addr-@-1));
 	}else{
-		lb=true;
+		lb=1;
 		push16be($1025);
 		push16be(c2sr<16>(addr-@-2));
 	}
@@ -1470,13 +1470,13 @@ macro lblo,lbcs @addr
 
 macro bls @addr
 {
-	static bool lb=false;
+	c2static lb;
 	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
-		lb=false;
+		lb=0;
 		push8($23);
 		push8(c2sr<8>(addr-@-1));
 	}else{
-		lb=true;
+		lb=1;
 		push16be($1023);
 		push16be(c2sr<16>(addr-@-2));
 	}
@@ -1490,13 +1490,13 @@ macro lbls @addr
 
 macro blt @addr
 {
-	static bool lb=false;
+	c2static lb;
 	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
-		lb=false;
+		lb=0;
 		push8($2d);
 		push8(c2sr<8>(addr-@-1));
 	}else{
-		lb=true;
+		lb=1;
 		push16be($102d);
 		push16be(c2sr<16>(addr-@-2));
 	}
@@ -1510,13 +1510,13 @@ macro lblt @addr
 
 macro bmi @addr
 {
-	static bool lb=false;
+	c2static lb;
 	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
-		lb=false;
+		lb=0;
 		push8($2b);
 		push8(c2sr<8>(addr-@-1));
 	}else{
-		lb=true;
+		lb=1;
 		push16be($102b);
 		push16be(c2sr<16>(addr-@-2));
 	}
@@ -1530,13 +1530,13 @@ macro lbmi @addr
 
 macro bne @addr
 {
-	static bool lb=false;
+	c2static lb;
 	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
-		lb=false;
+		lb=0;
 		push8($26);
 		push8(c2sr<8>(addr-@-1));
 	}else{
-		lb=true;
+		lb=1;
 		push16be($1026);
 		push16be(c2sr<16>(addr-@-2));
 	}
@@ -1550,13 +1550,13 @@ macro lbne @addr
 
 macro bpl @addr
 {
-	static bool lb=false;
+	c2static lb;
 	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
-		lb=false;
+		lb=0;
 		push8($2a);
 		push8(c2sr<8>(addr-@-1));
 	}else{
-		lb=true;
+		lb=1;
 		push16be($102a);
 		push16be(c2sr<16>(addr-@-2));
 	}
@@ -1570,13 +1570,13 @@ macro lbpl @addr
 
 macro bra @addr
 {
-	static bool lb=false;
+	c2static lb;
 	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*1))){
-		lb=false;
+		lb=0;
 		push8($20);
 		push8(c2sr<8>(addr-@-1));
 	}else{
-		lb=true;
+		lb=1;
 		if(!c2_6809_absolute){
 			push8($16);
 			push16be(c2sr<16>(addr-@-2));
@@ -1600,13 +1600,13 @@ macro lbra @addr
 
 macro brn @addr
 {
-	static bool lb=false;
+	c2static lb;
 	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
-		lb=false;
+		lb=0;
 		push8($21);
 		push8(c2sr<8>(addr-@-1));
 	}else{
-		lb=true;
+		lb=1;
 		push16be($1021);
 		push16be(c2sr<16>(addr-@-2));
 	}
@@ -1620,13 +1620,13 @@ macro lbrn @addr
 
 macro bsr @addr
 {
-	static bool lb=false;
+	c2static lb;
 	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*1))){
-		lb=false;
+		lb=0;
 		push8($8d);
 		push8(c2sr<8>(addr-@-1));
 	}else{
-		lb=true;
+		lb=1;
 		if(!c2_6809_absolute){
 			push8($17);
 			push16be(c2sr<16>(addr-@-2));
@@ -1650,13 +1650,13 @@ macro lbsr @addr
 
 macro bvc @addr
 {
-	static bool lb=false;
+	c2static lb;
 	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
-		lb=false;
+		lb=0;
 		push8($28);
 		push8(c2sr<8>(addr-@-1));
 	}else{
-		lb=true;
+		lb=1;
 		push16be($1028);
 		push16be(c2sr<16>(addr-@-2));
 	}
@@ -1670,13 +1670,13 @@ macro lbvc @addr
 
 macro bvs @addr
 {
-	static bool lb=false;
+	c2static lb;
 	if(!c2_6809_longbranch || c2st<8>(addr-(@+2+lb*2))){
-		lb=false;
+		lb=0;
 		push8($29);
 		push8(c2sr<8>(addr-@-1));
 	}else{
-		lb=true;
+		lb=1;
 		push16be($1029);
 		push16be(c2sr<16>(addr-@-2));
 	}
