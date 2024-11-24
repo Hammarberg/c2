@@ -82,6 +82,13 @@ public:
 			new (&c2vp[c2vn]) T(o);
 			c2vn++;
 		}
+		bool c2v_pop(T &o)
+		{
+			if(!c2vn)return false;
+			o=c2vp[c2vn-1];
+			size(c2vn);
+			return true;
+		}
 		void c2v_ensure(ST size, bool trim=false)
 		{
 			if(size > c2va)
