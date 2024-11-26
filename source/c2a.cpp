@@ -311,6 +311,9 @@ void c2a::s_parse1(toklink &link)
 {
 	std::string stmp;
 	bool label_declared = false;
+	bool switchhead = false;		// True while traversing the argument part of a switch statements
+	int64_t switchcount = 0;		// Positive while traversing a switch block
+	int64_t prev_switchcount;
 
 	for(;;)
 	{
@@ -335,6 +338,19 @@ void c2a::s_parse1(toklink &link)
 			
 		if(o->scopepos == uint32_t(-1))
 			o->scopepos = uint32_t(scope_labels[scopeindex].size() - 1);
+
+		prev_switchcount = switchcount;
+
+		if(switchhead || switchcount)
+		{
+			switchcount = bracketcount(switchcount, o);
+
+			if(!switchcount)
+				if(switchhead)
+					info(7, o, "End of switch head\n");
+				else
+					info(7, o, "End of switch block\n");
+		}
 			
 		switch(o->type)
 		{
@@ -443,6 +459,31 @@ void c2a::s_parse1(toklink &link)
 							error(o, "Unexpected end of file");
 					}
 				}
+				else if(!strcasecmp("switch", o->name))
+				{
+					int64_t bc = 0;
+					bool gothead = false;
+					stok *n = o->get_next();
+
+					while(n)
+					{
+						bc = bracketcount(bc, n);
+
+						if(!gothead)
+							gothead = bc != 0;
+
+						if(!bc)
+							break;
+
+						n = n->get_next();
+					}
+
+					if(gothead && n && (n = n->get_next_nonspace()) && *n->name == '{')
+					{
+						info(7, o, "C switch detected\n");
+						switchhead = true;
+					}
+				}
 				else if((o->ord == 0 || label_declared) && match_macro(o, link))
 				{
 					// Make sure the right scope is set up
@@ -521,7 +562,7 @@ void c2a::s_parse1(toklink &link)
 					break;
 					case ':':
 					{
-						if(*o->get_next()->name != ':')	//Avoid C++ namespaces
+						if(*o->get_next()->name != ':' && switchcount == 0)	//Avoid C++ namespaces and c switch blocks
 						{
 							bool indexed_label = false;
 							stok *plabel = nullptr;
@@ -726,25 +767,37 @@ void c2a::s_parse1(toklink &link)
 					break;
 					case '{':
 					{
-						info(7, o, "Scope start\n");
-						scopelix_stack.push_back(sslix(o));
-						if(parse1_macro_expanded)
+						if(switchhead && switchcount && !prev_switchcount)
 						{
-							info(7, o, "Inserting macro c2_scope\n");
-							s_parse1_insert_slix(o, true, link);
-							parse1_macro_expanded = false;
+							info(7, o, "Start of switch block\n");
+							switchhead = false;
+						}
+
+						if(!switchcount && !switchhead)
+						{
+							info(7, o, "Scope start\n");
+							scopelix_stack.push_back(sslix(o));
+							if(parse1_macro_expanded)
+							{
+								info(7, o, "Inserting macro c2_scope\n");
+								s_parse1_insert_slix(o, true, link);
+								parse1_macro_expanded = false;
+							}
 						}
 					}
 					break;
 					case '}':
 					{
-						info(7, o, "Scope end\n");
-						if(!scopelix_stack.size())
+						if(!prev_switchcount && !switchhead)
 						{
-							error(o, "Unexpected '}'");
-						}
+							info(7, o, "Scope end\n");
+							if(!scopelix_stack.size())
+							{
+								error(o, "Unexpected '}'");
+							}
 
-						scopelix_stack.pop_back();
+							scopelix_stack.pop_back();
+						}
 					}
 					break;
 					default:
