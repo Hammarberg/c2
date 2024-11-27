@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="source\c2.cpp" />
     <ClCompile Include="source\c2a.cpp" />
+    <ClCompile Include="source\c2am.cpp" />
     <ClCompile Include="source\cmda.cpp" />
     <ClCompile Include="source\json.cpp" />
     <ClCompile Include="source\library.cpp" />

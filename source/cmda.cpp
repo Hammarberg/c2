@@ -378,7 +378,7 @@ std::string cmda::get_c2_exe()
 
 std::string cmda::get_c2_exe_path()
 {
-	return sargs[0];
+	return clibrary::quote_path(sargs[0]);
 }
 
 int cmda::get_c2_exe_path(char *buffer, int buffersize)

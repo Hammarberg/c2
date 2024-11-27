@@ -15,7 +15,11 @@
 #include <cstdint>
 
 #include "version.h"
+#ifndef _MSC_VER
 #include "gitversion.h"
+#else
+#define C2_GITVERSION "VS build"
+#endif
 
 static std::string version()
 {
