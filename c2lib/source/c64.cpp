@@ -301,7 +301,7 @@ void c64::c2_post()
 		if(!c2_resolve(argc[1], to))
 			throw "--out-rle could not resolve 'to' address";
 			
-		if(from < 0x0200 || from > to || from < RAM_base || from >= RAM_base+RAM_size || to < RAM_base || to >= RAM_base+RAM_size)
+		if(from < 0x0200 || from > to || from < RAM_base || from >= RAM_base+RAM_size || to < RAM_base || to > RAM_base+RAM_size)
 			throw "--out-rle addresses out of range";
 
 		bool basic_startup = false;
