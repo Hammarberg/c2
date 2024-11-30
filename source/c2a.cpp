@@ -131,17 +131,17 @@ int64_t c2a::bracketcount(int64_t bc, const stok *o)
 	switch(c)
 	{
 		case '(':
-			return (bc+3)*2;
+			return (bc+1)*2;
 		case '{':
-			return (bc+5)*2;
+			return (bc+1)*3;
 		case '[':
-			return (bc+7)*2;
+			return (bc+1)*5;
 		case ')':
-			return (bc/2)-3;
+			return (bc/2)-1;
 		case '}':
-			return (bc/2)-5;
+			return (bc/3)-1;
 		case ']':
-			return (bc/2)-7;
+			return (bc/5)-1;
 	};
 	
 	return bc;
@@ -154,17 +154,17 @@ int64_t c2a::rbracketcount(int64_t bc, const stok *o)
 	switch(c)
 	{
 		case ')':
-			return (bc+3)*2;
+			return (bc+1)*2;
 		case '}':
-			return (bc+5)*2;
+			return (bc+1)*3;
 		case ']':
-			return (bc+7)*2;
+			return (bc+1)*5;
 		case '(':
-			return (bc/2)-3;
+			return (bc/2)-1;
 		case '{':
-			return (bc/2)-5;
+			return (bc/3)-1;
 		case '[':
-			return (bc/2)-7;
+			return (bc/5)-1;
 	};
 	
 	return bc;
