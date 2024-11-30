@@ -1,5 +1,4 @@
 #include "c2/c64/c64.s"
-#include "c2/c64/kernal.s"
 #include "c2/wdc/65816.s"
 
 			// hello
