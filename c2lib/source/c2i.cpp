@@ -174,9 +174,13 @@ c2i::c2_var::c2_var(const c2_corg &o)
 c2i::c2_var::c2_var(std::initializer_list<c2i::c2_var> elements)
 {
 	c2v_ensure(elements.size());
-	size_t r = 0;
-	for(auto i = elements.begin(); i != elements.end(); i++, r++)
-		c2v_push(i->c2v_read());
+	for(auto i = elements.begin(); i != elements.end(); i++)
+	{
+		for(size_t r = 0; r != i->size(); r++)
+		{
+			c2v_push(i->c2v_read(r));
+		}
+	}
 }
 
 c2i::c2_var::c2_var(const char *pstr)
