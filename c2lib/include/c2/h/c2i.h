@@ -12,6 +12,8 @@
 */
 
 #pragma once
+#define C2_INTERFACE_TEMPLATE_VERSION 1
+
 #include "cmdi.h"
 
 #include <cstdint>

@@ -1,6 +1,6 @@
 /*
 	c2 - cross assembler
-	Copyright (C) 2022-2023  John Hammarberg (crt@nospam.binarybone.com)
+	Copyright (C) 2022-2024  John Hammarberg (crt@nospam.binarybone.com)
 
 	This file is part of c2.
 
@@ -12,10 +12,14 @@
 */
 
 #pragma once
-#include "c2/commodore/cbm.s"
+#include "c2/commodore/cbm.h"
 
-macro basic_startup
+class mega65 : public cbm
 {
-	@ = $0801
-	byte $0b, $08, $0a, $00, $9e, $32, $30, $36, $31, $00, $00, $00
-}
+public:
+	mega65(cmdi *pcmd);
+	virtual ~mega65();
+	void c2_pre() override;
+	void c2_reset_pass() override;
+	void c2_post() override;
+};

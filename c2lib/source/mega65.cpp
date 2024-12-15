@@ -1,4 +1,4 @@
-/*
+﻿/*
 	c2 - cross assembler
 	Copyright (C) 2022-2023  John Hammarberg (crt@nospam.binarybone.com)
 
@@ -11,11 +11,33 @@
 	You should have received a copy of the GNU General Public License along with c2. If not, see <https://www.gnu.org/licenses/>.
 */
 
-#pragma once
-#include "c2/commodore/cbm.s"
+#include "c2/mega65/mega65.h"
 
-macro basic_startup
+mega65::mega65(cmdi *pcmd)
+: cbm(pcmd)
 {
-	@ = $0801
-	byte $0b, $08, $0a, $00, $9e, $32, $30, $36, $31, $00, $00, $00
+	// Default org if nothing is set
+	c2_org = 0x2000;
+	
+	// Valid range of RAM
+	c2_set_ram(0, 0x10000);
+}
+
+mega65::~mega65()
+{
+}
+
+void mega65::c2_pre()
+{
+	cbm::c2_pre();
+}
+
+void mega65::c2_reset_pass()
+{
+	cbm::c2_reset_pass();
+}
+
+void mega65::c2_post()
+{
+	cbm::c2_post();
 }

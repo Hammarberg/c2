@@ -1,6 +1,6 @@
 /*
 	c2 - cross assembler
-	Copyright (C) 2022-2023  John Hammarberg (crt@nospam.binarybone.com)
+	Copyright (C) 2022-2024  John Hammarberg (crt@nospam.binarybone.com)
 
 	This file is part of c2.
 
@@ -16,6 +16,6 @@
 
 macro basic_startup
 {
-	@ = $0801
-	byte $0b, $08, $0a, $00, $9e, $32, $30, $36, $31, $00, $00, $00
+	@ = $2001
+	byte $0b, $08, $0a, $00, $9e, $38, $32, $30, $35, $00, $00, $00
 }

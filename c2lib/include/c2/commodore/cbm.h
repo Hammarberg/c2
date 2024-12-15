@@ -1,6 +1,6 @@
 /*
 	c2 - cross assembler
-	Copyright (C) 2022-2023  John Hammarberg (crt@nospam.binarybone.com)
+	Copyright (C) 2022-2024  John Hammarberg (crt@nospam.binarybone.com)
 
 	This file is part of c2.
 
@@ -12,10 +12,31 @@
 */
 
 #pragma once
-#include "c2/commodore/cbm.s"
+#include "c2/h/c2i.h"
 
-macro basic_startup
+class cbm : public c2i
 {
-	@ = $0801
-	byte $0b, $08, $0a, $00, $9e, $32, $30, $36, $31, $00, $00, $00
-}
+public:
+	cbm(cmdi *pcmd);
+	virtual ~cbm();
+	static char ascii2screen(char i);
+	static char ascii2petscii(char i);
+	void basic_v2(const char *format, ...);
+
+	struct sid
+	{
+		var address, size, init, play, data;
+	};
+	
+	sid load_sid(const char *path);
+	void place_sid(sid &obj);
+
+	void c2_reset_pass() override;
+	void c2_post() override;
+	
+	void vice_cmd(var v);
+	
+	void *c64_internal = nullptr;
+
+	int64_t incprgorg(const char *file, size_t offset = 0, size_t length = -1);
+};

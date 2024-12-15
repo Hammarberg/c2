@@ -12,31 +12,16 @@
 */
 
 #pragma once
-#include "c2/h/c2i.h"
+#include "c2/commodore/cbm.h"
 
-class c64 : public c2i
+#define basic basic_v2
+
+class c64 : public cbm
 {
 public:
 	c64(cmdi *pcmd);
 	virtual ~c64();
-	static char ascii2screen(char i);
-	static char ascii2petscii(char i);
-	void basic(const char *format, ...);
-
-	struct sid
-	{
-		var address, size, init, play, data;
-	};
-	
-	sid load_sid(const char *path);
-	void place_sid(sid &obj);
-
+	void c2_pre() override;
 	void c2_reset_pass() override;
 	void c2_post() override;
-	
-	void c64_vice(var v);
-	
-	void *c64_internal = nullptr;
-
-	int64_t incprgorg(const char *file, size_t offset = 0, size_t length = -1);
 };

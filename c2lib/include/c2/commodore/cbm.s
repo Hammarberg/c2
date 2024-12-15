@@ -1,6 +1,6 @@
 /*
 	c2 - cross assembler
-	Copyright (C) 2022-2023  John Hammarberg (crt@nospam.binarybone.com)
+	Copyright (C) 2022-2024  John Hammarberg (crt@nospam.binarybone.com)
 
 	This file is part of c2.
 
@@ -12,10 +12,45 @@
 */
 
 #pragma once
-#include "c2/commodore/cbm.s"
 
 macro basic_startup
 {
-	@ = $0801
-	byte $0b, $08, $0a, $00, $9e, $32, $30, $36, $31, $00, $00, $00
+	basic_v2("0 sys%d\n",int(.start));
+.start:
 }
+
+macro screencode @data...
+{
+    for(size_t r=0;r<data.size();r++)
+    {
+        push8(ascii2screen(char(data[r])));
+    }
+}
+
+macro petscii @data...
+{
+    for(size_t r=0;r<data.size();r++)
+    {
+        push8(ascii2petscii(char(data[r])));
+    }
+}
+
+macro incprg @file, @param...
+{
+	size_t offset = 0;
+	size_t length = -1;
+	
+	if(param.size() >= 1)
+		offset = param[0];
+	
+	if(param.size() >= 2)
+		length = param[1];
+		
+	loadbin(file.str(), offset + 2, length);
+}
+
+macro vice @in
+{
+	vice_cmd(in);
+}
+
