@@ -484,14 +484,22 @@ Commodore 64 with provided utilities.
 Commodore 64 with provided utilities configured to auto lauch in VICE (x64sc) with symbols and optional breakpoints.
 ### atari2600
 Atari2600 with 4KB of ROM at $f000
+### NESnrom
+NES NROM 256
+### TG16
+Turbo Grafx 16 HuC6280
 ## 6809
 A plain 6809 template with 64KB of RAM.
 ## vectrex
 GCE Vectrex with 32KB of ROM between $0000-$8000
 ## dragon
 Dragon 32/64, also highly compatible with Tandy Color Computer (CoCo). Configured with 64KB of RAM.
-## 68000
-Highly experimental for c2 development, 68k CPU support is b0rken/buggy at best
+### 65816
+Plain 65816
+### c64scpu
+Commodore 64 Super CPU
+### mega65
+MEGA65/C65/DX64
 ## void
 A plain template containing no included assembly pseudo opcodes. Useful for experimentation or rendering of binaries using macros and meta-programming. 10MB of RAM is allocated in the default project file, add more as needed.
 # Targets
