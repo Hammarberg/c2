@@ -3,14 +3,11 @@
 	"basedir":".",
 	"arguments" : "--address-range 0xf000 0x10000 --out 0xf000 0x10000 hello.rom",
 	"execute" : "",
+	"template" : "atari2600",
 	"files":[
 		"hello.cpp":{
 			"c2" : true,
 			"flags" : "-O0"
-		},
-		"source/c2i.cpp":{
-			"external" : true,
-			"flags" : "-O2"
 		}
 	]
 }

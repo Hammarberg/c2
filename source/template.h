@@ -32,6 +32,7 @@ public:
 	void tpl_list();
 	std::string tpl_create(int arga, const char *argc[]);
 	tjson tpl_direct(int arga, const char *argc[]);
+	tjson tpl_load(const char *intemplate);
 
 	std::filesystem::path intermediatedir = ".im";
 
@@ -40,7 +41,6 @@ private:
 	void file_translate(const char *src, const char *dst, const std::vector<std::pair<std::string, std::string>> &translate);
 	static std::string str_translate(std::string str, const std::vector<std::pair<std::string, std::string>> &translate);
 
-	tjson tpl_load(const char *intemplate);
 	tjson create(bool direct, const char *intemplate, const char *intitle, const std::filesystem::path &destpath);
 	void tpl_file_move(ctemplate::tjson &tpl, const std::filesystem::path &destpath, std::vector<std::pair<std::string, std::string>> &translate, bool copyall);
 };

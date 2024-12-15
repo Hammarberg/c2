@@ -3,14 +3,11 @@
 	"basedir":".",
 	"arguments" : "--address-range 0x0000 0x14000 --out 0xe000 0x14000 bounce.pce",
 	"execute" : "",
+	"template" : "TG16",
 	"files":[
 		"tg16.cpp":{
 			"c2" : true,
 			"flags" : "-O0"
-		},
-		"source/c2i.cpp":{
-			"external" : true,
-			"flags" : "-O2"
 		}
 	]
 }

@@ -3,18 +3,11 @@
 	"basedir":".",
 	"arguments" : "--out-rle 0x0801 + basic_startup polarplasma.prg --vice-cmd polarplasma.sym",
 	"execute" : "x64sc -silent -moncommands polarplasma.sym polarplasma.prg",
+	"template" : "c64vice",
 	"files":[
 		"polarplasma.cpp":{
 			"c2" : true,
 			"flags" : "-O0"
-		},
-		"source/c2i.cpp":{
-			"external" : true,
-			"flags" : "-O2"
-		},
-		"source/c64.cpp":{
-			"external" : true,
-			"flags" : "-O2"
 		}
 	]
 }

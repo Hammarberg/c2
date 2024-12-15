@@ -75,6 +75,7 @@ public:
 	std::string title = "noname";
 	std::string arguments;
 	std::string execute;
+	std::string template_name;
 
 	stimestamp projecttime;
 	std::vector<std::unique_ptr<sfile> > files;

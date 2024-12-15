@@ -581,6 +581,13 @@ bool sproject::load_project(ctemplate::tjson cfg, const char* projectfile, bool 
 
     arguments = cfg->Get("arguments").GetString();
     execute = cfg->Get("execute").GetString();
+    template_name = cfg->Get("template").GetString();
+
+    if(!template_name.size())
+    {
+        VERBOSE(0, "Warning: %s is outdated and missing a template pair\n"
+        "To repair, add: \"template\": \"template name here\",\n", projectfile);
+    }
 
     // Intermediate
     tmp = cfg->Get("intermediate").GetString();
@@ -623,6 +630,9 @@ bool sproject::load_project(ctemplate::tjson cfg, const char* projectfile, bool 
 
     projecttime = tproj;
 
+    // Temporary hack not to completely break projects.
+    bool c64 = false;
+
     // Files
     json::array* pfiles = (json::array*)cfg->Find("files");
     if (pfiles)
@@ -656,6 +666,53 @@ bool sproject::load_project(ctemplate::tjson cfg, const char* projectfile, bool 
             file->c2 = ppair->second->Get("c2").GetBool();
             file->flags = ppair->second->Get("flags").GetString();
             file->ext = ext;
+
+            // Temporary hack not to completely break projects
+            if(ppair->first == "source/c64.cpp" || ppair->first == "source\\c64.cpp")
+                c64 = true;
+        }
+    }
+
+    // Library source files from template
+    if(template_name.size())
+    {
+        tjson tp = tpl_load(template_name.c_str());
+
+        json::array*p = (json::array*)tp->Find("source");
+        if (p->GetType() != json::type::ARRAY)
+        {
+            throw "source type not array";
+        }
+
+        json::iterate(p, json::PAIR, [&](json::base *i)
+        {
+            json::pair* ppair = (json::pair*)i;
+            if(ppair->second->GetType() == json::CONTAINER)
+            {
+                std::filesystem::path src("source");
+                src /= ppair->first;
+
+                sfile* file = add_file(lib_get_file_path(src.string().c_str()).string());
+
+                file->c2 = ppair->second->Get("c2").GetBool();
+                file->flags = ppair->second->Get("flags").GetString();
+                file->ext = ppair->second->Get("external").GetBool();
+            }
+        });
+    }
+    else
+    {
+        // Temporary hack. If template is missing and c64.cpp was seen. cbm.cpp will also be needed.
+        if(c64)
+        {
+            std::filesystem::path src("source");
+            src /= "cbm.cpp";
+
+            sfile* file = add_file(lib_get_file_path(src.string().c_str()).string());
+
+            file->c2 = false;
+            file->flags = "-O2";
+            file->ext = true;
         }
     }
 

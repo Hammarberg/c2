@@ -3,14 +3,11 @@
 	"basedir":".",
 	"arguments" : "--address-range 0x0 0xa00000 --out - + rendered.bmp",
 	"execute" : "",
+	"template" : "void",
 	"files":[
 		"bmp.cpp":{
 			"c2" : true,
 			"flags" : "-O0"
-		},
-		"source/c2i.cpp":{
-			"external" : true,
-			"flags" : "-O2"
 		}
 	]
 }

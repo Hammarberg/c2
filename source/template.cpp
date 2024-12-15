@@ -268,6 +268,13 @@ ctemplate::tjson ctemplate::create(bool direct, const char *intemplate, const ch
 		)
 	);
 
+	c->data.push_back(
+		new json::pair(
+			"template",
+			new json::string(intemplate)
+		)
+	);
+
 	json::array *f = new json::array;
 
 	c->data.push_back(
@@ -331,35 +338,6 @@ ctemplate::tjson ctemplate::create(bool direct, const char *intemplate, const ch
 	});
 
 	tpl_file_move(tpl, destpath, translate, !direct);
-
-	// source
-
-	p = (json::array*)t->Find("source");
-	if (p->GetType() != json::type::ARRAY)
-	{
-		throw "source type not array";
-	}
-
-	json::iterate(p, json::PAIR, [&](json::base *i)
-	{
-		json::pair* ppair = (json::pair*)i;
-		if(ppair->second->GetType() == json::CONTAINER)
-		{
-			json::container *c = (json::container *)ppair->second->Clone();
-			if(!c->Find("external"))
-			{
-				c->data.push_back(
-					new json::pair(
-						"external",
-						new json::boolean(true)
-					)
-				);
-			}
-			std::filesystem::path src("source");
-			src /= ppair->first;
-			f->data.push_back(new json::pair(src.string(), c));
-		}
-	});
 
 	return proj;
 }

@@ -4,7 +4,7 @@
 			// advbasic
 
 			@ = $0801
-			basic("10 for r=0 to 10\n20print \"hello world from basic \";\n30 next\n40 sys %d : rem hello world\n", int(start));
+			basic_v2("10 for r=0 to 10\n20print \"hello world from basic \";\n30 next\n40 sys %d : rem hello world\n", int(start));
 			
 start:
 			ldy #0

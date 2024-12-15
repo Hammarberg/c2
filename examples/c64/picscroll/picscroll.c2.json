@@ -3,18 +3,11 @@
 	"basedir":".",
 	"arguments" : "--out-rle start + start picscroll.prg --vice-cmd picscroll.sym",
 	"execute" : "x64sc -silent -moncommands picscroll.sym picscroll.prg",
+	"template" : "c64vice",
 	"files":[
 		"picscroll.cpp":{
 			"c2" : true,
 			"flags" : "-O0"
-		},
-		"source/c2i.cpp":{
-			"external" : true,
-			"flags" : "-O2"
-		},
-		"source/c64.cpp":{
-			"external" : true,
-			"flags" : "-O2"
 		}
 	]
 }

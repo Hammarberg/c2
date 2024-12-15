@@ -3,18 +3,11 @@
 	"basedir": ".",
 	"arguments": "--out-prg - + hello.prg --vice-cmd hello.sym",
 	"execute" : "xscpu64 -silent -moncommands hello.sym hello.prg",	
+	"template" : "c64scpu",
 	"files": [
 		"hello.cpp": {
 			"c2": true,
 			"flags": "-O0"
-		},
-		"source/c2i.cpp": {
-			"flags": "-O2",
-			"external": true
-		},
-		"source/c64.cpp": {
-			"flags": "-O2",
-			"external": true
 		}
 	]
 }
