@@ -22,6 +22,28 @@
 				}
 			]
 		},
+		"65c02":{
+			"description" : "Plain 65c02 for embedded projects",
+			"super" : "c2i",
+			"include" : "c2/h/c2i.h",
+			"arguments" : "--address-range 0x0 0x10000",
+			"output" : "--out - + {title}.bin",
+			"source":[
+				"c2i.cpp":{
+					"flags" : "-O2"
+				}
+			],
+			"template":[
+				"asm.cpp":{
+					"target" : "{source}.cpp"
+					"c2" : true
+					"flags" : "-O0"
+				},
+				"65c02.s":{
+					"target" : "{source}.s"
+				}
+			]
+		},
 		"c64":{
 			"description" : "Commodore 64",
 			"super" : "c64",

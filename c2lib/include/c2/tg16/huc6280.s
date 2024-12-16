@@ -12,7 +12,7 @@
 */
 
 #pragma once
-#include "c2/mos/65C02.s"
+#include "c2/mos/65c02.s"
 
 #define C2_HUC6280
 
