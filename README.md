@@ -116,8 +116,8 @@ ORG can be read as a variable.
 
 Example:
 ```
-        move.w @ + offset, d0
-        bra @   //Loop forever
+    move.w @ + offset, d0
+    bra @   //Loop forever
 ```
 ORG is evaluated at the beginning of the line before any opcode is counted, just like a modern programming language. This can differ from some older assemblers where ORG was evaluated at its ordinal position, after any initial opcodes.
 ### Relocation with ORG pointer
@@ -157,21 +157,21 @@ Local labels can be referenced from the outside of its parent scope by `<parent>
 Example:
 ```
 main:
-        moveq #data.end - data, d0 //size of data as immediate
+    moveq #data.end - data, d0 //size of data as immediate
 data:
-        dword $01020304, $baadbeef
+    dword $01020304, $baadbeef
 .end:
 ```
 #### Local labels in repeated scopes (auto indexed)
 ```
-for(int index=0; index<10; index++)
-{
+    for(int index=0; index<10; index++)
+    {
         lda data+index
         beq .small
         bmi .exit
         sta store+index
 .small:
-}
+    }
 .exit:
 ```
 This mode works automatically when a scope is repeated. The label `.small` is in this case duplicated 10 times and automatically indexed. For a more explicit control over the labels see see indexed labels.
@@ -180,8 +180,8 @@ Anonymous labels are declared with a single colon at the beginning of a line and
 
 Example:
 ```
-:       dex
-        bpl -
+:   dex
+    bpl -
 ```
 ### Relative label addressing
 When referencing a label, it's normally done by name. Anonymous labels can only be referenced with a relative count from the current location. To reference the previous label, anonymous or not, use a single `-`, to reference two labels back use `--`. In the same way, use one or more`+` to reference forward labels.
@@ -192,66 +192,66 @@ Syntax: `<name>[<index>]:`
 
 Example:
 ```
-        jmp data[10]
+    jmp data[10]
 
-for(int index=0; index<20; index++)
-{
-data[index]:
+    for(int index=0; index<20; index++)
+    {
+        data[index]:
         //Other code or data here
-}
+    }
 ```
 ## c2 variables
 c2 provides a built-in variable type.
 
 Syntax: `var <name> [= expression]`
 ```
-        var x = 5
-        // When declaring and assigning a variable, there is no need to add a ';'.
-        // If you re-assign it, it will be needed
-        x = 10;
+    var x = 5
+    // When declaring and assigning a variable, there is no need to add a ';'.
+    // If you re-assign it, it will be needed
+    x = 10;
 ```
 Currently, variables doesn't support label namespaces (design decisions yet to be made) and works more like C++ variables. If you need to limit a scope of a variable you can use C scopes:
 ```
-{
+    {
         var x = 5
         //Other code here
-}
-// x is no more
+    }
+    // x is no more
 ```
 Variables remembers explicit bit counts and this is supported by some target.
 ```
-        var src = $0002
-        lda src //16 bit absolute rather than zero page addressing mode on 6502
+    var src = $0002
+    lda src //16 bit absolute rather than zero page addressing mode on 6502
 ```
 Variables declared inside macros are automatically scoped to the macro.
 ### Global variable
 A global variable works much like a regular variable except it can be referenced from inside macros or before it is even declared in the source.
 ```
-    global myvalue = 128
+    global myvalue = 128
 ```
 ### Indexed, array & string variables
 A variable can be used as an array or string.
 ```
-        var x = {12,34,$56}
-        var y = "hollow world"
+    var x = {12,34,$56}
+    var y = "hollow world"
 
-        // Use of logging and member method .str()
-        c2_info("Assembling PETSCII: %s", y.str());
-        petscii y
+    // Use of logging and member method .str()
+    c2_info("Assembling PETSCII: %s", y.str());
+    petscii y
 
-        // Use of member method .size()
-        for(size_t i=0; i<x.size(); i++)
-        {
-                byte x[i]
-        }
+    // Use of member method .size()
+    for(size_t i=0; i<x.size(); i++)
+    {
+        byte x[i]
+    }
 ```
 ### C/C++ variables
 You are free to use C/C++ variables in almost all cases where you would use a c2 variable. Just remember to apply `;` as in C-syntax.
 
 Example:
 ```
-        int y = $1234 + offset;
-        move.b y, d0
+    int y = $1234 + offset;
+    move.b y, d0
 ```
 #### cint type
 Internally c2 uses `cint` as the default signed 64 bit integer type. Variables and most calls are based upon cint.
@@ -260,27 +260,27 @@ In its simplest form, macros are pieces of declared information that can be reca
 
 Syntax:
 ```
-macro <name>[,alias] [arguments]
-{
+    macro <name>[,alias] [arguments]
+    {
         [contents]
-}
+    }
 ```
 Example:
 ```
-macro nop
-{
-        byte 0xea
-}
+    macro nop
+    {
+        byte $ea
+    }
 ```
 Macros are case insensitive and are simply recalled by name.
 
 Example:
 ```
-        nop
+    nop
 ```
 This will be expanded back to:
 ```
-        byte 0xea
+    byte $ea
 ```
 In this example, byte is also a macro that will be expanded.
 
@@ -290,64 +290,69 @@ Macros contain its own label namespace. Local labels can therefore be used insid
 ### Macro alias
 Aliases for macros can be declared with a comma separated list.
 ```
-macro nop,slack,nada
-{
+    macro nop,slack,nada,eom
+    {
         byte 0xea
-}
-        slack //same as nop
+    }
+
+    slack //same as nop
 ```
 ### Macro inputs
 Macro inputs are carried in variables and are declared in the header of the macro. When a macro reference is examined for a match with a macro, arguments are examined against the declared header. Declared inputs are prefixed with `@` and are followed by a label name to carry that input. Other characters are matched literally to the reference.
 
 Example:
 ```
-macro move_byte @src, @dst
-{
+    macro move_byte @src, @dst
+    {
         lda src
         sta dst
-}
-        move_byte $1000, $1001
+    }
+
+    move_byte $1000, $1001
 ```
 To recall `move_byte`, its name or alias must be referenced followed by at least one white space, a number or other expression for `@src`, a comma (`,`) and another expression for `@dst`. Note that `@` is in this context used to prefix a variable name in the macro header (not to be confused with ORG).
 #### Macro overloading
 Macros can be overloaded using the same name but with unique input declarations.
 ```
-macro move_byte #@src, @dst
-{
+    macro move_byte #@src, @dst
+    {
         lda #src
         sta dst
-}
-macro move_byte @src, @dst
-{
+    }
+
+    macro move_byte @src, @dst
+    {
         lda src
         sta dst
-}
-        move_byte #123, $1000
-        move_byte $1000, $2000
+    }
+
+    move_byte #123, $1000
+    move_byte $1000, $2000
 ```
 The difference between the these macros in this case is the prefix `#` for `@src`. It must be matched literally.
 
 A referenced macro is matched against declared macros with the most parameter/operators first. While it's legal to completely wrap your expression in parentheses, this can however interfere with macro matching if you are not careful. Consider these examples:
 ```
-        lda variable+2,y        //lda @n,y is matched
-        lda (variable+2),y      //lda (@n),y indirect zero page is matched
-        lda 2+(variable),y      //lda @n,y is matched
+    lda variable+2,y        //lda @n,y is matched
+    lda (variable+2),y      //lda (@n),y indirect zero page is matched
+    lda 2+(variable),y      //lda @n,y is matched
 ```
 #### Macro overriding
 Macros can be overridden with an identical macro declaration to a previously declared macro.
 ```
-macro set_marker @dst
-{
-		lda #$00
-		sta dst
-}
-// override/replace macro
-macro set_marker @dst
-{
-		lda #$ff
-		sta dst
-		set_marker dst+1 		//expand the original macro as part of this macro
-}
+    macro set_marker @dst
+    {
+        lda #$00
+        sta dst
+    }
+
+    // override/replace macro
+    macro set_marker @dst
+    {
+        lda #$ff
+        sta dst
+        set_marker dst+1   //expand the original macro as part of this macro
+    }
 ```
 ### String input
 As input is handled in c2 variables, strings are valid expressions.
@@ -360,16 +365,17 @@ Syntax:
 ```
 Example:
 ```
-macro store_data @address, @data...
-{
+    macro store_data @address, @data...
+    {
         // Unrolled store
         for(size_t i=0; i<data.size(); i++)
         {
-                lda #data[i]
-                sta address+i
+            lda #data[i]
+            sta address+i
         }
-}
-        store_data $1000, 23, 24*2, -100, $bd
+    }
+
+    store_data $1000, 23, 24*2, -100, $bd
 ```
 ### Enum input
 A macro input can be an enum much like a zero based C enum by declaring the input with a comma separated list with literals within square brackets. An input have to match one of the enum strings specified and the variable will hold the ordinal value.
@@ -380,13 +386,13 @@ Syntax:
 ```
 Example:
 ```
-macro set_color @[black,white,red,cyan,purple,green,blue,yellow]col
-{
+    macro set_color @[black,white,red,cyan,purple,green,blue,yellow]col
+    {
         lda #col
         sta $d021
-}
+    }
 
-        set_color green
+    set_color green
 ```
 It is also possible to combine enum with variadic input.
 ## yourproject.cpp
@@ -414,20 +420,19 @@ You have the complete power of the C pre-processor. Some ideas and examples:
 #define SCREEN $0400
 #define LIMIT8BIT(X) ((X)&$ff)
 
-lda #LIMIT8BIT(258)
-sta SCREEN
+    lda #LIMIT8BIT(258)
+    sta SCREEN
 ```
 ## Inline C++
 All C/C++ loops, variables, if/else, case switches are available. As the assembly source resides inside the C++ method `c2_pass()` there are some logical restrictions. If you want to declare your own function, that's normally done as a member method in the .cpp-file. A way to get around this is to declare a lambda:
 ```
-			auto storestring = [&](var string)
-			{
-				byte string
-				byte 0	//zero terminate
-			};
+    auto storestring = [&](var str)
+    {
+        byte str
+        byte 0 //zero terminate
+    };
 
-text:		storestring("hello world from assembly ");
-
+text:  storestring("hello world from assembly");
 ```
 ## Logging, warnings & errors
 The following fuctions works much like printf() from C and other languages.
@@ -440,17 +445,16 @@ Will print and abort assembly.
 
 Always print information, unless silenced with `--silent-info`.
 
- `c2_verbose(const char *format, ...)`
+`c2_verbose(const char *format, ...)`
 
 Verbosely print where no-one printed before. Only visible with `-v`.
 
 Example:
 ```
-if(x != 10)
-{
-    c2_error("Expected x to be 10 but it was %d", int(x));
-}
-
+    if(x != 10)
+    {
+        c2_error("Expected x to be 10 but it was %d", int(x));
+    }
 ```
 ## c2 C++ interface
 ### Custom C++ extensions
@@ -478,7 +482,7 @@ c2 searches the explicitly set paths first followed by the include folders in c2
 # Defined targets / Templates
 ## 6502
 A plain 6502 template with 64KB of RAM.
-## c64
+### c64
 Commodore 64 with provided utilities.
 ### c64vice
 Commodore 64 with provided utilities configured to auto lauch in VICE (x64sc) with symbols and optional breakpoints.
@@ -486,20 +490,22 @@ Commodore 64 with provided utilities configured to auto lauch in VICE (x64sc) wi
 Atari2600 with 4KB of ROM at $f000
 ### NESnrom
 NES NROM 256
+## 65c02
+A plain 65c02 template with 64KB of RAM.
 ### TG16
-Turbo Grafx 16 HuC6280
+Turbo Grafx 16 HuC6280.
+### mega65
+MEGA65 (C65/DX64) 4510 & 45gs02.
 ## 6809
 A plain 6809 template with 64KB of RAM.
-## vectrex
-GCE Vectrex with 32KB of ROM between $0000-$8000
-## dragon
+### vectrex
+GCE Vectrex with 32KB of ROM between $0000-$8000.
+### dragon
 Dragon 32/64, also highly compatible with Tandy Color Computer (CoCo). Configured with 64KB of RAM.
-### 65816
-Plain 65816
+## 65816
+Plain 65816.
 ### c64scpu
 Commodore 64 Super CPU
-### mega65
-MEGA65/C65/DX64
 ## void
 A plain template containing no included assembly pseudo opcodes. Useful for experimentation or rendering of binaries using macros and meta-programming. 10MB of RAM is allocated in the default project file, add more as needed.
 # Targets
@@ -520,8 +526,10 @@ Repeats the following line or C code block X times. The variable `c2repn` can be
 
 Example:
 ```
-        repeat(10)
-                byte offset + c2repn*7
+    repeat(10)
+    {
+        byte offset + c2repn*7
+    }
 ```
 `assemble "<source>"`
 Externally assemble the source and include the results at the current ORG. Unlike the C pre-processor `#include` statement that merge at the source level, `assemble` will assemble the source separately and then merge at the binary level. This creates isolation between the including and included source and can improve build times on large projects.
@@ -533,12 +541,41 @@ Import a global label from an externally assembled source.
 
 Example:
 ```
-        // Import labels before use
-        import data
-        import routine
+    // Import labels before use
+    import data
+    import routine
 
-        move data, d0
-        jmp routine
+    move data, d0
+    jmp routine
 
-        assemble "dataset.asm"
+    assemble "dataset.asm"
+```
+## c64, c64vice and mega65
+Commodore 8 bit platforms includes the following macros:
+
+`basic_startup`
+Set ORG and inserts a basic startup line. The machine code start address is the address immediately following the expanded macro.
+
+`screencode "<string>"`
+String as VIC screencode.
+
+Example:
+```
+scrolltext:     screencode "hello world",0
+```
+`petscii "<string">`
+String as PETSCII.
+
+Example:
+```
+filename:     petscii "data.seq"
+```
+`incprg "<filename>" [, offset [, length] ]`
+Includes a Commodore PRG file from the file system at current org. Optionally, byte offset and byte length can be given. This is equivalent to `incbin` with 2 added to the offset effectively discarding the PRG header.
+`vice "<cmd string>"`
+Add a VICE emulator command. Use in conjunction with `--vice-cmd`. See the `c64vice` template and the VICE monitor command reference. `@` can be used to substitute the current ORG.
+
+Example of setting a break point:
+```
+    vice "break @"
 ```

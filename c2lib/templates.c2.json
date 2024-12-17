@@ -145,6 +145,28 @@
 				}
 			]
 		},
+		"65c02":{
+			"description" : "Plain 65c02 for embedded projects",
+			"super" : "c2i",
+			"include" : "c2/h/c2i.h",
+			"arguments" : "--address-range 0x0 0x10000",
+			"output" : "--out - + {title}.bin",
+			"source":[
+				"c2i.cpp":{
+					"flags" : "-O2"
+				}
+			],
+			"template":[
+				"asm.cpp":{
+					"target" : "{source}.cpp"
+					"c2" : true
+					"flags" : "-O0"
+				},
+				"65c02.s":{
+					"target" : "{source}.s"
+				}
+			]
+		},
 		"TG16":{
 			"description" : "Turbo Grafx 16 HuC6280",
 			"super" : "c2i",
@@ -163,6 +185,34 @@
 					"flags" : "-O0"
 				},
 				"tg16.s":{
+					"target" : "{source}.s"
+				}
+			]
+		},
+		"mega65":{
+			"description" : "MEGA65/C65/DX64",
+			"super" : "mega65",
+			"include" : "c2/mega65/mega65.h",
+			"arguments" : "",
+			"output" : "--out-prg - + {title}.prg",
+			"source":[
+				"c2i.cpp":{
+					"flags" : "-O2"
+				},
+				"cbm.cpp":{
+					"flags" : "-O2"
+				},
+				"mega65.cpp":{
+					"flags" : "-O2"
+				}
+			],
+			"template":[
+				"asm.cpp":{
+					"target" : "{source}.cpp"
+					"c2" : true
+					"flags" : "-O0"
+				},
+				"mega65.s":{
 					"target" : "{source}.s"
 				}
 			]
@@ -288,34 +338,6 @@
 					"flags" : "-O0"
 				},
 				"c64scpu.s":{
-					"target" : "{source}.s"
-				}
-			]
-		},
-		"mega65":{
-			"description" : "MEGA65/C65/DX64",
-			"super" : "mega65",
-			"include" : "c2/mega65/mega65.h",
-			"arguments" : "",
-			"output" : "--out-prg - + {title}.prg",
-			"source":[
-				"c2i.cpp":{
-					"flags" : "-O2"
-				},
-				"cbm.cpp":{
-					"flags" : "-O2"
-				},
-				"mega65.cpp":{
-					"flags" : "-O2"
-				}
-			],
-			"template":[
-				"asm.cpp":{
-					"target" : "{source}.cpp"
-					"c2" : true
-					"flags" : "-O0"
-				},
-				"mega65.s":{
 					"target" : "{source}.s"
 				}
 			]
