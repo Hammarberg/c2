@@ -428,51 +428,19 @@ bool c2a::match_macro(stok *io, toklink &link)
 
 					for(size_t r=0;r<args.size();r++)
 					{
-						stok *c = args[r];
+						stok *c = clone(args[r]);
+						out.push_tok(c);
 
-						if(isarray && c->type == etype::QUOTE)
+						if(anon_valid && c->type == etype::OP && (*c->name == '+' || *c->name == '-'))
 						{
-							anon_valid = false;
+							if(!anon_first)
+								anon_first = c;
 
-							if(!isarray)
-								out.push_tok(maketok(io, "{", etype::OP));
-
-							char *p = c->name;
-							bool f = true;
-							while(*p)
-							{
-								if(!f)
-								{
-									out.push_tok(maketok(io, ",", etype::OP, 10));
-								}
-
-								char numtmp[64];
-								snprintf(numtmp, sizeof(numtmp), "%d", int(*p));
-								out.push_tok(maketok(io, numtmp, etype::NUM, 10));
-
-								p++;
-								f = false;
-							}
-
-							if(!isarray)
-								out.push_tok(maketok(io, "}", etype::OP));
+							anon_last = c;
 						}
 						else
 						{
-							c = clone(c);
-							out.push_tok(c);
-
-							if(anon_valid && c->type == etype::OP && (*c->name == '+' || *c->name == '-'))
-							{
-								if(!anon_first)
-									anon_first = c;
-
-								anon_last = c;
-							}
-							else
-							{
-								anon_valid = false;
-							}
+							anon_valid = false;
 						}
 					}
 
