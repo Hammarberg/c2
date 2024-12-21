@@ -14,10 +14,31 @@
 #pragma once
 #include "c2/motorola/6809.s"
 
+// Memory and BASIC reference
+// http://dragon32.info/info/
+
 macro screencode @data...
 {
     for(size_t r=0;r<data.size();r++)
     {
         push8(ascii2screen(char(data[r])));
     }
+}
+
+macro dosheader @start, @end
+{
+        @ = start - (.begin - .head)
+.head:
+        byte $55
+        byte $02
+        word start
+        word end-start
+        word start
+        byte $aa
+.begin:
+}
+
+macro dosheader @start
+{
+	dosheader start, c2_high_bound
 }
