@@ -139,14 +139,14 @@ macro adca [@off,pc]
 macro adca @off,pcr
 {
 	push8($a9);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro adca [@off,pcr]
 {
 	push8($a9);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -268,14 +268,14 @@ macro adcb [@off,pc]
 macro adcb @off,pcr
 {
 	push8($e9);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro adcb [@off,pcr]
 {
 	push8($e9);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -397,14 +397,14 @@ macro adda [@off,pc]
 macro adda @off,pcr
 {
 	push8($ab);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro adda [@off,pcr]
 {
 	push8($ab);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -526,14 +526,14 @@ macro addb [@off,pc]
 macro addb @off,pcr
 {
 	push8($eb);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro addb [@off,pcr]
 {
 	push8($eb);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -655,14 +655,14 @@ macro addd [@off,pc]
 macro addd @off,pcr
 {
 	push8($e3);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro addd [@off,pcr]
 {
 	push8($e3);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -784,14 +784,14 @@ macro anda [@off,pc]
 macro anda @off,pcr
 {
 	push8($a4);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro anda [@off,pcr]
 {
 	push8($a4);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -913,14 +913,14 @@ macro andb [@off,pc]
 macro andb @off,pcr
 {
 	push8($e4);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro andb [@off,pcr]
 {
 	push8($e4);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -1042,14 +1042,14 @@ macro asr [@off,pc]
 macro asr @off,pcr
 {
 	push8($67);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro asr [@off,pcr]
 {
 	push8($67);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -1281,14 +1281,14 @@ macro bita [@off,pc]
 macro bita @off,pcr
 {
 	push8($a5);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro bita [@off,pcr]
 {
 	push8($a5);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -1410,14 +1410,14 @@ macro bitb [@off,pc]
 macro bitb @off,pcr
 {
 	push8($e5);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro bitb [@off,pcr]
 {
 	push8($e5);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -1793,14 +1793,14 @@ macro clr [@off,pc]
 macro clr @off,pcr
 {
 	push8($6f);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro clr [@off,pcr]
 {
 	push8($6f);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -1932,14 +1932,14 @@ macro cmpa [@off,pc]
 macro cmpa @off,pcr
 {
 	push8($a1);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro cmpa [@off,pcr]
 {
 	push8($a1);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -2061,14 +2061,14 @@ macro cmpb [@off,pc]
 macro cmpb @off,pcr
 {
 	push8($e1);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro cmpb [@off,pcr]
 {
 	push8($e1);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -2190,14 +2190,14 @@ macro cmpd [@off,pc]
 macro cmpd @off,pcr
 {
 	push16be($10a3);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro cmpd [@off,pcr]
 {
 	push16be($10a3);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -2319,14 +2319,14 @@ macro cmps [@off,pc]
 macro cmps @off,pcr
 {
 	push16be($11ac);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro cmps [@off,pcr]
 {
 	push16be($11ac);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -2448,14 +2448,14 @@ macro cmpu [@off,pc]
 macro cmpu @off,pcr
 {
 	push16be($11a3);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro cmpu [@off,pcr]
 {
 	push16be($11a3);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -2577,14 +2577,14 @@ macro cmpx [@off,pc]
 macro cmpx @off,pcr
 {
 	push8($ac);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro cmpx [@off,pcr]
 {
 	push8($ac);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -2706,14 +2706,14 @@ macro cmpy [@off,pc]
 macro cmpy @off,pcr
 {
 	push16be($10ac);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro cmpy [@off,pcr]
 {
 	push16be($10ac);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -2829,14 +2829,14 @@ macro com [@off,pc]
 macro com @off,pcr
 {
 	push8($63);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro com [@off,pcr]
 {
 	push8($63);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -2982,14 +2982,14 @@ macro dec [@off,pc]
 macro dec @off,pcr
 {
 	push8($6a);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro dec [@off,pcr]
 {
 	push8($6a);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -3121,14 +3121,14 @@ macro eora [@off,pc]
 macro eora @off,pcr
 {
 	push8($a8);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro eora [@off,pcr]
 {
 	push8($a8);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -3250,14 +3250,14 @@ macro eorb [@off,pc]
 macro eorb @off,pcr
 {
 	push8($e8);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro eorb [@off,pcr]
 {
 	push8($e8);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -3379,14 +3379,14 @@ macro inc [@off,pc]
 macro inc @off,pcr
 {
 	push8($6c);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro inc [@off,pcr]
 {
 	push8($6c);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -3512,14 +3512,14 @@ macro jmp [@off,pc]
 macro jmp @off,pcr
 {
 	push8($6e);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro jmp [@off,pcr]
 {
 	push8($6e);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -3635,14 +3635,14 @@ macro jsr [@off,pc]
 macro jsr @off,pcr
 {
 	push8($ad);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro jsr [@off,pcr]
 {
 	push8($ad);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -3764,14 +3764,14 @@ macro lda [@off,pc]
 macro lda @off,pcr
 {
 	push8($a6);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro lda [@off,pcr]
 {
 	push8($a6);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -3893,14 +3893,14 @@ macro ldb [@off,pc]
 macro ldb @off,pcr
 {
 	push8($e6);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro ldb [@off,pcr]
 {
 	push8($e6);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -4022,14 +4022,14 @@ macro ldd [@off,pc]
 macro ldd @off,pcr
 {
 	push8($ec);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro ldd [@off,pcr]
 {
 	push8($ec);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -4151,14 +4151,14 @@ macro lds [@off,pc]
 macro lds @off,pcr
 {
 	push16be($10ee);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro lds [@off,pcr]
 {
 	push16be($10ee);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -4280,14 +4280,14 @@ macro ldu [@off,pc]
 macro ldu @off,pcr
 {
 	push8($ee);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro ldu [@off,pcr]
 {
 	push8($ee);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -4409,14 +4409,14 @@ macro ldx [@off,pc]
 macro ldx @off,pcr
 {
 	push8($ae);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro ldx [@off,pcr]
 {
 	push8($ae);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -4538,14 +4538,14 @@ macro ldy [@off,pc]
 macro ldy @off,pcr
 {
 	push16be($10ae);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro ldy [@off,pcr]
 {
 	push16be($10ae);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -4643,14 +4643,14 @@ macro leas [@off,pc]
 macro leas @off,pcr
 {
 	push8($32);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro leas [@off,pcr]
 {
 	push8($32);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -4748,14 +4748,14 @@ macro leau [@off,pc]
 macro leau @off,pcr
 {
 	push8($33);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro leau [@off,pcr]
 {
 	push8($33);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -4853,14 +4853,14 @@ macro leax [@off,pc]
 macro leax @off,pcr
 {
 	push8($30);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro leax [@off,pcr]
 {
 	push8($30);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -4958,14 +4958,14 @@ macro leay [@off,pc]
 macro leay @off,pcr
 {
 	push8($31);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro leay [@off,pcr]
 {
 	push8($31);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -5081,14 +5081,14 @@ macro lsl,asl [@off,pc]
 macro lsl,asl @off,pcr
 {
 	push8($68);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro lsl,asl [@off,pcr]
 {
 	push8($68);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -5214,14 +5214,14 @@ macro lsr [@off,pc]
 macro lsr @off,pcr
 {
 	push8($64);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro lsr [@off,pcr]
 {
 	push8($64);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -5352,14 +5352,14 @@ macro neg [@off,pc]
 macro neg @off,pcr
 {
 	push8($60);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro neg [@off,pcr]
 {
 	push8($60);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -5496,14 +5496,14 @@ macro ora [@off,pc]
 macro ora @off,pcr
 {
 	push8($aa);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro ora [@off,pcr]
 {
 	push8($aa);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -5625,14 +5625,14 @@ macro orb [@off,pc]
 macro orb @off,pcr
 {
 	push8($ea);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro orb [@off,pcr]
 {
 	push8($ea);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -5819,14 +5819,14 @@ macro rol [@off,pc]
 macro rol @off,pcr
 {
 	push8($69);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro rol [@off,pcr]
 {
 	push8($69);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -5952,14 +5952,14 @@ macro ror [@off,pc]
 macro ror @off,pcr
 {
 	push8($66);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro ror [@off,pcr]
 {
 	push8($66);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -6101,14 +6101,14 @@ macro sbca [@off,pc]
 macro sbca @off,pcr
 {
 	push8($a2);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro sbca [@off,pcr]
 {
 	push8($a2);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -6230,14 +6230,14 @@ macro sbcb [@off,pc]
 macro sbcb @off,pcr
 {
 	push8($e2);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro sbcb [@off,pcr]
 {
 	push8($e2);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -6358,14 +6358,14 @@ macro sta [@off,pc]
 macro sta @off,pcr
 {
 	push8($a7);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro sta [@off,pcr]
 {
 	push8($a7);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -6481,14 +6481,14 @@ macro stb [@off,pc]
 macro stb @off,pcr
 {
 	push8($e7);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro stb [@off,pcr]
 {
 	push8($e7);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -6604,14 +6604,14 @@ macro std [@off,pc]
 macro std @off,pcr
 {
 	push8($ed);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro std [@off,pcr]
 {
 	push8($ed);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -6727,14 +6727,14 @@ macro sts [@off,pc]
 macro sts @off,pcr
 {
 	push16be($10ef);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro sts [@off,pcr]
 {
 	push16be($10ef);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -6850,14 +6850,14 @@ macro stu [@off,pc]
 macro stu @off,pcr
 {
 	push8($ef);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro stu [@off,pcr]
 {
 	push8($ef);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -6973,14 +6973,14 @@ macro stx [@off,pc]
 macro stx @off,pcr
 {
 	push8($af);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro stx [@off,pcr]
 {
 	push8($af);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -7096,14 +7096,14 @@ macro sty [@off,pc]
 macro sty @off,pcr
 {
 	push16be($10af);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro sty [@off,pcr]
 {
 	push16be($10af);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -7225,14 +7225,14 @@ macro suba [@off,pc]
 macro suba @off,pcr
 {
 	push8($a0);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro suba [@off,pcr]
 {
 	push8($a0);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -7354,14 +7354,14 @@ macro subb [@off,pc]
 macro subb @off,pcr
 {
 	push8($e0);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro subb [@off,pcr]
 {
 	push8($e0);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -7483,14 +7483,14 @@ macro subd [@off,pc]
 macro subd @off,pcr
 {
 	push8($a3);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro subd [@off,pcr]
 {
 	push8($a3);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
@@ -7632,14 +7632,14 @@ macro tst [@off,pc]
 macro tst @off,pcr
 {
 	push8($6d);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_direct_pc(off-(@+2+1*ol));
 }
 
 macro tst [@off,pcr]
 {
 	push8($6d);
-	static bool ol=false;
+	c2static ol;
 	ol=c2_6809_idx_indirect_pc(off-(@+2+1*ol));
 }
 
