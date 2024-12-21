@@ -1,0 +1,13 @@
+{
+	"title": "nitemove",
+	"basedir": ".",
+	"arguments": "--longbranch --absolute --out - + nitemove.bin",
+	"execute": "xroar nitemove.bin",
+	"template": "dragon",
+	"files": [
+		"nitemove.cpp": {
+			"c2": true,
+			"flags": "-O0"
+		}
+	]
+}
