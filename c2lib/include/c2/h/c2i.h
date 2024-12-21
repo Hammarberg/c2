@@ -225,9 +225,12 @@ public:
 	virtual void push64le(cint b, bool isaddr = false);
 	virtual void push64be(cint b, bool isaddr = false);
 	
-	cint c2_low_bound();
-	cint c2_high_bound();
-	
+	cint c2_get_low_bound();
+	cint c2_get_high_bound();
+
+	var c2_low_bound;
+	var c2_high_bound;
+
 	template<int BITS> bool c2bt(cint n, int taken)
 	{
 		if (BITS == 8 && n == 2 * taken)

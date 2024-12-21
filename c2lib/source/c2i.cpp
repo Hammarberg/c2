@@ -940,7 +940,7 @@ bool c2i::c2_assemble()
 	return result;
 }
 
-c2i::cint c2i::c2_low_bound()
+c2i::cint c2i::c2_get_low_bound()
 {
 	cint low = 0;
 	for(;low<RAM_size;low++)
@@ -950,7 +950,7 @@ c2i::cint c2i::c2_low_bound()
 	return c2_org.orgw + RAM_base;
 }
 
-c2i::cint c2i::c2_high_bound()
+c2i::cint c2i::c2_get_high_bound()
 {
 	cint high = RAM_size - 1;
 	for(;high>=0;high--)
@@ -1045,10 +1045,10 @@ bool c2i::c2_resolve(const char *addr, c2i::cint &out, bool allow_labels)
 	switch(t)
 	{
 	case low:
-		out = c2_low_bound();
+		out = c2_low_bound;
 		break;
 	case high:
-		out = c2_high_bound();
+		out = c2_high_bound;
 		break;
 	case dec:
 #if !defined(_MSC_VER) && !defined(__MINGW64__)
@@ -1137,6 +1137,9 @@ void c2i::c2_pre()
 void c2i::c2_post()
 {
 	sinternal *p = (sinternal *)pinternal;
+
+	c2_low_bound = c2_get_low_bound();
+	c2_high_bound = c2_get_high_bound();
 	
 	c2_cmd.invoke("--out", [&](int arga, const char *argc[])
 	{
