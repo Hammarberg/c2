@@ -2,7 +2,7 @@
 ## Overview
 The motivation behind c2 is to have an assembler framework capable of targeting a wide range of 8-32 bit CPU architectures while providing strong meta-programming capabilities.
 
-Currently c2 works well with 6502+variants and 6809. Experimental support for Z80 exist and 68000 is under development.
+Currently c2 supports 6502, 65c02, 65816, 4510/45gs02, 6809. Experimental support for z80 exist.
 
 c2 is an assembler wrapper on top of a C++ compiler. It's highly configurable and architecture independent in the sense that all assembly pseudo opcodes are built with text macros. Macro files are included with the standard C pre-processor.
 
@@ -561,21 +561,32 @@ String as VIC screencode.
 
 Example:
 ```
-scrolltext:     screencode "hello world",0
+    screencode "hello world",0
 ```
 `petscii "<string">`
 String as PETSCII.
 
 Example:
 ```
-filename:     petscii "data.seq"
+    petscii "data.seq"
 ```
 `incprg "<filename>" [, offset [, length] ]`
 Includes a Commodore PRG file from the file system at current org. Optionally, byte offset and byte length can be given. This is equivalent to `incbin` with 2 added to the offset effectively discarding the PRG header.
-`vice "<cmd string>"`
-Add a VICE emulator command. Use in conjunction with `--vice-cmd`. See the `c64vice` template and the VICE monitor command reference. `@` can be used to substitute the current ORG.
 
-Example of setting a break point:
+`vice "<cmd string>"`
+Add a VICE emulator command. Use in conjunction with `--vice-cmd`. See the `c64vice` template and the VICE emulator documentation. `@` can be used to substitute the current ORG.
+
+To set a break point at the current ORG from source:
 ```
     vice "break @"
+```
+## Dragon/CoCo
+`dosheader <start>`
+Set ORG to the given start address and insert a DOS binary header. This should be first in your source. When using this macro with switch `--out - +` the output is a Dragon/CoCo DOS compatible binary.
+
+Example:
+```
+    dosheader $4000"
+start:
+    lda #$00
 ```
