@@ -632,6 +632,8 @@ void c2a::parse_macro(toklink &link)
 
 			o->mute();
 			lastparam = true;
+
+			signature_offset --;
 		}
 		else
 		{
