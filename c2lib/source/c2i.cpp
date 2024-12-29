@@ -658,7 +658,7 @@ void c2i::push24be(c2i::cint b, bool isaddr)
 		c2_error("SWord overflow");
 	}
 
-	push(b>>168);
+	push(b>>16);
 	push(b>>8);
 	push(b);
 }
