@@ -409,12 +409,45 @@ bool c2i::c2_file::open(const char *file)
 	return false;
 }
 
+bool c2i::c2_file::openwrite(const char *file)
+{
+	close();
+
+	c2file_data *p = (c2file_data *)pinternal;
+	sinternal *c2p = (sinternal *)c2_get_single()->pinternal;
+
+	if(file)
+	{
+#ifdef _WIN32
+		p->fp = fopen(file,"wb");
+#else
+		p->fp = fopen(file,"w");
+#endif
+
+		if(!p->fp)
+		{
+			c2_get_single()->c2_error("Cannot open file for writing: %s", file);
+			return false;
+		}
+	}
+	else
+	{
+		p->fp = stdout;
+	}
+
+	return true;
+}
+
+
 void c2i::c2_file::close()
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	if(p->fp)
 	{
-		fclose(p->fp);
+		if(p->fp != stdout)
+		{
+			fclose(p->fp);
+		}
 		p->fp = nullptr;
 		p->size = 0;
 	}
@@ -526,6 +559,62 @@ c2i::cint c2i::c2_file::read(void *ptr, c2i::cint size)
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	int rs = fread(ptr, 1, size, p->fp);
+	return rs;
+}
+
+void c2i::c2_file::push8(c2i::cint n)
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	uint8_t d = uint8_t(n);
+	fwrite(&d, 1, sizeof(d), p->fp);
+}
+
+void c2i::c2_file::push16le(c2i::cint n)
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	uint16_t d = uint16_t(n);
+	fwrite(&d, 1, sizeof(d), p->fp);
+}
+
+void c2i::c2_file::push16be(c2i::cint n)
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	uint16_t d = swap_endian(uint16_t(n));
+	fwrite(&d, 1, sizeof(d), p->fp);
+}
+
+void c2i::c2_file::push32le(c2i::cint n)
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	uint32_t d = uint32_t(n);
+	fwrite(&d, 1, sizeof(d), p->fp);
+}
+
+void c2i::c2_file::push32be(c2i::cint n)
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	uint32_t d = swap_endian(uint32_t(n));
+	fwrite(&d, 1, sizeof(d), p->fp);
+}
+
+void c2i::c2_file::push64le(c2i::cint n)
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	uint64_t d = uint64_t(n);
+	fwrite(&d, 1, sizeof(d), p->fp);
+}
+
+void c2i::c2_file::push64be(c2i::cint n)
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	uint64_t d = swap_endian(uint64_t(n));
+	fwrite(&d, 1, sizeof(d), p->fp);
+}
+
+c2i::cint c2i::c2_file::write(void *ptr, c2i::cint size)
+{
+	c2file_data *p = (c2file_data *)pinternal;
+	int rs = fwrite(ptr, 1, size, p->fp);
 	return rs;
 }
 

@@ -304,6 +304,7 @@ public:
 		c2_file(const char *file = nullptr);
 		~c2_file();
 		bool open(const char *file);
+		bool openwrite(const char *file = nullptr);
 		void close();
 		cint size();
 		cint seek(cint pos);
@@ -318,7 +319,15 @@ public:
 		cint pop64be();
 		float pop32float();
 		double pop64float();
+		void push8(cint);
+		void push16le(cint);
+		void push16be(cint);
+		void push32le(cint);
+		void push32be(cint);
+		void push64le(cint);
+		void push64be(cint);
 		cint read(void *ptr, cint size);
+		cint write(void *ptr, cint size);
 	private:
 		void *pinternal;
 	};
