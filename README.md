@@ -506,6 +506,8 @@ Dragon 32/64, also highly compatible with Tandy Color Computer (CoCo). Configure
 Plain 65816.
 ### c64scpu
 Commodore 64 Super CPU
+## z80
+Zilog80
 ## void
 A plain template containing no included assembly pseudo opcodes. Useful for experimentation or rendering of binaries using macros and meta-programming. 10MB of RAM is allocated in the default project file, add more as needed.
 # Targets

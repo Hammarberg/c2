@@ -342,6 +342,28 @@
 				}
 			]
 		},
+		"z80":{
+			"description" : "Plain z80 for embedded projects",
+			"super" : "c2i",
+			"include" : "c2/h/c2i.h",
+			"arguments" : "--address-range 0x0 0x10000",
+			"output" : "--out - + {title}.bin",
+			"source":[
+				"c2i.cpp":{
+					"flags" : "-O2"
+				}
+			],
+			"template":[
+				"asm.cpp":{
+					"target" : "{source}.cpp"
+					"c2" : true
+					"flags" : "-O0"
+				},
+				"z80.s":{
+					"target" : "{source}.s"
+				}
+			]
+		},
 		"void":{
 			"description" : "Void c2 project, no target architecture for custom assembly of binaries and hacking",
 			"super" : "c2i",
