@@ -12,5 +12,4 @@
 */
 
 #pragma once
-#include "c2/motorola/6809.s"
 #include "c2/vectrex/vectrex.i"

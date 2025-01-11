@@ -1,4 +1,5 @@
 #include "c2/vectrex/vectrex.s"
+#include "c2/motorola/6809.s"
 
 			// {title}
 

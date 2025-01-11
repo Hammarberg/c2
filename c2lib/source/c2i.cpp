@@ -84,7 +84,18 @@ struct csfp
 
 	~csfp()
 	{
-		if(fp && fp != stdin && fp != stderr)
+		close();
+	}
+
+	bool open(const char *file, const char *mode)
+	{
+		close();
+		return (fp = fopen(file, mode)) != nullptr;
+	}
+
+	void close(void)
+	{
+		if(fp && fp != stdin && fp != stdout && fp != stderr)
 			fclose(fp);
 	}
 
@@ -100,12 +111,12 @@ private:
 c2i::cint c2i::c2_corg::operator=(c2i::c2_corg &o)
 {
 	// @ = @ resets orga
-	return orga = o.orgw;
+	return porg->a = o.porg->w;
 }
 
 c2i::cint c2i::c2_corg::operator=(c2i::cint n)
 {
-	return orga = orgw = n;
+	return porg->a = porg->w = n;
 }
 
 c2i::cint c2i::c2_corg::operator=(std::initializer_list<cint> elements)
@@ -113,33 +124,21 @@ c2i::cint c2i::c2_corg::operator=(std::initializer_list<cint> elements)
 	auto i = elements.begin();
 	if(elements.size() >= 2)
 	{
-		orgw = *i;
+		porg->w = *i;
 		i++;
-		orga = *i;
+		porg->a = *i;
 	}
 	else if(elements.size() == 1)
 	{
-		orga = orgw = *i;
+		porg->a = porg->w = *i;
 	}
 
-	return orga;
+	return porg->a;
 }
 
 c2i::c2_corg::operator c2i::cint() const
 {
-	return orga;
-}
-
-void c2i::c2_corg::backup(c2i::cint &a, c2i::cint &w)
-{
-	a = orga;
-	w = orgw;
-}
-
-void c2i::c2_corg::restore(c2i::cint a, c2i::cint w)
-{
-	orga = a;
-	orgw = w;
+	return porg->a;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -168,7 +167,7 @@ c2i::c2_var::c2_var(int in)
 
 c2i::c2_var::c2_var(const c2_corg &o)
 {
-	c2v_push(o.orga);
+	c2v_push(o.porg->a);
 }
 
 c2i::c2_var::c2_var(std::initializer_list<c2i::c2_var> elements)
@@ -216,7 +215,7 @@ c2i::c2_var &c2i::c2_var::operator=(c2i::cint n)
 c2i::c2_var &c2i::c2_var::operator=(const c2i::c2_corg &o)
 {
 	c2v_size(1);
-	c2v_ref()=o.orga;
+	c2v_ref()=o.porg->a;
 	return *this;
 }
 
@@ -414,7 +413,6 @@ bool c2i::c2_file::openwrite(const char *file)
 	close();
 
 	c2file_data *p = (c2file_data *)pinternal;
-	sinternal *c2p = (sinternal *)c2_get_single()->pinternal;
 
 	if(file)
 	{
@@ -457,7 +455,6 @@ c2i::cint c2i::c2_file::size()
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	return p->size;
-}
 
 c2i::cint c2i::c2_file::seek(c2i::cint newpos)
 {
@@ -684,16 +681,18 @@ c2i::c2i(cmdi *pcmd)
 	c2_cmd.declare("--hash", nullptr, "[expected]: Compare the final assembly hash with the expected hash. If no expected hash is given, output final hash", 0, 1);
 	c2_cmd.declare("--org", "-O", "<address> [reloc address]: Set ORG. Addresses must be numerical", 1, 2);
 	c2_cmd.declare("--silent-info", nullptr, "Prevent c2_info() printouts");
+
+	c2_activate_image(0);
+
+	// Set default prefix and postfix image size
+	c2_render_image[1].set(0, 8192);
+	c2_render_image[2].set(0, 8192);
 }
 
 c2i::~c2i()
 {
 	sinternal *p = (sinternal *)pinternal;
 	delete p;
-	
-	delete [] RAM;
-	delete [] RAM_last;
-	delete [] RAM_use;
 }
 
 void c2i::push8(c2i::cint b, bool isaddr)
@@ -804,9 +803,9 @@ void c2i::push64be(c2i::cint b, bool isaddr)
 
 void c2i::push(c2i::cint b)
 {
-	c2_poke(c2_org.orgw, b);
-	c2_org.orga++;
-	c2_org.orgw++;
+	c2_poke(c2_org.porg->w, b);
+	c2_org.porg->a++;
+	c2_org.porg->w++;
 }
 
 void c2i::c2_poke(c2i::cint pos, c2i::cint data)
@@ -819,17 +818,17 @@ void c2i::c2_poke(c2i::cint pos, c2i::cint data)
 	
 	p->hash_state.push128(d);
 
-	if(pos < RAM_base || pos >= RAM_base+RAM_size)
+	if(pos < RAM->base || pos >= RAM->base+RAM->size)
 	{
-		c2_error("Out of range writing to address 0x%x", int(c2_org.orgw));
+		c2_error("Out of range writing to address 0x%x", int(pos));
 	}
 	else
 	{
-		if(c2_allow_overwrite == false && RAM_use[pos - RAM_base])
+		if(c2_allow_overwrite == false && RAM->use[pos - RAM->base])
 			c2_error("Overwriting already assembled data at address 0x%x", int(pos));
 		
-		RAM[pos - RAM_base] = uint8_t(data);
-		RAM_use[pos - RAM_base] = 1;
+		RAM->ptr[pos - RAM->base] = uint8_t(data);
+		RAM->use[pos - RAM->base] = 1;
 	}
 	
 	if(c2_assembly_step_hash)
@@ -844,12 +843,12 @@ void c2i::c2_poke(c2i::cint pos, c2i::cint data)
 
 uint8_t c2i::c2_peek(c2i::cint pos)
 {
-	if(pos < RAM_base || pos >= RAM_base+RAM_size)
+	if(pos < RAM->base || pos >= RAM->base+RAM->size)
 	{
-		c2_error("Out of range reading from address 0x%x", int(c2_org.orgw));
+		c2_error("Out of range reading from address 0x%x", int(pos));
 		return 0;
 	}
-	return RAM_last[pos - RAM_base];
+	return RAM->last[pos - RAM->base];
 }
 
 void c2i::c2_reset_pass()
@@ -875,11 +874,11 @@ void c2i::c2_reset_pass()
 
 	p->added_arg.clear();
 	
-	delete [] RAM_last;
-	RAM_last = RAM;
-	RAM = new uint8_t[RAM_size];
-	memset(RAM, 0, RAM_size);
-	memset(RAM_use, 0, RAM_size);
+	c2_render_image[0].reset();
+	c2_render_image[1].reset();
+	c2_render_image[2].reset();
+
+	c2_activate_image(0);
 
 	c2_cmd.invoke("--org", [&](int arga, const char *argc[])
 	{
@@ -895,7 +894,7 @@ void c2i::c2_reset_pass()
 		else
 		{
 			if(!c2_resolve(argc[1], w, false))
-				throw "--org could not resolve address";
+				throw "--org could not resolve reloc address";
 
 			c2_org = {a,w};
 		}
@@ -922,8 +921,7 @@ bool c2i::c2_assemble()
 		{
 			std::vector<cmur3::shash> history;
 
-			cint org_backup_a, org_backup_w;
-			c2_org.backup(org_backup_a, org_backup_w);
+			c2_corg_backup org_backup = c2_backup_org();
 
 			for(int pass=1;;pass++)
 			{
@@ -933,7 +931,7 @@ bool c2i::c2_assemble()
 					throw "Giving up resolving forward references";
 				}
 
-				c2_org.restore(org_backup_a, org_backup_w);
+				c2_restore_org(org_backup);
 				c2_reset_pass();
 
 				if(!c2_assembly_step_hash && c2_loglevel >= 1)
@@ -955,6 +953,9 @@ bool c2i::c2_assemble()
 #endif
 					needcrlf = false;
 				}
+
+				c2_low_bound = c2_get_low_bound();
+				c2_high_bound = c2_get_high_bound();
 
 				if(history.size())
 				{
@@ -1014,6 +1015,7 @@ bool c2i::c2_assemble()
 	{
 		try
 		{
+			c2_activate_image(0);
 			c2_cmd.add_args(p->added_arg.c_str());
 			c2_post();
 		}
@@ -1032,21 +1034,21 @@ bool c2i::c2_assemble()
 c2i::cint c2i::c2_get_low_bound()
 {
 	cint low = 0;
-	for(;low<RAM_size;low++)
-		if(RAM_use[low])
-			return low + RAM_base;
+	for(;low<RAM->size;low++)
+		if(RAM->use[low])
+			return low + RAM->base;
 
-	return c2_org.orgw + RAM_base;
+	return c2_org.porg->w + RAM->base;
 }
 
 c2i::cint c2i::c2_get_high_bound()
 {
-	cint high = RAM_size - 1;
+	cint high = RAM->size - 1;
 	for(;high>=0;high--)
-		if(RAM_use[high])
-			return high+1 + RAM_base;
+		if(RAM->use[high])
+			return high+1 + RAM->base;
 
-	return c2_org.orgw + 1 + RAM_base;
+	return c2_org.porg->w + RAM->base;
 }
 
 bool c2i::c2_resolve(const char *addr, c2i::cint &out, bool allow_labels)
@@ -1227,9 +1229,6 @@ void c2i::c2_post()
 {
 	sinternal *p = (sinternal *)pinternal;
 
-	c2_low_bound = c2_get_low_bound();
-	c2_high_bound = c2_get_high_bound();
-	
 	c2_cmd.invoke("--out", [&](int arga, const char *argc[])
 	{
 		cint from,to;
@@ -1240,21 +1239,35 @@ void c2i::c2_post()
 		if(!c2_resolve(argc[1], to))
 			throw "--out could not resolve 'to' address";
 			
-		if(from > to || from < RAM_base || from > RAM_base+RAM_size || to < RAM_base || to > RAM_base+RAM_size)
+		if(from > to || !RAM->in_range(from) || !RAM->in_range(to))
 			throw "--out addresses out of range";
 			
-		FILE *fp = stdout;
+		csfp fp(stdout);
 		if(arga == 3)
 		{
-			fp = fopen(argc[2], "wb");
+			fp.open(argc[2], "wb");
 			if(!fp)
 				throw "--out could not open file for writing";
 		}
+		auto save_image = [this, &fp](int n)
+		{
+			cint previmg = c2_activate_image(n);
+			cint low = c2_get_low_bound();
+			cint high = c2_get_high_bound();
+			cint size = high - low;
+			if(size)
+			{
+				fwrite(RAM->get(low), 1, size, fp);
+			}
+			c2_activate_image(previmg);
+		};
 		
-		fwrite(RAM+from-RAM_base, 1, to - from, fp);
-		
-		if(fp != stdout)
-			fclose(fp);
+		// Write prefix
+		save_image(1);
+		// Write body
+		fwrite(RAM->get(from), 1, to - from, fp);
+		// Write postfix
+		save_image(2);
 	});
 
 	c2_cmd.invoke("--c2-link-out", [&](int arga, const char *argc[])
@@ -1274,10 +1287,10 @@ void c2i::c2_post()
 		}
 		fputc(0, fp);
 
-		fwrite(&c2_org, 1, sizeof(c2_org), fp);
+		fwrite(c2_org.porg, 1, sizeof(c2_corg::sdata), fp);
 
-		fwrite(RAM, 1, RAM_size, fp);
-		fwrite(RAM_use, 1, RAM_size, fp);
+		fwrite(RAM->ptr, 1, RAM->size, fp);
+		fwrite(RAM->use, 1, RAM->size, fp);
 	},1,1);
 	
 	c2_cmd.invoke("--out-c", [&](int arga, const char *argc[])
@@ -1290,13 +1303,13 @@ void c2i::c2_post()
 		if(!c2_resolve(argc[1], to))
 			throw "--out-c could not resolve 'to' address";
 			
-		if(from > to || from < RAM_base || from > RAM_base+RAM_size || to < RAM_base || to > RAM_base+RAM_size)
+		if(from > to || !RAM->in_range(from) || !RAM->in_range(to))
 			throw "--out-c addresses out of range";
 			
-		FILE *fp = stdout;
+		csfp fp(stdout);
 		if(arga == 3)
 		{
-			fp = fopen(argc[2], "wb");
+			fp.open(argc[2], "wb");
 			if(!fp)
 				throw "--out-c could not open file for writing";
 		}
@@ -1307,7 +1320,7 @@ void c2i::c2_post()
 		const cint W = 8;
 		for(cint r = 0; r < size; r++)
 		{
-			int b = RAM[from-RAM_base+r];
+			int b = RAM->ptr[from-RAM->base+r];
 			if(r % W == 0)
 			{
 				fprintf(fp,"\n\t");
@@ -1322,14 +1335,11 @@ void c2i::c2_post()
 		}
 		
 		fprintf(fp,"\n};\n");
-		
-		if(fp != stdout)
-			fclose(fp);
 	});
 	
 	c2_cmd.invoke("--dump-vars", [p](int arga, const char *argc[])
 	{
-		FILE *fp = stdout;
+		csfp fp(stdout);
 		if(arga)
 		{
 			fp = fopen(argc[0], "w");
@@ -1351,10 +1361,10 @@ void c2i::c2_post()
 	
 	c2_cmd.invoke("--dump-enum", [p](int arga, const char *argc[])
 	{
-		FILE *fp = stdout;
+		csfp fp(stdout);
 		if(arga)
 		{
-			fp = fopen(argc[0], "w");
+			fp.open(argc[0], "w");
 			if(!fp)
 				throw "--dump-enum could not open file for writing";
 		}
@@ -1376,14 +1386,11 @@ void c2i::c2_post()
 #endif
 		}
 		fprintf(fp, "};\n");
-		
-		if(fp != stdout)
-			fclose(fp);
 	});
 
 	c2_cmd.invoke("--hash", [p](int arga, const char *argc[])
 	{
-		FILE *fp = stdout;
+		csfp fp(stdout);
 		char buf[256];
 
 		cmur3::shash hash = p->hash_state.hash;
@@ -1816,25 +1823,96 @@ const char *c2i::c2_get_template()
 	return "void";
 }
 
-void c2i::c2_set_ram(c2i::cint base, c2i::cint size)
+void c2i::c2_set_ram(c2i::cint base, c2i::cint size, uint8_t image_num)
 {
-	if(RAM)
+	c2_render_image[image_num].set(base, size);
+}
+
+void c2i::c2_crender_image::set(c2i::cint inbase, c2i::cint insize)
+{
+	destroy();
+
+	ptr = new uint8_t[insize];
+	use = new uint8_t[insize];
+	last = new uint8_t[insize];
+
+	memset(ptr, 0, insize);
+	memset(use, 0, insize);
+	memset(last, 0, insize);
+
+	base = inbase;
+	size = insize;
+}
+
+void c2i::c2_crender_image::reset()
+{
+	if(ptr)
 	{
-		delete [] RAM;
-		delete [] RAM_use;
-		delete [] RAM_last;
+		uint8_t *tmp = last;
+		last = ptr;
+		ptr = tmp;
+		memset(ptr, 0, size);
+		memset(use, 0, size);
 	}
-		
-	RAM = new uint8_t[size];
-	RAM_use = new uint8_t[size];
-	RAM_last = new uint8_t[size];
+}
 
-	memset(RAM, 0, size);
-	memset(RAM_use, 0, size);
-	memset(RAM_last, 0, size);
+void c2i::c2_crender_image::destroy()
+{
+	if(ptr)
+	{
+		delete [] ptr;
+		delete [] use;
+		delete [] last;
+		ptr = last = use = nullptr;
+	}
+}
 
-	RAM_base = base;
-	RAM_size = size;
+bool c2i::c2_crender_image::in_range(cint a)
+{
+	return a >= base || a < base+size;
+}
+
+uint8_t *c2i::c2_crender_image::get(cint a)
+{
+	return ptr + a - base;
+}
+
+c2i::c2_crender_image::~c2_crender_image()
+{
+	destroy();
+}
+
+c2i::cint c2i::c2_activate_image(c2i::cint image_num)
+{
+	cint r = c2_active_image;
+
+	if(r != image_num)
+	{
+		c2_crender_image &img = c2_render_image[image_num];
+		RAM = &img;
+
+		c2_org.porg = &img.org;
+
+		c2_active_image = image_num;
+	}
+
+	return r;
+}
+
+c2i::c2_corg_backup c2i::c2_backup_org()
+{
+	c2_corg_backup b;
+
+	for(int r=0;r<3;r++)
+		b.org[r] = c2_render_image[r].org;
+
+	return b;
+}
+
+void c2i::c2_restore_org(const c2i::c2_corg_backup &o)
+{
+	for(int r=0;r<3;r++)
+		c2_render_image[r].org = o.org[r];
 }
 
 void c2i::c2_subassemble(const char *source)
@@ -1869,10 +1947,10 @@ void c2i::c2_subassemble(const char *source)
 #endif
 				in.c_str(),
 				out.c_str(),
-				RAM_base,
-				RAM_base+RAM_size,
-				c2_org.orga,
-				c2_org.orgw,
+				RAM->base,
+				RAM->base+RAM->size,
+				c2_org.porg->a,
+				c2_org.porg->w,
 				c2_get_template(),
 				source,
 				err.c_str()
@@ -1996,30 +2074,32 @@ void c2i::c2_subassemble(const char *source)
 	p->import_vars(sorted);
 
 	// Read ORG
-	memcpy(&c2_org, buf.data()+pos, sizeof(c2_org));
-	pos += sizeof(c2_org);
+	memcpy(c2_org.porg, buf.data()+pos, sizeof(c2_corg::sdata));
+	pos += sizeof(c2_corg::sdata);
 
-	if(buf.size()-pos != RAM_size * 2)
+	if(buf.size()-pos != RAM->size * 2)
 	{
-		c2_error("Wrong sub assembly RAM map size: %d", int(buf.size()-pos));
+		c2_error("Wrong sub assembly RAM map size: %d!=%d", int(buf.size()-pos), int(RAM->size * 2));
 		return;
 	}
 
 	// Read ram maps
 	std::vector<uint8_t> ram;
 	std::vector<uint8_t> use;
-	ram.resize(RAM_size);
-	use.resize(RAM_size);
+	ram.resize(RAM->size);
+	use.resize(RAM->size);
 
-	memcpy(ram.data(), buf.data()+pos, RAM_size);
-	pos += RAM_size;
+	memcpy(ram.data(), buf.data()+pos, RAM->size);
+	pos += RAM->size;
 
-	memcpy(use.data(), buf.data()+pos, RAM_size);
-	//pos += RAM_size;
+	memcpy(use.data(), buf.data()+pos, RAM->size);
+	//pos += RAM->size;
 
-	for(cint pos = 0; pos<RAM_size; pos++)
+	cint used = 0;
+	for(cint pos = 0; pos<RAM->size; pos++)
 	{
 		if(use[pos])
-			c2_poke(RAM_base + pos, ram[pos]);
+			c2_poke(RAM->base + pos, ram[pos]), used++;
 	}
+	//printf("%d bytes moved %x %x\n",int(used),int(c2_get_low_bound()),int(c2_get_high_bound()));
 }

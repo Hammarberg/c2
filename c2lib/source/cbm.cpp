@@ -32,12 +32,6 @@ struct sc64internal
 cbm::cbm(cmdi *pcmd)
 : c2i(pcmd)
 {
-	// Default org if nothing is set
-	c2_org = 0x1000;
-	
-	// Valid range of RAM
-	c2_set_ram(0, 0x10000);
-	
 	c2_cmd.declare("--out-prg", "-P", "<from> <to> [filename]: Outputs a Commodore PRG. Parameters are the same as for --out", 2, 3);
 	c2_cmd.declare("--vice-cmd", "-M", "[filename]: Outputs a VICE compatible monitor command file containing labels and breakpoints. Use -moncommands <filename> as VICE arguments.", 0, 1);
 	
@@ -171,9 +165,8 @@ void cbm::basic_v2(const char *format, ...)
 		int quote = 0;
 		
 		// Back up org pointers
-		int64_t save_a, save_w;
-		c2_org.backup(save_a, save_w);
-		
+		c2_corg_backup org_backup = c2_backup_org();
+
 		// Push a dummy 16 bit value
 		push16le(0);
 		
@@ -222,17 +215,18 @@ void cbm::basic_v2(const char *format, ...)
 		push8(0);
 		
 		// Back up org pointers
-		int64_t restore_a, restore_w;
-		c2_org.backup(restore_a, restore_w);
+		cint pointer = c2_org.porg->a;
+		c2_corg_backup org_backup_end = c2_backup_org();
+
 		bool allow_overwrite_backup = c2_allow_overwrite;
 		c2_allow_overwrite = true;
 		
 		// Restore to previous backup and dummy value
-		c2_org.restore(save_a, save_w);
-		push16le(restore_a);
-		
+		c2_restore_org(org_backup);
+		push16le(pointer);
+
 		// Finally restore
-		c2_org.restore(restore_a, restore_w);
+		c2_restore_org(org_backup_end);
 		c2_allow_overwrite = allow_overwrite_backup;
 		
 		if(!*p)
@@ -258,9 +252,9 @@ void cbm::c2_post()
 		if(!c2_resolve(argc[1], to))
 			throw "--out-prg could not resolve 'to' address";
 			
-		if(from > to || from < RAM_base || from > RAM_base+RAM_size || to < RAM_base || to > RAM_base+RAM_size)
+		if(from > to || from < RAM->base || from > RAM->base+RAM->size || to < RAM->base || to > RAM->base+RAM->size)
 			throw "--out-prg addresses out of range";
-			
+
 		FILE *fp = stdout;
 		if(arga == 3)
 		{
@@ -271,7 +265,7 @@ void cbm::c2_post()
 		
 		uint16_t hdr = uint16_t(from);
 		fwrite(&hdr, 1, sizeof(hdr), fp);
-		fwrite(RAM+from-RAM_base, 1, to - from, fp);
+		fwrite(RAM->ptr+from-RAM->base, 1, to - from, fp);
 		
 		if(fp != stdout)
 			fclose(fp);
@@ -317,7 +311,7 @@ void cbm::vice_cmd(var v)
 	}
 	
 	char s[16];
-	sprintf(s,"%lx", c2_org.orga);
+	sprintf(s,"%lx", c2_org.porg->a);
 		
 	size_t r;
 	while((r = tmp.find('@')) != tmp.npos)

@@ -121,11 +121,29 @@ public:
 		cint operator=(cint n);
 		cint operator=(std::initializer_list<cint> elements);
 		operator cint()const;
-		void backup(cint &a, cint &w);
-		void restore(cint a, cint w);
-		cint orga = 0, orgw = 0;
+		struct sdata
+		{
+			cint a = 0, w = 0;
+		}org,*porg=&org;
 	}c2_org;
-	
+
+	class c2_crender_image
+	{
+	public:
+		c2_corg::sdata org;
+		cint base = 0, size = 0;
+		uint8_t *ptr = nullptr;
+		uint8_t *last = nullptr;
+		uint8_t *use = nullptr;
+
+		~c2_crender_image();
+		void set(cint base, cint size);
+		void reset();
+		void destroy();
+		bool in_range(cint address);
+		uint8_t *get(cint address);
+	}*RAM = &c2_render_image[0];
+
 	typedef c2_vector<cint> c2_vardata;
 
 	class c2_var : private c2_vardata
@@ -181,7 +199,7 @@ public:
 		c2_baselabel(const c2_slabel &o) : c2scid(o.scid) { c2_get_single()->c2_register_var(o.name, nullptr, o.mode, this); }
 		virtual ~c2_baselabel() { c2_get_single()->c2_unregister_var(this); }
 		
-		void operator=(const c2_corg &o) { c2v_ref(c2_get_lix())=o.orga; }
+		void operator=(const c2_corg &o) { c2v_ref(c2_get_lix())=o.porg->a; }
 		operator cint() const { return c2v_read(c2_get_lix()); }
 		operator var() const { return c2v_read(c2_get_lix()); };
 		cint &operator[](size_t n) { return c2v_ref(n); }
@@ -228,8 +246,8 @@ public:
 	cint c2_get_low_bound();
 	cint c2_get_high_bound();
 
-	var c2_low_bound;
-	var c2_high_bound;
+	var c2_low_bound = 0;
+	var c2_high_bound = 0;
 
 	template<int BITS> bool c2bt(cint n, int taken)
 	{
@@ -338,7 +356,7 @@ public:
 	
 	void c2_add_arg(const char *format, ...);
 
-	void c2_set_ram(cint base, cint size);
+	void c2_set_ram(cint base, cint size, uint8_t image_num = 0);
 	
 	size_t c2_scope_push(uint32_t fileindex, uint32_t line, uint32_t uid);
 	size_t c2_scope_lix(uint32_t uid);
@@ -385,7 +403,6 @@ public:
 	
 	virtual const char *c2_get_template();
 
-protected:
 	// Hides internals to avoid includes
 	void *pinternal;
 	
@@ -397,9 +414,16 @@ protected:
 	void c2_unregister_var(c2i::c2_vardata *pv);
 
 	static c2i *c2_single;
-	
-	uint8_t *RAM = nullptr;
-	uint8_t *RAM_last = nullptr;
-	uint8_t *RAM_use = nullptr;
-	cint RAM_base = 0, RAM_size = 0;
+
+	struct c2_corg_backup
+	{
+		c2_corg::sdata org[3];
+	};
+
+	c2_corg_backup c2_backup_org(void);
+	void c2_restore_org(const c2_corg_backup &o);
+
+	c2_crender_image c2_render_image[3];
+	cint c2_active_image = -1;
+	cint c2_activate_image(cint image_num = 0);
 };

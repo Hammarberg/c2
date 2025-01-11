@@ -27,15 +27,15 @@ macro screencode @data...
 
 macro dosheader @start, @end
 {
-        @ = start - (.begin - .head)
-.head:
+        C2_PREFIX		// Assemble to prefix, saved with --out
         byte $55
         byte $02
         word start
         word end-start
         word start
         byte $aa
-.begin:
+		C2_BODY			// Resume assemble to the main body
+		@ = start
 }
 
 macro dosheader @start

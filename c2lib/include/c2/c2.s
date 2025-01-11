@@ -73,3 +73,7 @@ macro assemble @src
 	c2_subassemble(src.str());
 }
 #define ASSEMBLE assemble
+
+#define C2_BODY c2_activate_image(0);
+#define C2_PREFIX c2_activate_image(1);
+#define C2_POSFIX c2_activate_image(2);

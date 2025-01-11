@@ -14,7 +14,7 @@
 			cmpx		#$600
 			bne		-
 
-			ldx		#$0500 - 32 + (32 - (text.textend-text)) / 2			// Text screen start, centered
+			ldx		#$0500 - 32 + (32 - (text.end-text)) / 2			// Text screen start, centered
 			leay		text,pcr
 :			lda		,y+
 			beq		+
@@ -25,4 +25,4 @@
 			jmp		cls             // Done
 
 text:		screencode "  hello c2 world!  "
-.textend:	byte 0
+.end:		byte 0

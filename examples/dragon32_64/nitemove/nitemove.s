@@ -7,6 +7,7 @@
 
         //  Calling macro to give a start load address and insert a DOS header
         dosheader $2134
+
 begin:  bsr instr
 
 semi24: ldx #$600

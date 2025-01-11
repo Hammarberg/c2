@@ -1,6 +1,6 @@
 /*
 	c2 - cross assembler
-	Copyright (C) 2022-2023  John Hammarberg (crt@nospam.binarybone.com)
+	Copyright (C) 2022-2024  John Hammarberg (crt@nospam.binarybone.com)
 
 	This file is part of c2.
 
@@ -12,7 +12,6 @@
 */
 
 #pragma once
-#include "c2/mos/6502.s"
 
 #define VSYNC   $00
 #define VBLANK  $01

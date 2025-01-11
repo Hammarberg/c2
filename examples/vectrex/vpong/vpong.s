@@ -1,4 +1,5 @@
 #include "c2/vectrex/vectrex.s"
+#include "c2/motorola/6809.s"
 
 // this game was written on 08.02.1998 bye Christopher Salomon
 // it is public domain

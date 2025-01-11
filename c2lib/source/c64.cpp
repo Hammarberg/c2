@@ -25,7 +25,7 @@ c64::c64(cmdi *pcmd)
 : cbm(pcmd)
 {
 	// Default org if nothing is set
-	c2_org = 0x1000;
+	c2_org = 0x0801;
 	
 	// Valid range of RAM
 	c2_set_ram(0, 0x10000);
@@ -74,7 +74,7 @@ void c64::c2_post()
 		if(!c2_resolve(argc[1], to))
 			throw "--out-rle could not resolve 'to' address";
 
-		if(from < 0x0200 || from > to || from < RAM_base || from >= RAM_base+RAM_size || to < RAM_base || to > RAM_base+RAM_size)
+		if(from < 0x0200 || from > to || from < RAM->base || from >= RAM->base+RAM->size || to < RAM->base || to > RAM->base+RAM->size)
 			throw "--out-rle addresses out of range";
 
 		bool basic_startup = false;
@@ -109,7 +109,7 @@ void c64::c2_post()
 		}stream;
 
 		int size = int(to - from);
-		uint8_t *ram = RAM+from-RAM_base;
+		uint8_t *ram = RAM->ptr+from-RAM->base;
 
 		int lit = 0;
 

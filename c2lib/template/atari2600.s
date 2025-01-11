@@ -1,5 +1,6 @@
 #include "c2/atari2600/atari2600.s"
 #include "c2/atari2600/macro.s"
+#include "c2/mos/6502.s"
 
 			// {title}
 
