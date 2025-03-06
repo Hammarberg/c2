@@ -455,6 +455,7 @@ c2i::cint c2i::c2_file::size()
 {
 	c2file_data *p = (c2file_data *)pinternal;
 	return p->size;
+}
 
 c2i::cint c2i::c2_file::seek(c2i::cint newpos)
 {
