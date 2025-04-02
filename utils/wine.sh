@@ -5,7 +5,7 @@ cd $(dirname "$0")/../
 
 c2root="$PWD"
 
-c2exe="wine $c2root/c2"
+c2exe="wine $c2root/c2.exe"
 echo $c2exe
 
 for line in $(find examples | grep .hash)
