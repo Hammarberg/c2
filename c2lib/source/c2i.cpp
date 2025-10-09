@@ -366,12 +366,14 @@ struct c2file_data
 	c2i::cint size = 0;
 };
 
-
-c2i::c2_file::c2_file(const char *file)
+c2i::c2_file::c2_file(const char *file, bool openread)
 {
 	c2file_data *p = new c2file_data;
 	pinternal = (void *)p;
-	open(file);
+	if(openread)
+		open(file);
+	else
+		openwrite(file);
 }
 
 c2i::c2_file::~c2_file()

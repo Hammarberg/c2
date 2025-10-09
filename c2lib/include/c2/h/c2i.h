@@ -319,7 +319,7 @@ public:
 	class c2_file
 	{
 	public:
-		c2_file(const char *file = nullptr);
+		c2_file(const char *file = nullptr, bool openread = true);
 		~c2_file();
 		bool open(const char *file);
 		bool openwrite(const char *file = nullptr);
