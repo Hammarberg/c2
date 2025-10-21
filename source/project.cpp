@@ -582,6 +582,7 @@ bool sproject::load_project(ctemplate::tjson cfg, const char* projectfile, bool 
     arguments = cfg->Get("arguments").GetString();
     execute = cfg->Get("execute").GetString();
     template_name = cfg->Get("template").GetString();
+    flags = cfg->Get("flags").GetString();
 
     if(!template_name.size())
     {
@@ -773,7 +774,6 @@ void sproject::build(bool doexecute)
                 if(!f->c2)cmd += " ";
                 cmd += f->flags;
             }
-
 #ifndef _WIN32
             cmd += " -fpic";
 #endif
@@ -831,7 +831,13 @@ void sproject::build(bool doexecute)
     if(dirty_link)
     {
         VERBOSE(1, "%s is dirty\n", link_target.c_str());
-        cmd = compiler + stdc + " -shared -o " + quote_path(link_target);
+        cmd =
+            compiler +
+            stdc +
+            (flags.size() ? " " + flags : "") +
+            " -shared -o " +
+            quote_path(link_target);
+
         for(size_t r=0; r<files.size(); r++)
         {
             cmd += " " + quote_path(files[r]->obj);

@@ -76,6 +76,7 @@ public:
 	std::string arguments;
 	std::string execute;
 	std::string template_name;
+	std::string flags;
 
 	stimestamp projecttime;
 	std::vector<std::unique_ptr<sfile> > files;
