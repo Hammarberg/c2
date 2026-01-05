@@ -263,6 +263,13 @@ ctemplate::tjson ctemplate::create(bool direct, const char *intemplate, const ch
 
 	c->data.push_back(
 		new json::pair(
+			"flags",
+			new json::string(str_translate(t->Get("flags").GetString(), translate).c_str())
+		)
+	);
+
+	c->data.push_back(
+		new json::pair(
 			"execute",
 			new json::string(str_translate(t->Get("execute").GetString(), translate).c_str())
 		)
