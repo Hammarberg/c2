@@ -61,7 +61,6 @@ void sproject::stimestamp::load(FILE *fp)
 
 bool sproject::stimestamp::operator==(const stimestamp &o) const
 {
-    if(!mtim) return false;
     return memcmp(&mtim, &o.mtim, sizeof(mtim)) == 0;
 }
 
