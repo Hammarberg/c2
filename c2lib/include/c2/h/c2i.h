@@ -14,6 +14,12 @@
 #pragma once
 #define C2_INTERFACE_TEMPLATE_VERSION 1
 
+#ifndef __OPTIMIZE__
+	#ifdef _FORTIFY_SOURCE
+		#undef _FORTIFY_SOURCE
+	#endif
+#endif
+
 #include "cmdi.h"
 
 #include <cstdint>
