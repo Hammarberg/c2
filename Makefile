@@ -45,33 +45,28 @@ else
 	CXXFLAGS := $(CXXFLAGS) -std=gnu++17
 endif
 
-C2_GITVERSION := $(shell git describe --always)
+GITVERSION := $(shell git describe --tags --dirty --always 2>/dev/null || echo "not set")
 
-ifeq ($(C2_GITVERSION),)
-	C2_GITVERSION := not set
-endif
+CXXFLAGS := $(CXXFLAGS) -DC2_VERSION=\"$(GITVERSION)\"
 
 ifeq ($(PREFIX),)
     PREFIX := /usr/local
 endif
 
-$(TARGET_EXEC): c2gitversion.h $(OBJS)
+.PHONY: clean debug install uninstall
+
+$(TARGET_EXEC): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) $(LDFLAGS) $(LDLIBS) -o $@
 
 $(BUILD_DIR)/%.cpp.o: %.cpp
 	$(MKDIR_P) $(dir $@)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
-c2gitversion.h:
-	@echo "#define C2_GITVERSION \"$(value C2_GITVERSION)\"" > gitversion.h
-
-.PHONY: clean debug install uninstall
-
 clean:
-	$(RM) -r $(BUILD_DIR) c2gitversion.h
+	$(RM) -r $(BUILD_DIR)
 
 debug:
-	@echo C2_GITVERSION=$(C2_GITVERSION)
+	@echo GITVERSION=$(GITVERSION)
 	@echo OS=$(OS)
 	@echo TARGET_EXEC=$(TARGET_EXEC)
 	@echo CXX=$(CXX)

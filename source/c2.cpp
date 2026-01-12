@@ -15,25 +15,22 @@
 #include <cstdint>
 
 #include "version.h"
-#ifndef _MSC_VER
-#include "gitversion.h"
-#else
-#define C2_GITVERSION "VS build"
-#endif
 
 static std::string version()
 {
-	std::string str = C2_VERSION;
+	std::string str = C2_TAG;
 
-	if(std::string(C2_GITVERSION) != "not set")
-		str += " (" C2_GITVERSION ")";
+	std::string version = std::string(C2_VERSION);
+
+	if(version != "not set" && version != C2_TAG)
+		str += " (" C2_VERSION ")";
 
 	return str;
 }
 
 static std::string title()
 {
-	return std::string("c2 cross assembler version: " + version () + " - " C2_TAG "\nCopyright (C) 2022-2024  John Hammarberg (CRT)");
+	return std::string("c2 cross assembler version: " + version () + " - " C2_TAGLINE "\nCopyright (C) 2022-2026  John Hammarberg (CRT)");
 }
 
 int main(int arga, char *argc[])
