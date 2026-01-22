@@ -1,6 +1,6 @@
 /*
 	c2 - cross assembler
-	Copyright (C) 2022-2024  John Hammarberg (crt@nospam.binarybone.com)
+	Copyright (C) 2022-2026  John Hammarberg (crt@nospam.binarybone.com)
 
 	This file is part of c2.
 
