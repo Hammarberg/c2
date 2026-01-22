@@ -11,6 +11,6 @@ if "%C2_GITVERSION%"=="" (
 	set C2_GITVERSION=not set
 )
 
-echo #define C2_GITVERSION ^"%C2_GITVERSION%^" > ..\c2gitversion.h
+echo #define C2_VERSION ^"%C2_GITVERSION%^" > ..\c2gitversion.h
 
 endlocal

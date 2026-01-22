@@ -36,6 +36,7 @@
     <ClInclude Include="source\template.h" />
     <ClInclude Include="source\token.h" />
     <ClInclude Include="source\tokfeed.h" />
+    <ClInclude Include="version.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
