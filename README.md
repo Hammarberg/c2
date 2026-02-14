@@ -17,9 +17,9 @@ Some of the highlights:
 * Inline C++ for additional meta-programming
 * Multiple pass assembly for conditional code generation with forward references
   
-  ### License
-  
-  Copyright (C) 2022-2025  John Hammarberg (crt@nospam.binarybone.com)
+### License
+
+Copyright (C) 2022-2025  John Hammarberg (crt@nospam.binarybone.com)
 
 This file is part of c2.
 
