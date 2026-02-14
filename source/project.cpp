@@ -536,11 +536,11 @@ void sproject::set_compiler()
 
     if(compiler.find("clang") != std::string::npos)
     {
-        stdc = " -std=c++17";
+        stdc = " -std=c++20";
     }
     else
     {
-        stdc = " -std=gnu++17";
+        stdc = " -std=gnu++20";
     }
 }
 

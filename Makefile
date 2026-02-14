@@ -40,9 +40,9 @@ else
 endif
 
 ifeq ($(findstring clang,$(CXX)),clang)
-	CXXFLAGS := $(CXXFLAGS) -std=c++17
+	CXXFLAGS := $(CXXFLAGS) -std=c++20
 else
-	CXXFLAGS := $(CXXFLAGS) -std=gnu++17
+	CXXFLAGS := $(CXXFLAGS) -std=gnu++20
 endif
 
 GITVERSION := $(shell git describe --tags --dirty --always 2>/dev/null || echo "not set")
