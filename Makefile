@@ -47,7 +47,7 @@ endif
 
 GITVERSION := $(shell git describe --tags --dirty --always 2>/dev/null || echo "not set")
 
-CXXFLAGS := $(CXXFLAGS) -DC2_VERSION=\"$(GITVERSION)\"
+CXXFLAGS := $(CXXFLAGS) -DC2_VERSION='"$(GITVERSION)"'
 
 ifeq ($(PREFIX),)
     PREFIX := /usr/local
