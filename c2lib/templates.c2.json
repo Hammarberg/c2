@@ -1,7 +1,7 @@
 {
 	"templates":[
 		"6502":{
-			"description" : "Plain 6502 for embedded projects",
+			"description" : "6502",
 			"super" : "c2i",
 			"include" : "c2/h/c2i.h",
 			"arguments" : "--address-range 0x0 0x10000",
@@ -23,7 +23,7 @@
 			]
 		},
 		"65c02":{
-			"description" : "Plain 65c02 for embedded projects",
+			"description" : "65c02",
 			"super" : "c2i",
 			"include" : "c2/h/c2i.h",
 			"arguments" : "--address-range 0x0 0x10000",
@@ -40,6 +40,75 @@
 					"flags" : "-O0"
 				},
 				"65c02.s":{
+					"target" : "{source}.s"
+				}
+			]
+		},
+		"65816":{
+			"description" : "65816",
+			"super" : "c2i",
+			"include" : "c2/h/c2i.h",
+			"arguments" : "--address-range 0x0 0x1000000",
+			"output" : "--out - + {title}.bin",
+			"source":[
+				"c2i.cpp":{
+					"flags" : "-O2"
+				}
+			],
+			"template":[
+				"asm.cpp":{
+					"target" : "{source}.cpp"
+					"c2" : true
+					"flags" : "-O0"
+				},
+				"65816.s":{
+					"target" : "{source}.s"
+				}
+			]
+		},
+		"6809":{
+			"description" : "6809",
+			"super" : "motorola6809",
+			"include" : "c2/motorola/6809.h",
+			"arguments" : "--address-range 0x0 0x10000",
+			"output" : "--out - + {title}.bin",
+			"source":[
+				"c2i.cpp":{
+					"flags" : "-O2"
+				},
+				"6809.cpp":{
+					"flags" : "-O2"
+				}
+			],
+			"template":[
+				"asm.cpp":{
+					"target" : "{source}.cpp"
+					"c2" : true
+					"flags" : "-O0"
+				},
+				"6809.s":{
+					"target" : "{source}.s"
+				}
+			]
+		},
+		"z80":{
+			"description" : "z80 (experimental support)",
+			"super" : "c2i",
+			"include" : "c2/h/c2i.h",
+			"arguments" : "--address-range 0x0 0x10000",
+			"output" : "--out - + {title}.bin",
+			"source":[
+				"c2i.cpp":{
+					"flags" : "-O2"
+				}
+			],
+			"template":[
+				"asm.cpp":{
+					"target" : "{source}.cpp"
+					"c2" : true
+					"flags" : "-O0"
+				},
+				"z80.s":{
 					"target" : "{source}.s"
 				}
 			]
@@ -145,28 +214,6 @@
 				}
 			]
 		},
-		"65c02":{
-			"description" : "Plain 65c02 for embedded projects",
-			"super" : "c2i",
-			"include" : "c2/h/c2i.h",
-			"arguments" : "--address-range 0x0 0x10000",
-			"output" : "--out - + {title}.bin",
-			"source":[
-				"c2i.cpp":{
-					"flags" : "-O2"
-				}
-			],
-			"template":[
-				"asm.cpp":{
-					"target" : "{source}.cpp"
-					"c2" : true
-					"flags" : "-O0"
-				},
-				"65c02.s":{
-					"target" : "{source}.s"
-				}
-			]
-		},
 		"TG16":{
 			"description" : "Turbo Grafx 16 HuC6280",
 			"super" : "c2i",
@@ -213,31 +260,6 @@
 					"flags" : "-O0"
 				},
 				"mega65.s":{
-					"target" : "{source}.s"
-				}
-			]
-		},
-		"6809":{
-			"description" : "Plain 6809",
-			"super" : "motorola6809",
-			"include" : "c2/motorola/6809.h",
-			"arguments" : "--address-range 0x0 0x10000",
-			"output" : "--out - + {title}.bin",
-			"source":[
-				"c2i.cpp":{
-					"flags" : "-O2"
-				},
-				"6809.cpp":{
-					"flags" : "-O2"
-				}
-			],
-			"template":[
-				"asm.cpp":{
-					"target" : "{source}.cpp"
-					"c2" : true
-					"flags" : "-O0"
-				},
-				"6809.s":{
 					"target" : "{source}.s"
 				}
 			]
@@ -292,28 +314,6 @@
 				}
 			]
 		},
-		"65816":{
-			"description" : "Plain 65816",
-			"super" : "c2i",
-			"include" : "c2/h/c2i.h",
-			"arguments" : "--address-range 0x0 0x1000000",
-			"output" : "--out - + {title}.bin",
-			"source":[
-				"c2i.cpp":{
-					"flags" : "-O2"
-				}
-			],
-			"template":[
-				"asm.cpp":{
-					"target" : "{source}.cpp"
-					"c2" : true
-					"flags" : "-O0"
-				},
-				"65816.s":{
-					"target" : "{source}.s"
-				}
-			]
-		},
 		"c64scpu":{
 			"description" : "Commodore 64 Super CPU",
 			"super" : "c64",
@@ -338,28 +338,6 @@
 					"flags" : "-O0"
 				},
 				"c64scpu.s":{
-					"target" : "{source}.s"
-				}
-			]
-		},
-		"z80":{
-			"description" : "Plain z80 for embedded projects",
-			"super" : "c2i",
-			"include" : "c2/h/c2i.h",
-			"arguments" : "--address-range 0x0 0x10000",
-			"output" : "--out - + {title}.bin",
-			"source":[
-				"c2i.cpp":{
-					"flags" : "-O2"
-				}
-			],
-			"template":[
-				"asm.cpp":{
-					"target" : "{source}.cpp"
-					"c2" : true
-					"flags" : "-O0"
-				},
-				"z80.s":{
 					"target" : "{source}.s"
 				}
 			]
