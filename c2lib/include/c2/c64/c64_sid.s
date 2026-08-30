@@ -99,6 +99,6 @@
 
 // Filter control
 #define SID_MUTE_V3		128
-#define SID_FHIGH		63
+#define SID_FHIGH		64
 #define SID_FBAND		32
 #define SID_FLOW		16
